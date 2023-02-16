@@ -33,6 +33,7 @@ class ContentViewController: NSViewController, NSTableViewDelegate, NSTableViewD
     
     // See: https://stackoverflow.com/questions/18560509/nstableview-detecting-a-mouse-click-together-with-the-row-and-column
     @objc private func onClick() {
+        if tableView.clickedRow == -1 { return }
         let item = contents[tableView.clickedRow]
         if item.type == .directory {
             getContent(item.path)
