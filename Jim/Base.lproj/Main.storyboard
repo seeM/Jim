@@ -765,7 +765,7 @@
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hiQ-eZ-0Ce">
-                                                                    <rect key="frame" x="3" y="0.0" width="17" height="17"/>
+                                                                    <rect key="frame" x="3" y="3" width="17.5" height="11"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="17" id="1ma-bv-B9Y"/>
                                                                     </constraints>
@@ -797,10 +797,6 @@
                                                     </prototypeCellViews>
                                                 </tableColumn>
                                             </tableColumns>
-                                            <connections>
-                                                <outlet property="dataSource" destination="PY6-yu-l18" id="dBy-UZ-jmd"/>
-                                                <outlet property="delegate" destination="PY6-yu-l18" id="SMq-Uy-n2z"/>
-                                            </connections>
                                         </tableView>
                                     </subviews>
                                     <nil key="backgroundColor"/>
