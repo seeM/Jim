@@ -11,6 +11,15 @@
 		8456BD42299D0264001E3EDA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456BD41299D0264001E3EDA /* ViewController.swift */; };
 		8456BD44299D0268001E3EDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8456BD43299D0268001E3EDA /* Assets.xcassets */; };
 		8456BD47299D0268001E3EDA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8456BD45299D0268001E3EDA /* Main.storyboard */; };
+		8456BD4F299D05A5001E3EDA /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456BD4E299D05A5001E3EDA /* ContentViewController.swift */; };
+		8456BD51299D0F5E001E3EDA /* NotebookViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456BD50299D0F5E001E3EDA /* NotebookViewController.swift */; };
+		84C838DF299D6DF000BA3F8F /* JupyterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C838DB299D6DF000BA3F8F /* JupyterService.swift */; };
+		84C838E0299D6DF000BA3F8F /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C838DC299D6DF000BA3F8F /* Cell.swift */; };
+		84C838E1299D6DF000BA3F8F /* Notebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C838DD299D6DF000BA3F8F /* Notebook.swift */; };
+		84C838E2299D6DF000BA3F8F /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C838DE299D6DF000BA3F8F /* Content.swift */; };
+		84C838E6299D6E2900BA3F8F /* AnyCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 84C838E5299D6E2900BA3F8F /* AnyCodable */; };
+		84C838EA299D6E4600BA3F8F /* StringOrArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C838E8299D6E4600BA3F8F /* StringOrArray.swift */; };
+		84C838EB299D6E4600BA3F8F /* Base64Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C838E9299D6E4600BA3F8F /* Base64Image.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +29,14 @@
 		8456BD43299D0268001E3EDA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8456BD46299D0268001E3EDA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8456BD48299D0268001E3EDA /* Jim.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Jim.entitlements; sourceTree = "<group>"; };
+		8456BD4E299D05A5001E3EDA /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
+		8456BD50299D0F5E001E3EDA /* NotebookViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookViewController.swift; sourceTree = "<group>"; };
+		84C838DB299D6DF000BA3F8F /* JupyterService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JupyterService.swift; sourceTree = "<group>"; };
+		84C838DC299D6DF000BA3F8F /* Cell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
+		84C838DD299D6DF000BA3F8F /* Notebook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notebook.swift; sourceTree = "<group>"; };
+		84C838DE299D6DF000BA3F8F /* Content.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Content.swift; sourceTree = "<group>"; };
+		84C838E8299D6E4600BA3F8F /* StringOrArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringOrArray.swift; sourceTree = "<group>"; };
+		84C838E9299D6E4600BA3F8F /* Base64Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Base64Image.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84C838E6299D6E2900BA3F8F /* AnyCodable in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,13 +70,38 @@
 		8456BD3E299D0264001E3EDA /* Jim */ = {
 			isa = PBXGroup;
 			children = (
+				84C838DA299D6DF000BA3F8F /* Jupyter */,
+				84C838E7299D6E4600BA3F8F /* Utils */,
 				8456BD3F299D0264001E3EDA /* AppDelegate.swift */,
 				8456BD41299D0264001E3EDA /* ViewController.swift */,
 				8456BD43299D0268001E3EDA /* Assets.xcassets */,
 				8456BD45299D0268001E3EDA /* Main.storyboard */,
+				8456BD4E299D05A5001E3EDA /* ContentViewController.swift */,
+				8456BD50299D0F5E001E3EDA /* NotebookViewController.swift */,
 				8456BD48299D0268001E3EDA /* Jim.entitlements */,
 			);
 			path = Jim;
+			sourceTree = "<group>";
+		};
+		84C838DA299D6DF000BA3F8F /* Jupyter */ = {
+			isa = PBXGroup;
+			children = (
+				84C838DB299D6DF000BA3F8F /* JupyterService.swift */,
+				84C838DC299D6DF000BA3F8F /* Cell.swift */,
+				84C838DD299D6DF000BA3F8F /* Notebook.swift */,
+				84C838DE299D6DF000BA3F8F /* Content.swift */,
+			);
+			name = Jupyter;
+			path = ../../nbed/Sources/Jupyter;
+			sourceTree = "<group>";
+		};
+		84C838E7299D6E4600BA3F8F /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				84C838E8299D6E4600BA3F8F /* StringOrArray.swift */,
+				84C838E9299D6E4600BA3F8F /* Base64Image.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -77,6 +120,9 @@
 			dependencies = (
 			);
 			name = Jim;
+			packageProductDependencies = (
+				84C838E5299D6E2900BA3F8F /* AnyCodable */,
+			);
 			productName = Jim;
 			productReference = 8456BD3C299D0264001E3EDA /* Jim.app */;
 			productType = "com.apple.product-type.application";
@@ -105,6 +151,9 @@
 				Base,
 			);
 			mainGroup = 8456BD33299D0264001E3EDA;
+			packageReferences = (
+				84C838E4299D6E2800BA3F8F /* XCRemoteSwiftPackageReference "AnyCodable" */,
+			);
 			productRefGroup = 8456BD3D299D0264001E3EDA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -132,7 +181,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				8456BD42299D0264001E3EDA /* ViewController.swift in Sources */,
+				8456BD4F299D05A5001E3EDA /* ContentViewController.swift in Sources */,
+				84C838DF299D6DF000BA3F8F /* JupyterService.swift in Sources */,
+				84C838E2299D6DF000BA3F8F /* Content.swift in Sources */,
 				8456BD40299D0264001E3EDA /* AppDelegate.swift in Sources */,
+				84C838EA299D6E4600BA3F8F /* StringOrArray.swift in Sources */,
+				8456BD51299D0F5E001E3EDA /* NotebookViewController.swift in Sources */,
+				84C838E0299D6DF000BA3F8F /* Cell.swift in Sources */,
+				84C838EB299D6E4600BA3F8F /* Base64Image.swift in Sources */,
+				84C838E1299D6DF000BA3F8F /* Notebook.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,6 +392,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		84C838E4299D6E2800BA3F8F /* XCRemoteSwiftPackageReference "AnyCodable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Flight-School/AnyCodable";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		84C838E5299D6E2900BA3F8F /* AnyCodable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84C838E4299D6E2800BA3F8F /* XCRemoteSwiftPackageReference "AnyCodable" */;
+			productName = AnyCodable;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8456BD34299D0264001E3EDA /* Project object */;
 }
