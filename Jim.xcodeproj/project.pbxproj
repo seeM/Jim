@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		8437F0F829A4F0F500D027B7 /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8437F0F729A4F0F500D027B7 /* WindowController.swift */; };
+		8437F0FA29A4F86700D027B7 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8437F0F929A4F86700D027B7 /* Message.swift */; };
+		8437F0FC29A4F88300D027B7 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8437F0FB29A4F88300D027B7 /* Session.swift */; };
 		8456BD40299D0264001E3EDA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456BD3F299D0264001E3EDA /* AppDelegate.swift */; };
 		8456BD44299D0268001E3EDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8456BD43299D0268001E3EDA /* Assets.xcassets */; };
 		8456BD47299D0268001E3EDA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8456BD45299D0268001E3EDA /* Main.storyboard */; };
@@ -24,6 +26,8 @@
 
 /* Begin PBXFileReference section */
 		8437F0F729A4F0F500D027B7 /* WindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
+		8437F0F929A4F86700D027B7 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		8437F0FB29A4F88300D027B7 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		8456BD3C299D0264001E3EDA /* Jim.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jim.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8456BD3F299D0264001E3EDA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8456BD43299D0268001E3EDA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -87,9 +91,11 @@
 			isa = PBXGroup;
 			children = (
 				84C838DB299D6DF000BA3F8F /* JupyterService.swift */,
-				84C838DC299D6DF000BA3F8F /* Cell.swift */,
-				84C838DD299D6DF000BA3F8F /* Notebook.swift */,
 				84C838DE299D6DF000BA3F8F /* Content.swift */,
+				84C838DD299D6DF000BA3F8F /* Notebook.swift */,
+				84C838DC299D6DF000BA3F8F /* Cell.swift */,
+				8437F0FB29A4F88300D027B7 /* Session.swift */,
+				8437F0F929A4F86700D027B7 /* Message.swift */,
 			);
 			name = Jupyter;
 			path = ../../nbed/Sources/Jupyter;
@@ -186,7 +192,9 @@
 				8456BD40299D0264001E3EDA /* AppDelegate.swift in Sources */,
 				84C838EA299D6E4600BA3F8F /* StringOrArray.swift in Sources */,
 				8456BD51299D0F5E001E3EDA /* NotebookViewController.swift in Sources */,
+				8437F0FA29A4F86700D027B7 /* Message.swift in Sources */,
 				8437F0F829A4F0F500D027B7 /* WindowController.swift in Sources */,
+				8437F0FC29A4F88300D027B7 /* Session.swift in Sources */,
 				84C838E0299D6DF000BA3F8F /* Cell.swift in Sources */,
 				84C838EB299D6E4600BA3F8F /* Base64Image.swift in Sources */,
 				84C838E1299D6DF000BA3F8F /* Notebook.swift in Sources */,

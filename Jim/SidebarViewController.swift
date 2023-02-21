@@ -3,7 +3,7 @@ import Cocoa
 class SidebarViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
     @IBOutlet var tableView: NSTableView!
     
-    var jupyter: JupyterService!
+    let jupyter = JupyterService.shared
     var content: Content? {
         didSet {
             guard let content = content else { return }
@@ -17,7 +17,6 @@ class SidebarViewController: NSViewController, NSTableViewDelegate, NSTableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        jupyter = JupyterService()
         Task {
             _ = await jupyter.login(baseUrl: "http://localhost:8999/", token: "testtoken123")
             getContent()
@@ -39,7 +38,7 @@ class SidebarViewController: NSViewController, NSTableViewDelegate, NSTableViewD
     }
     
     @objc private func onTableClick() {
-        if tableView.clickedRow == -1 { return }
+        guard tableView.clickedRow != -1 else { return }
         let item = contents[tableView.clickedRow]
         if item.type == .directory {
             let prev = content
@@ -47,11 +46,15 @@ class SidebarViewController: NSViewController, NSTableViewDelegate, NSTableViewD
             if let prev {
                 path.append(prev)
             }
+        } else if item.type == .notebook {
+            if let notebookViewController = (parent as? NSSplitViewController)?.children[1] as? NotebookViewController {
+                notebookViewController.notebookSelected(path: item.path)
+            }
         }
     }
     
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return self.contents.count
+        contents.count
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
