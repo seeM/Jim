@@ -6,8 +6,10 @@ class SidebarViewController: NSViewController, NSTableViewDelegate, NSTableViewD
     var jupyter: JupyterService!
     var content: Content? {
         didSet {
-            contents = content?.content?.sorted() ?? []
+            guard let content = content else { return }
+            contents = content.content?.sorted() ?? []
             tableView.reloadData()
+            view.window?.title = content.name == "" ? "Files" : content.name
         }
     }
     var contents = [Content]()
@@ -36,7 +38,6 @@ class SidebarViewController: NSViewController, NSTableViewDelegate, NSTableViewD
         }
     }
     
-    // See: https://stackoverflow.com/questions/18560509/nstableview-detecting-a-mouse-click-together-with-the-row-and-column
     @objc private func onTableClick() {
         if tableView.clickedRow == -1 { return }
         let item = contents[tableView.clickedRow]
