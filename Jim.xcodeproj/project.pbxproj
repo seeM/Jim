@@ -76,8 +76,8 @@
 				8437F0F729A4F0F500D027B7 /* WindowController.swift */,
 				8456BD4E299D05A5001E3EDA /* SidebarViewController.swift */,
 				8456BD50299D0F5E001E3EDA /* NotebookViewController.swift */,
-				8456BD43299D0268001E3EDA /* Assets.xcassets */,
 				8456BD45299D0268001E3EDA /* Main.storyboard */,
+				8456BD43299D0268001E3EDA /* Assets.xcassets */,
 				8456BD48299D0268001E3EDA /* Jim.entitlements */,
 			);
 			path = Jim;
