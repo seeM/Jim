@@ -1,8 +1,8 @@
 import Cocoa
 
-class ContentViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
+class SidebarViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
     @IBOutlet var tableView: NSTableView!
-//    @IBOutlet var backButton: NSButton!
+    
     var jupyter: JupyterService!
     var content: Content? {
         didSet {
@@ -11,11 +11,7 @@ class ContentViewController: NSViewController, NSTableViewDelegate, NSTableViewD
         }
     }
     var contents = [Content]()
-    var path = [Content]() {
-        didSet {
-//            backButton.isEnabled = path.count > 0
-        }
-    }
+    var path = [Content]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,10 +23,6 @@ class ContentViewController: NSViewController, NSTableViewDelegate, NSTableViewD
         tableView.action = #selector(onTableClick)
         tableView.delegate = self
         tableView.dataSource = self
-//        backButton.target = self
-//        backButton.action = #selector(onBackClick)
-//        _ = backButton.leadingAnchor.constraint(equalTo: tableView.leadingAnchor)
-//        backButton.isEnabled = false
     }
     
     func getContent(_ path: String = "") {
@@ -43,10 +35,6 @@ class ContentViewController: NSViewController, NSTableViewDelegate, NSTableViewD
             }
         }
     }
-    
-//    @objc private func onBackClick() {
-//        content = path.popLast()
-//    }
     
     // See: https://stackoverflow.com/questions/18560509/nstableview-detecting-a-mouse-click-together-with-the-row-and-column
     @objc private func onTableClick() {
@@ -72,5 +60,17 @@ class ContentViewController: NSViewController, NSTableViewDelegate, NSTableViewD
         view.imageView?.image = NSImage(systemSymbolName: systemSymbolName, accessibilityDescription: nil)!
         view.textField?.stringValue = item.name
         return view
+    }
+}
+
+// MARK: Back toolbar item
+
+extension SidebarViewController: NSToolbarItemValidation {
+    func validateToolbarItem(_ item: NSToolbarItem) -> Bool {
+        path.count > 0
+    }
+    
+    @IBAction func backClicked(_ sender: NSView) {
+        content = path.popLast()
     }
 }

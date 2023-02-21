@@ -683,36 +683,31 @@
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
             <objects>
-                <windowController id="B8D-0N-5wS" customClass="WindowController" customModule="Jim" customModuleProvider="target" sceneMemberID="viewController">
+                <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
                     <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" toolbarStyle="expanded" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" fullSizeContentView="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
-                        <toolbar key="toolbar" implicitIdentifier="2F7475BF-9AD6-46E9-AFC0-39494C8819B3" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="sKV-hf-qch">
+                        <toolbar key="toolbar" implicitIdentifier="2B77841B-1E9E-42CB-A512-1403343DFBAC" autosavesConfiguration="NO" displayMode="iconOnly" sizeMode="regular" id="sKV-hf-qch">
                             <allowedToolbarItems>
-                                <toolbarItem implicitItemIdentifier="NSToolbarShowColorsItem" id="xlv-84-udO"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarShowFontsItem" id="rZB-3j-tHV"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarPrintItem" id="mKs-LI-no2"/>
+                                <toolbarItem implicitItemIdentifier="10F0284E-DDEA-42B7-8C6F-7F7F7F05AFBF" explicitItemIdentifier="Back" label="Back" paletteLabel="Back" tag="-1" image="chevron.left" catalog="system" bordered="YES" sizingBehavior="auto" id="DDW-tK-3ar">
+                                    <connections>
+                                        <action selector="backClicked:" target="Oky-zY-oP4" id="hDo-wy-UQJ"/>
+                                    </connections>
+                                </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="TFt-Ue-sxK"/>
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="7hR-Ro-Pch"/>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
-                                <toolbarItem reference="xlv-84-udO"/>
-                                <toolbarItem reference="rZB-3j-tHV"/>
-                                <toolbarItem reference="7hR-Ro-Pch"/>
-                                <toolbarItem reference="mKs-LI-no2"/>
+                                <toolbarItem reference="DDW-tK-3ar"/>
                             </defaultToolbarItems>
                             <connections>
                                 <outlet property="delegate" destination="B8D-0N-5wS" id="6uc-Jn-sTb"/>
                             </connections>
                         </toolbar>
-                        <connections>
-                            <outlet property="delegate" destination="B8D-0N-5wS" id="98r-iN-zZc"/>
-                        </connections>
                     </window>
                     <connections>
-                        <outlet property="window" destination="IQv-IB-iLA" id="Xn9-eO-AxM"/>
                         <segue destination="RGn-SO-iPK" kind="relationship" relationship="window.shadowedContentViewController" id="td0-hX-TfF"/>
                     </connections>
                 </windowController>
@@ -745,12 +740,12 @@
             </objects>
             <point key="canvasLocation" x="75" y="685"/>
         </scene>
-        <!--Content View Controller-->
+        <!--Sidebar View Controller-->
         <scene sceneID="6Sw-Kw-5pq">
             <objects>
                 <customObject id="gUs-q4-mnT" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <viewController id="PY6-yu-l18" customClass="ContentViewController" customModule="Jim" customModuleProvider="target" sceneMemberID="viewController">
-                    <scrollView key="view" borderType="none" autohidesScrollers="YES" horizontalLineScroll="17" horizontalPageScroll="10" verticalLineScroll="17" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="3CE-8K-TF8">
+                <viewController id="PY6-yu-l18" customClass="SidebarViewController" customModule="Jim" customModuleProvider="target" sceneMemberID="viewController">
+                    <scrollView key="view" borderType="none" autohidesScrollers="YES" horizontalLineScroll="22" horizontalPageScroll="10" verticalLineScroll="22" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="3CE-8K-TF8">
                         <rect key="frame" x="0.0" y="0.0" width="200" height="300"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <clipView key="contentView" drawsBackground="NO" id="5SS-ef-S4r">
@@ -760,7 +755,7 @@
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="sourceList" selectionHighlightStyle="sourceList" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="hz2-r5-sm7">
                                     <rect key="frame" x="0.0" y="0.0" width="200" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <size key="intercellSpacing" width="17" height="0.0"/>
+                                    <size key="intercellSpacing" width="17" height="5"/>
                                     <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
@@ -776,25 +771,35 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
-                                                <tableCellView id="2Yw-7E-FbE">
-                                                    <rect key="frame" x="18" y="0.0" width="163" height="17"/>
+                                                <tableCellView misplaced="YES" id="2Yw-7E-FbE">
+                                                    <rect key="frame" x="18" y="2" width="163" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lro-K7-0jx">
-                                                            <rect key="frame" x="3" y="0.0" width="17" height="17"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lro-K7-0jx">
+                                                            <rect key="frame" x="0.0" y="-5" width="17" height="27"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="17" id="UCg-RO-JX9"/>
+                                                            </constraints>
                                                             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" catalog="system" id="v3Z-LA-6Ze"/>
                                                         </imageView>
-                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Dr-5m-Zdi">
-                                                            <rect key="frame" x="25" y="0.0" width="138" height="17"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="k7o-th-lWb">
+                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Dr-5m-Zdi" userLabel="Text Field">
+                                                            <rect key="frame" x="22" y="0.0" width="143" height="16"/>
+                                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Text Field" id="k7o-th-lWb">
                                                                 <font key="font" metaFont="system"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>
                                                         </textField>
                                                     </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="lro-K7-0jx" firstAttribute="leading" secondItem="2Yw-7E-FbE" secondAttribute="leading" id="2sW-Kn-esM"/>
+                                                        <constraint firstItem="lro-K7-0jx" firstAttribute="top" secondItem="2Yw-7E-FbE" secondAttribute="top" id="KSB-6f-TPi"/>
+                                                        <constraint firstItem="0Dr-5m-Zdi" firstAttribute="centerY" secondItem="2Yw-7E-FbE" secondAttribute="centerY" id="LNW-ng-CMG"/>
+                                                        <constraint firstItem="0Dr-5m-Zdi" firstAttribute="leading" secondItem="lro-K7-0jx" secondAttribute="trailing" constant="7" id="Ruy-hg-nV3"/>
+                                                        <constraint firstAttribute="trailing" secondItem="0Dr-5m-Zdi" secondAttribute="trailing" id="VkC-3f-9gH"/>
+                                                        <constraint firstItem="lro-K7-0jx" firstAttribute="centerY" secondItem="0Dr-5m-Zdi" secondAttribute="centerY" id="ifG-Ca-G5W"/>
+                                                        <constraint firstItem="0Dr-5m-Zdi" firstAttribute="top" secondItem="2Yw-7E-FbE" secondAttribute="top" id="udL-q4-H5q"/>
+                                                    </constraints>
                                                     <connections>
                                                         <outlet property="imageView" destination="lro-K7-0jx" id="6Zl-6g-KUj"/>
                                                         <outlet property="textField" destination="0Dr-5m-Zdi" id="MVI-uK-jhY"/>
@@ -831,8 +836,8 @@
         <scene sceneID="pTr-ab-NhC">
             <objects>
                 <viewController id="2ZR-3o-ogp" customClass="NotebookViewController" customModule="Jim" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="xIO-7d-0kK">
-                        <rect key="frame" x="0.0" y="0.0" width="448" height="300"/>
+                    <view key="view" id="xIO-7d-0kK">
+                        <rect key="frame" x="0.0" y="0.0" width="453" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c36-tr-xM3">
@@ -900,7 +905,7 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="c36-tr-xM3" firstAttribute="leading" secondItem="xIO-7d-0kK" secondAttribute="leading" id="HM5-FG-NCL"/>
-                            <constraint firstAttribute="trailing" secondItem="c36-tr-xM3" secondAttribute="trailing" constant="-5" id="LPi-P1-LqM"/>
+                            <constraint firstAttribute="trailing" secondItem="c36-tr-xM3" secondAttribute="trailing" id="LPi-P1-LqM"/>
                             <constraint firstItem="c36-tr-xM3" firstAttribute="top" secondItem="xIO-7d-0kK" secondAttribute="top" id="cuA-jW-8Ix"/>
                             <constraint firstAttribute="bottom" secondItem="c36-tr-xM3" secondAttribute="bottom" id="tNp-JK-Igv"/>
                         </constraints>
@@ -913,5 +918,6 @@
     </scenes>
     <resources>
         <image name="NSActionTemplate" catalog="system" width="20" height="20"/>
+        <image name="chevron.left" catalog="system" width="10" height="14"/>
     </resources>
 </document>
