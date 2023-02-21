@@ -2,7 +2,7 @@ import Cocoa
 
 class ContentViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
     @IBOutlet var tableView: NSTableView!
-    @IBOutlet var backButton: NSButton!
+//    @IBOutlet var backButton: NSButton!
     var jupyter: JupyterService!
     var content: Content? {
         didSet {
@@ -13,7 +13,7 @@ class ContentViewController: NSViewController, NSTableViewDelegate, NSTableViewD
     var contents = [Content]()
     var path = [Content]() {
         didSet {
-            backButton.isEnabled = path.count > 0
+//            backButton.isEnabled = path.count > 0
         }
     }
     
@@ -27,10 +27,10 @@ class ContentViewController: NSViewController, NSTableViewDelegate, NSTableViewD
         tableView.action = #selector(onTableClick)
         tableView.delegate = self
         tableView.dataSource = self
-        backButton.target = self
-        backButton.action = #selector(onBackClick)
-        _ = backButton.leadingAnchor.constraint(equalTo: tableView.leadingAnchor)
-        backButton.isEnabled = false
+//        backButton.target = self
+//        backButton.action = #selector(onBackClick)
+//        _ = backButton.leadingAnchor.constraint(equalTo: tableView.leadingAnchor)
+//        backButton.isEnabled = false
     }
     
     func getContent(_ path: String = "") {
@@ -44,9 +44,9 @@ class ContentViewController: NSViewController, NSTableViewDelegate, NSTableViewD
         }
     }
     
-    @objc private func onBackClick() {
-        content = path.popLast()
-    }
+//    @objc private func onBackClick() {
+//        content = path.popLast()
+//    }
     
     // See: https://stackoverflow.com/questions/18560509/nstableview-detecting-a-mouse-click-together-with-the-row-and-column
     @objc private func onTableClick() {

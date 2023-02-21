@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8437F0F629A4D07400D027B7 /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8437F0F529A4D07400D027B7 /* WindowController.swift */; };
 		8456BD40299D0264001E3EDA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456BD3F299D0264001E3EDA /* AppDelegate.swift */; };
 		8456BD42299D0264001E3EDA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456BD41299D0264001E3EDA /* ViewController.swift */; };
 		8456BD44299D0268001E3EDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8456BD43299D0268001E3EDA /* Assets.xcassets */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8437F0F529A4D07400D027B7 /* WindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
 		8456BD3C299D0264001E3EDA /* Jim.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jim.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8456BD3F299D0264001E3EDA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8456BD41299D0264001E3EDA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 				8456BD41299D0264001E3EDA /* ViewController.swift */,
 				8456BD43299D0268001E3EDA /* Assets.xcassets */,
 				8456BD45299D0268001E3EDA /* Main.storyboard */,
+				8437F0F529A4D07400D027B7 /* WindowController.swift */,
 				8456BD4E299D05A5001E3EDA /* ContentViewController.swift */,
 				8456BD50299D0F5E001E3EDA /* NotebookViewController.swift */,
 				8456BD48299D0268001E3EDA /* Jim.entitlements */,
@@ -187,6 +190,7 @@
 				8456BD40299D0264001E3EDA /* AppDelegate.swift in Sources */,
 				84C838EA299D6E4600BA3F8F /* StringOrArray.swift in Sources */,
 				8456BD51299D0F5E001E3EDA /* NotebookViewController.swift in Sources */,
+				8437F0F629A4D07400D027B7 /* WindowController.swift in Sources */,
 				84C838E0299D6DF000BA3F8F /* Cell.swift in Sources */,
 				84C838EB299D6E4600BA3F8F /* Base64Image.swift in Sources */,
 				84C838E1299D6DF000BA3F8F /* Notebook.swift in Sources */,
