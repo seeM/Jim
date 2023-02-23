@@ -8,12 +8,7 @@
 
 import Foundation
 import CoreGraphics
-
-#if os(macOS)
 import AppKit
-#else
-import UIKit
-#endif
 
 public protocol SyntaxTextViewDelegate: AnyObject {
 
@@ -77,28 +72,7 @@ open class SyntaxTextView: _View {
 
     var ignoreSelectionChange = false
 
-    #if os(macOS)
-
     let wrapperView = TextViewWrapperView()
-
-    #endif
-
-    #if os(iOS)
-
-    public var contentInset: UIEdgeInsets = .zero {
-        didSet {
-            textView.contentInset = contentInset
-            textView.scrollIndicatorInsets = contentInset
-        }
-    }
-
-    open override var tintColor: UIColor! {
-        didSet {
-
-        }
-    }
-
-    #else
 
     public var tintColor: NSColor! {
         set {
@@ -108,8 +82,6 @@ open class SyntaxTextView: _View {
             return textView.tintColor
         }
     }
-
-    #endif
     
     public override init(frame: CGRect) {
         textView = SyntaxTextView.createInnerTextView()
@@ -126,44 +98,19 @@ open class SyntaxTextView: _View {
     private static func createInnerTextView() -> InnerTextView {
         let textStorage = NSTextStorage()
         let layoutManager = SyntaxTextViewLayoutManager()
-        #if os(macOS)
         let containerSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
-        #endif
-
-        #if os(iOS)
-        let containerSize = CGSize(width: 0, height: 0)
-        #endif
-
         let textContainer = NSTextContainer(size: containerSize)
-        
         textContainer.widthTracksTextView = true
-
-        #if os(iOS)
-        textContainer.heightTracksTextView = true
-        #endif
         layoutManager.addTextContainer(textContainer)
         textStorage.addLayoutManager(layoutManager)
-        
         return InnerTextView(frame: .zero, textContainer: textContainer)
     }
 
-    #if os(macOS)
-
     public let scrollView = CellScrollView()
-
-    #endif
 
     private func setup() {
 
         textView.gutterWidth = 20
-
-        #if os(iOS)
-
-        textView.translatesAutoresizingMaskIntoConstraints = false
-
-        #endif
-
-        #if os(macOS)
 
         wrapperView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -217,51 +164,12 @@ open class SyntaxTextView: _View {
 
         wrapperView.textView = textView
 
-        #else
-
-        self.addSubview(textView)
-        textView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        textView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        textView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        textView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-
-        self.contentMode = .redraw
-        textView.contentMode = .topLeft
-
-        textViewSelectedRangeObserver = contentTextView.observe(\UITextView.selectedTextRange) { [weak self] (textView, value) in
-
-            if let `self` = self {
-                self.delegate?.didChangeSelectedRange(self, selectedRange: self.contentTextView.selectedRange)
-            }
-
-        }
-
-        #endif
-
         textView.innerDelegate = self
         textView.delegate = self
 
         textView.text = ""
-
-        #if os(iOS)
-
-        textView.autocapitalizationType = .none
-        textView.keyboardType = .default
-        textView.autocorrectionType = .no
-        textView.spellCheckingType = .no
-
-        if #available(iOS 11.0, *) {
-            textView.smartQuotesType = .no
-            textView.smartInsertDeleteType = .no
-        }
-
-        self.clipsToBounds = true
-
-        #endif
-
+        
     }
-
-    #if os(macOS)
 
     open override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
@@ -274,73 +182,24 @@ open class SyntaxTextView: _View {
 
     }
 
-    #endif
-
-    // MARK: -
-
-    #if os(iOS)
-
-    open override func becomeFirstResponder() -> Bool {
-        return textView.becomeFirstResponder()
-    }
-    override open var isFirstResponder: Bool {
-        return textView.isFirstResponder
-    }
-
-    #endif
-
     @IBInspectable
     public var text: String {
         get {
-            #if os(macOS)
             return textView.string
-            #else
-            return textView.text ?? ""
-            #endif
         }
         set {
-            #if os(macOS)
             textView.layer?.isOpaque = true
             textView.string = newValue
             refreshColors()
-            #else
-            // If the user sets this property as soon as they create the view, we get a strange UIKit bug where the text often misses a final line in some Dynamic Type configurations. The text isn't actually missing: if you background the app then foreground it the text reappears just fine, so there's some sort of drawing sync problem. A simple fix for this is to give UIKit a tiny bit of time to create all its data before we trigger the update, so we push the updating work to the runloop.
-            DispatchQueue.main.async {
-                self.textView.text = newValue
-                self.textView.setNeedsDisplay()
-                self.refreshColors()
-            }
-            #endif
 
         }
     }
-
-    // MARK: -
 
     public func insertText(_ text: String) {
         if shouldChangeText(insertingText: text) {
-            #if os(macOS)
             contentTextView.insertText(text, replacementRange: contentTextView.selectedRange())
-            #else
-            contentTextView.insertText(text)
-            #endif
         }
     }
-
-    #if os(iOS)
-
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.textView.setNeedsDisplay()
-    }
-
-    override open func layoutSubviews() {
-        super.layoutSubviews()
-
-        self.textView.invalidateCachedParagraphs()
-        self.textView.setNeedsDisplay()
-    }
-
-    #endif
 
     public var theme: SyntaxColorTheme? {
         didSet {
@@ -349,10 +208,7 @@ open class SyntaxTextView: _View {
             }
 
             cachedThemeInfo = nil
-            #if os(iOS)
-            backgroundColor = theme.backgroundColor
-            #endif
-            textView.backgroundColor = theme.backgroundColor
+//            textView.backgroundColor = theme.backgroundColor
             textView.theme = theme
             textView.font = theme.font
 
@@ -394,11 +250,7 @@ open class SyntaxTextView: _View {
 
         let textStorage: NSTextStorage
 
-        #if os(macOS)
         textStorage = textView.textStorage!
-        #else
-        textStorage = textView.textStorage
-        #endif
 
         //		self.backgroundColor = theme.backgroundColor
 
