@@ -30,6 +30,9 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate, NSTextViewDele
         let textView = syntaxTextView.contentTextView
         textView.delegate = self
         
+        textView.wantsLayer = true
+        textView.layer?.cornerRadius = 7
+        
         // Enable horizontal scrolling. See: https://stackoverflow.com/questions/3174140/how-to-disable-word-wrap-of-nstextview
         textView.isHorizontallyResizable = true
         textView.textContainer?.widthTracksTextView = false
