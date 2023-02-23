@@ -149,7 +149,6 @@ extension SyntaxTextView: NSTextViewDelegate {
         
         func refreshColors() {
             self.invalidateCachedTokens()
-            self.textView.invalidateCachedParagraphs()
             
             if let delegate = delegate {
                 colorTextView(lexerForSource: { (source) -> Lexer in

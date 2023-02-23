@@ -20,12 +20,6 @@ class InnerTextView: NSTextView {
     
     var theme: SyntaxColorTheme?
     
-    var cachedParagraphs: [Paragraph]?
-    
-    func invalidateCachedParagraphs() {
-        cachedParagraphs = nil
-    }
-    
     func hideGutter() {
         gutterWidth = theme?.gutterStyle.minimumWidth ?? 0.0
     }
