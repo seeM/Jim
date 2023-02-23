@@ -836,7 +836,7 @@
         <scene sceneID="pTr-ab-NhC">
             <objects>
                 <viewController id="2ZR-3o-ogp" customClass="NotebookViewController" customModule="Jim" customModuleProvider="target" sceneMemberID="viewController">
-                    <scrollView key="view" borderType="none" autohidesScrollers="YES" horizontalLineScroll="38" horizontalPageScroll="10" verticalLineScroll="38" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="c36-tr-xM3">
+                    <scrollView key="view" borderType="none" autohidesScrollers="YES" horizontalLineScroll="38" horizontalPageScroll="10" verticalLineScroll="38" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="c36-tr-xM3" customClass="NotebookScrollView" customModule="Jim" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="453" height="297"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <clipView key="contentView" id="8C4-H2-4af">
@@ -866,7 +866,7 @@
                                                     <rect key="frame" x="18" y="7" width="416" height="24"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="oA3-aL-M6P" customClass="SyntaxTextView" customModule="Sourceful">
+                                                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="oA3-aL-M6P" customClass="SyntaxTextView" customModule="Jim" customModuleProvider="target">
                                                             <rect key="frame" x="0.0" y="0.0" width="416" height="24"/>
                                                         </customView>
                                                     </subviews>

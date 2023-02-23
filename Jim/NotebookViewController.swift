@@ -1,5 +1,4 @@
 import Cocoa
-import Sourceful
 
 class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
     @IBOutlet var tableView: NSTableView!
@@ -50,6 +49,12 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
     
     func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
         false
+    }
+}
+
+class NotebookScrollView: NSScrollView {
+    override func scrollWheel(with event: NSEvent) {
+        print(event.deltaX, event.deltaY)
     }
 }
 

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct Base64Image: Codable, Hashable {
     let text: String
-    let value: Image
+    let value: NSImage
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(text)
@@ -15,7 +15,7 @@ struct Base64Image: Codable, Hashable {
               let nsImage = NSImage(data: data) else {
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid Base64Image")
         }
-        self.value = Image(nsImage: nsImage)
+        self.value = nsImage
     }
     
     func encode(to encoder: Encoder) throws {

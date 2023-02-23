@@ -1,5 +1,4 @@
 import Cocoa
-import Sourceful
 
 class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate, NSTextViewDelegate {
     @IBOutlet var syntaxTextView: SyntaxTextView!
