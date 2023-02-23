@@ -21,14 +21,28 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate, NSTextViewDele
         syntaxTextView.text = cell.source.value
         syntaxTextView.theme = JimSourceCodeTheme()
         syntaxTextView.delegate = self
-        syntaxTextView.scrollView.verticalScrollElasticity = .none
-        syntaxTextView.scrollView.hasVerticalScroller = false
-        syntaxTextView.contentTextView.delegate = self
+        
+        let scrollView = syntaxTextView.scrollView
+        scrollView.verticalScrollElasticity = .none
+        scrollView.horizontalScrollElasticity = .automatic
+        scrollView.hasVerticalScroller = false
+        scrollView.hasHorizontalScroller = false
+        
+        let textView = syntaxTextView.contentTextView
+        textView.delegate = self
+        
+        // Enable horizontal scrolling. See: https://stackoverflow.com/questions/3174140/how-to-disable-word-wrap-of-nstextview
+        textView.isHorizontallyResizable = true
+        textView.textContainer?.widthTracksTextView = false
+        let infiniteSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.maxSize = infiniteSize
+        textView.textContainer?.size = infiniteSize
     }
     
     func textDidChange(_ notification: Notification) {
         guard let textView = notification.object as? NSTextView else { return }
         cell.source.value = textView.string
+        // Disable the animation since it causes a bobble on newlines
         NSAnimationContext.runAnimationGroup { context in
             context.duration = 0
             tableView.noteHeightOfRows(withIndexesChanged: .init(integer: row))
