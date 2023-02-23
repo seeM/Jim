@@ -48,8 +48,6 @@
 		84CE599729A762990094FE3E /* Paragraphs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE597A29A762990094FE3E /* Paragraphs.swift */; };
 		84CE599829A762990094FE3E /* SourceCodeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE597B29A762990094FE3E /* SourceCodeTheme.swift */; };
 		84CE599929A762990094FE3E /* SourceCodeToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE597C29A762990094FE3E /* SourceCodeToken.swift */; };
-		84CE599A29A762990094FE3E /* DefaultSourceCodeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE597E29A762990094FE3E /* DefaultSourceCodeTheme.swift */; };
-		84CE599B29A762990094FE3E /* SourceCodeTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE598029A762990094FE3E /* SourceCodeTextEditor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -95,8 +93,6 @@
 		84CE597A29A762990094FE3E /* Paragraphs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Paragraphs.swift; sourceTree = "<group>"; };
 		84CE597B29A762990094FE3E /* SourceCodeTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SourceCodeTheme.swift; sourceTree = "<group>"; };
 		84CE597C29A762990094FE3E /* SourceCodeToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SourceCodeToken.swift; sourceTree = "<group>"; };
-		84CE597E29A762990094FE3E /* DefaultSourceCodeTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultSourceCodeTheme.swift; sourceTree = "<group>"; };
-		84CE598029A762990094FE3E /* SourceCodeTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SourceCodeTextEditor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,8 +175,6 @@
 				84CE597329A762990094FE3E /* View */,
 				84CE597B29A762990094FE3E /* SourceCodeTheme.swift */,
 				84CE597C29A762990094FE3E /* SourceCodeToken.swift */,
-				84CE597D29A762990094FE3E /* Themes */,
-				84CE597F29A762990094FE3E /* SwiftUI */,
 			);
 			path = Sourceful;
 			sourceTree = "<group>";
@@ -232,22 +226,6 @@
 				84CE597A29A762990094FE3E /* Paragraphs.swift */,
 			);
 			path = View;
-			sourceTree = "<group>";
-		};
-		84CE597D29A762990094FE3E /* Themes */ = {
-			isa = PBXGroup;
-			children = (
-				84CE597E29A762990094FE3E /* DefaultSourceCodeTheme.swift */,
-			);
-			path = Themes;
-			sourceTree = "<group>";
-		};
-		84CE597F29A762990094FE3E /* SwiftUI */ = {
-			isa = PBXGroup;
-			children = (
-				84CE598029A762990094FE3E /* SourceCodeTextEditor.swift */,
-			);
-			path = SwiftUI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -343,11 +321,9 @@
 				84CE599329A762990094FE3E /* InnerTextView.swift in Sources */,
 				84CE598229A762990094FE3E /* String+Range.swift in Sources */,
 				8456BD40299D0264001E3EDA /* AppDelegate.swift in Sources */,
-				84CE599A29A762990094FE3E /* DefaultSourceCodeTheme.swift in Sources */,
 				84CE599229A762990094FE3E /* SyntaxTextView+TextViewDelegate.swift in Sources */,
 				84C838EA299D6E4600BA3F8F /* StringOrArray.swift in Sources */,
 				84CE598B29A762990094FE3E /* ASTVisualizer.swift in Sources */,
-				84CE599B29A762990094FE3E /* SourceCodeTextEditor.swift in Sources */,
 				8456BD51299D0F5E001E3EDA /* NotebookViewController.swift in Sources */,
 				84CE598F29A762990094FE3E /* Token.swift in Sources */,
 				84CE599629A762990094FE3E /* SyntaxTextViewLayoutManager.swift in Sources */,

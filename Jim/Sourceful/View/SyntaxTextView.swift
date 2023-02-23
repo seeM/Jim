@@ -208,7 +208,7 @@ open class SyntaxTextView: _View {
             }
 
             cachedThemeInfo = nil
-//            textView.backgroundColor = theme.backgroundColor
+            textView.backgroundColor = theme.backgroundColor
             textView.theme = theme
             textView.font = theme.font
 
