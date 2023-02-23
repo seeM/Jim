@@ -90,11 +90,10 @@ open class SyntaxTextView: NSView {
     }
 
     private static func createInnerTextView() -> NSTextView {
+        // We'll set the container size and text view frame later
         let textStorage = NSTextStorage()
         let layoutManager = SyntaxTextViewLayoutManager()
-        let containerSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
-        let textContainer = NSTextContainer(size: containerSize)
-        textContainer.widthTracksTextView = true
+        let textContainer = NSTextContainer(size: .zero)
         layoutManager.addTextContainer(textContainer)
         textStorage.addLayoutManager(layoutManager)
         return NSTextView(frame: .zero, textContainer: textContainer)
@@ -115,18 +114,24 @@ open class SyntaxTextView: NSView {
         scrollView.hasVerticalScroller = false
 
         scrollView.documentView = textView
-
+        
+        // Using the scroll view's background is better than the text view's since we want the rounded background
+        // to stay rounded even while scrolling.
+        scrollView.drawsBackground = true
+        scrollView.wantsLayer = true
+        scrollView.layer?.cornerRadius = 7
+        textView.backgroundColor = .clear
+        
+        // Infinite max size text view and container + resizable text view allows for horizontal scrolling.
+        // Height is currently controlled by the table view.
+        textView.textContainer?.size = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         textView.minSize = NSSize(width: 0.0, height: self.bounds.height)
         textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         textView.isVerticallyResizable = true
-        textView.isHorizontallyResizable = false
-        textView.autoresizingMask = [.width, .height]
+        textView.isHorizontallyResizable = true
         textView.isEditable = true
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.allowsUndo = true
-
-        textView.textContainer?.containerSize = NSSize(width: self.bounds.width, height: .greatestFiniteMagnitude)
-        textView.textContainer?.widthTracksTextView = true
 
         textView.delegate = self
     }
@@ -156,7 +161,7 @@ open class SyntaxTextView: NSView {
             }
 
             cachedThemeInfo = nil
-            textView.backgroundColor = theme.backgroundColor
+            scrollView.backgroundColor = theme.backgroundColor
             textView.font = theme.font
 
             refreshColors()
