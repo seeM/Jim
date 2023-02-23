@@ -46,6 +46,16 @@ struct ThemeInfo {
 
 }
 
+public class CellScrollView: NSScrollView {
+    public override func scrollWheel(with event: NSEvent) {
+        if abs(event.deltaX) < abs(event.deltaY) {
+            super.nextResponder?.scrollWheel(with: event)
+        } else {
+            super.scrollWheel(with: event)
+        }
+    }
+}
+
 @IBDesignable
 open class SyntaxTextView: _View {
 
@@ -139,7 +149,7 @@ open class SyntaxTextView: _View {
 
     #if os(macOS)
 
-    public let scrollView = NSScrollView()
+    public let scrollView = CellScrollView()
 
     #endif
 

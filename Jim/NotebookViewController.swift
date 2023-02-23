@@ -52,12 +52,6 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
     }
 }
 
-class NotebookScrollView: NSScrollView {
-    override func scrollWheel(with event: NSEvent) {
-        print(event.deltaX, event.deltaY)
-    }
-}
-
 struct JimSourceCodeTheme: SourceCodeTheme {
     public let lineNumbersStyle: LineNumbersStyle? = nil
     public let gutterStyle: GutterStyle = GutterStyle(backgroundColor: Color.red, minimumWidth: 0)
