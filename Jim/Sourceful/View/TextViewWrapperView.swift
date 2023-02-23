@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-class TextViewWrapperView: _View {
+class TextViewWrapperView: NSView {
     
     override func hitTest(_ point: NSPoint) -> NSView? {
         // Disable interaction, so we're not blocking the text view.
@@ -50,7 +50,7 @@ class TextViewWrapperView: _View {
             textView.hideGutter()
             
             let gutterRect = CGRect(x: 0, y: rect.minY, width: textView.gutterWidth, height: rect.height)
-            let path = BezierPath(rect: gutterRect)
+            let path = NSBezierPath(rect: gutterRect)
             path.fill()
             
         } else {
@@ -74,7 +74,7 @@ class TextViewWrapperView: _View {
             
             paragraphs = offsetParagraphs(paragraphs, for: textView, yOffset: yOffset)
             
-            let components = textView.text.components(separatedBy: .newlines)
+            let components = textView.string.components(separatedBy: .newlines)
             
             let count = components.count
             
@@ -85,7 +85,7 @@ class TextViewWrapperView: _View {
             theme.gutterStyle.backgroundColor.setFill()
             
             let gutterRect = CGRect(x: 0, y: 0, width: textView.gutterWidth, height: rect.height)
-            let path = BezierPath(rect: gutterRect)
+            let path = NSBezierPath(rect: gutterRect)
             path.fill()
             
             drawLineNumbers(paragraphs, in: rect, for: textView)

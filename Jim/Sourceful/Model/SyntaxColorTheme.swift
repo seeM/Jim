@@ -6,15 +6,16 @@
 //  Copyright © 2017 Silver Fox. All rights reserved.
 //
 
+import AppKit
 import Foundation
 import CoreGraphics
 
 public struct LineNumbersStyle {
 	
-	public let font: Font
-	public let textColor: Color
+	public let font: NSFont
+	public let textColor: NSColor
 	
-	public init(font: Font, textColor: Color) {
+	public init(font: NSFont, textColor: NSColor) {
 		self.font = font
 		self.textColor = textColor
 	}
@@ -23,14 +24,14 @@ public struct LineNumbersStyle {
 
 public struct GutterStyle {
 
-	public let backgroundColor: Color
+	public let backgroundColor: NSColor
 
 	/// If line numbers are displayed, the gutter width adapts to fit all line numbers.
 	/// This specifies the minimum width that the gutter should have at all times,
 	/// regardless of any line numbers.
 	public let minimumWidth: CGFloat
 	
-	public init(backgroundColor: Color, minimumWidth: CGFloat) {
+	public init(backgroundColor: NSColor, minimumWidth: CGFloat) {
 		self.backgroundColor = backgroundColor
 		self.minimumWidth = minimumWidth
 	}
@@ -43,9 +44,9 @@ public protocol SyntaxColorTheme {
 	
 	var gutterStyle: GutterStyle { get }
 	
-	var font: Font { get }
+	var font: NSFont { get }
 	
-	var backgroundColor: Color { get }
+	var backgroundColor: NSColor { get }
 
 	func globalAttributes() -> [NSAttributedString.Key: Any]
 

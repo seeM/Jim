@@ -8,13 +8,9 @@
 
 import Foundation
 
-#if os(macOS)
-	import AppKit
-#else
-	import UIKit
-#endif
+import AppKit
 
-extension TextView {
+extension NSTextView {
 	
 	func paragraphRectForRange(range: NSRange) -> CGRect {
 		
@@ -22,13 +18,8 @@ extension TextView {
 		
 		let layoutManager: NSLayoutManager
 		let textContainer: NSTextContainer
-		#if os(macOS)
-			layoutManager = self.layoutManager!
-			textContainer = self.textContainer!
-		#else
-			layoutManager = self.layoutManager
-			textContainer = self.textContainer
-		#endif
+        layoutManager = self.layoutManager!
+        textContainer = self.textContainer!
 		
 		nsRange = layoutManager.glyphRange(forCharacterRange: nsRange, actualCharacterRange: nil)
 		
@@ -49,12 +40,12 @@ extension TextView {
 
 func generateParagraphs(for textView: InnerTextView, flipRects: Bool = false) -> [Paragraph] {
 	
-	let range = NSRange(location: 0, length: (textView.text as NSString).length)
+	let range = NSRange(location: 0, length: (textView.string as NSString).length)
 	
 	var paragraphs = [Paragraph]()
 	var i = 0
 	
-	(textView.text as NSString).enumerateSubstrings(in: range, options: [.byParagraphs]) { (paragraphContent, paragraphRange, enclosingRange, stop) in
+	(textView.string as NSString).enumerateSubstrings(in: range, options: [.byParagraphs]) { (paragraphContent, paragraphRange, enclosingRange, stop) in
 		
 		i += 1
 		
@@ -65,15 +56,11 @@ func generateParagraphs(for textView: InnerTextView, flipRects: Bool = false) ->
 		
 	}
 	
-	if textView.text.isEmpty || textView.text.hasSuffix("\n") {
+	if textView.string.isEmpty || textView.string.hasSuffix("\n") {
 		
 		var rect: CGRect
 		
-		#if os(macOS)
-			let gutterWidth = textView.textContainerInset.width
-		#else
-			let gutterWidth = textView.textContainerInset.left
-		#endif
+        let gutterWidth = textView.textContainerInset.width
 		
 		let lineHeight: CGFloat = 18
 		
@@ -114,23 +101,18 @@ func generateParagraphs(for textView: InnerTextView, flipRects: Bool = false) ->
 func offsetParagraphs(_ paragraphs: [Paragraph], for textView: InnerTextView, yOffset: CGFloat = 0) -> [Paragraph] {
 	
 	var paragraphs = paragraphs
-	
-	#if os(macOS)
-		
-		if let yOffset = textView.enclosingScrollView?.contentView.bounds.origin.y {
-			
-			paragraphs = paragraphs.map { (p) -> Paragraph in
-				
-				var p = p
-				p.rect.origin.y += yOffset
-				
-				return p
-			}
-		}
-		
-		
-	#endif
-	
+    
+    if let yOffset = textView.enclosingScrollView?.contentView.bounds.origin.y {
+        
+        paragraphs = paragraphs.map { (p) -> Paragraph in
+            
+            var p = p
+            p.rect.origin.y += yOffset
+            
+            return p
+        }
+    }
+    
 	
 	
 	paragraphs = paragraphs.map { (p) -> Paragraph in
@@ -165,11 +147,7 @@ func drawLineNumbers(_ paragraphs: [Paragraph], in rect: CGRect, for textView: I
 		
 		drawRect.origin.x = gutterWidth - drawSize.width - 4
 		
-		#if os(macOS)
 //			drawRect.origin.y += (drawRect.height - drawSize.height) / 2.0
-		#else
-			//			drawRect.origin.y += 22 - drawSize.height
-		#endif
 		drawRect.size.width = drawSize.width
 		drawRect.size.height = drawSize.height
 

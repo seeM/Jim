@@ -7,12 +7,7 @@
 //
 
 import Foundation
-
-#if os(macOS)
-	import AppKit
-#else
-	import UIKit
-#endif
+import AppKit
 
 extension SyntaxTextView: InnerTextViewDelegate {
 	
@@ -37,10 +32,8 @@ extension SyntaxTextView {
 	
 	func updateSelectedRange(_ range: NSRange) {
 		textView.selectedRange = range
-		
-		#if os(macOS)		
+			
 		self.textView.scrollRangeToVisible(range)
-		#endif
 		
 		self.delegate?.didChangeSelectedRange(self, selectedRange: range)
 	}
@@ -52,15 +45,7 @@ extension SyntaxTextView {
 		}
 		
 		if let cachedTokens = cachedTokens {
-			
-			#if os(iOS)
-				if !textView.isCursorFloating {
-					updateEditorPlaceholders(cachedTokens: cachedTokens)
-				}
-			#else
 				updateEditorPlaceholders(cachedTokens: cachedTokens)
-			#endif
-			
 		}
 		
 		colorTextView(lexerForSource: { (source) -> Lexer in
@@ -145,9 +130,7 @@ extension SyntaxTextView {
     }
 }
 
-#if os(macOS)
-	
-	extension SyntaxTextView: NSTextViewDelegate {
+extension SyntaxTextView: NSTextViewDelegate {
 		
 		open func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
 			
@@ -184,51 +167,6 @@ extension SyntaxTextView {
 		}
 		
 	}
-	
-#endif
-
-#if os(iOS)
-	
-	extension SyntaxTextView: UITextViewDelegate {
-		
-		open func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-			
-			return self.shouldChangeText(insertingText: text)
-		}
-		
-		public func textViewDidBeginEditing(_ textView: UITextView) {
-			// pass the message up to our own delegate
-			delegate?.textViewDidBeginEditing(self)
-		}
-		
-		open func textViewDidChange(_ textView: UITextView) {
-			
-			didUpdateText()
-			
-		}
-		
-		func refreshColors() {
-			
-			self.invalidateCachedTokens()
-			self.textView.invalidateCachedParagraphs()
-			textView.setNeedsDisplay()
-			
-			if let delegate = delegate {
-				colorTextView(lexerForSource: { (source) -> Lexer in
-					return delegate.lexerForSource(source)
-				})
-			}
-			
-		}
-	
-		open func textViewDidChangeSelection(_ textView: UITextView) {
-			
-			contentDidChangeSelection()
-		}
-		
-	}
-	
-#endif
 
 extension SyntaxTextView {
 
@@ -242,7 +180,7 @@ extension SyntaxTextView {
 		
 		if insertingText == "\n" {
 			
-			let nsText = textView.text as NSString
+			let nsText = textView.string as NSString
 			
 			var currentLine = nsText.substring(with: nsText.lineRange(for: textView.selectedRange))
 			
@@ -269,18 +207,11 @@ extension SyntaxTextView {
 		
 		let textStorage: NSTextStorage
 		
-		#if os(macOS)
-		
 		guard let _textStorage = textView.textStorage else {
 			return true
 		}
 		
 		textStorage = _textStorage
-		
-		#else
-		
-		textStorage = textView.textStorage
-		#endif
 		
 		guard let cachedTokens = cachedTokens else {
 			return true

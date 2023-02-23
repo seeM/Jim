@@ -6,11 +6,12 @@
 //  Copyright © 2018 Silver Fox. All rights reserved.
 //
 
+import AppKit
 import Foundation
 
 public protocol SourceCodeTheme: SyntaxColorTheme {
 	
-	func color(for syntaxColorType: SourceCodeTokenType) -> Color
+	func color(for syntaxColorType: SourceCodeTokenType) -> NSColor
 	
 }
 

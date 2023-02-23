@@ -54,17 +54,17 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 struct JimSourceCodeTheme: SourceCodeTheme {
     public let lineNumbersStyle: LineNumbersStyle? = nil
-    public let gutterStyle: GutterStyle = GutterStyle(backgroundColor: Color.red, minimumWidth: 0)
-    public let font = Font(name: "Menlo", size: 15)!
-    public let backgroundColor = Color(red: 0, green: 0, blue: 0, alpha: 0.06)
-    public func color(for syntaxColorType: SourceCodeTokenType) -> Color {
+    public let gutterStyle: GutterStyle = GutterStyle(backgroundColor: NSColor.red, minimumWidth: 0)
+    public let font = NSFont(name: "Menlo", size: 15)!
+    public let backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0.06)
+    public func color(for syntaxColorType: SourceCodeTokenType) -> NSColor {
         switch syntaxColorType {
         case .plain: return .black
-        case .number: return Color(red: 0, green: 136/255, blue: 0, alpha: 1.0)
-        case .string: return Color(red: 186/255, green: 33/255, blue: 33/255, alpha: 1.0)
+        case .number: return NSColor(red: 0, green: 136/255, blue: 0, alpha: 1.0)
+        case .string: return NSColor(red: 186/255, green: 33/255, blue: 33/255, alpha: 1.0)
         case .identifier: return .black
-        case .keyword: return Color(red: 0, green: 128/255, blue: 0, alpha: 1.0)
-        case .comment: return Color(red: 0, green: 121/255, blue: 121/255, alpha: 1.0)
+        case .keyword: return NSColor(red: 0, green: 128/255, blue: 0, alpha: 1.0)
+        case .comment: return NSColor(red: 0, green: 121/255, blue: 121/255, alpha: 1.0)
         case .editorPlaceholder: return backgroundColor
         }
     }

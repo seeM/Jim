@@ -52,7 +52,7 @@ public class CellScrollView: NSScrollView {
 }
 
 @IBDesignable
-open class SyntaxTextView: _View {
+open class SyntaxTextView: NSView {
 
     var previousSelectedRange: NSRange?
 
@@ -60,7 +60,7 @@ open class SyntaxTextView: _View {
 
     let textView: InnerTextView
 
-    public var contentTextView: TextView {
+    public var contentTextView: NSTextView {
         return textView
     }
 
@@ -76,10 +76,10 @@ open class SyntaxTextView: _View {
 
     public var tintColor: NSColor! {
         set {
-            textView.tintColor = newValue
+            textView.insertionPointColor = newValue
         }
         get {
-            return textView.tintColor
+            return textView.insertionPointColor
         }
     }
     
@@ -167,7 +167,7 @@ open class SyntaxTextView: _View {
         textView.innerDelegate = self
         textView.delegate = self
 
-        textView.text = ""
+        textView.string = ""
         
     }
 
@@ -244,9 +244,7 @@ open class SyntaxTextView: _View {
     }
 
     func colorTextView(lexerForSource: (String) -> Lexer) {
-        guard let source = textView.text else {
-            return
-        }
+        let source = textView.string
 
         let textStorage: NSTextStorage
 
@@ -385,8 +383,8 @@ open class SyntaxTextView: _View {
 
                 textStorage.addAttributes(theme.attributes(for: token), range: contentRange)
 
-                textStorage.addAttributes([.foregroundColor: Color.clear, .font: Font.systemFont(ofSize: 0.01)], range: startRange)
-                textStorage.addAttributes([.foregroundColor: Color.clear, .font: Font.systemFont(ofSize: 0.01)], range: endRange)
+                textStorage.addAttributes([.foregroundColor: NSColor.clear, .font: NSFont.systemFont(ofSize: 0.01)], range: startRange)
+                textStorage.addAttributes([.foregroundColor: NSColor.clear, .font: NSFont.systemFont(ofSize: 0.01)], range: endRange)
 
                 textStorage.addAttributes(attr, range: range)
                 continue

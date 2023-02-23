@@ -7,12 +7,7 @@
 //
 
 import Foundation
-
-#if os(macOS)
-	import AppKit
-#else
-	import UIKit
-#endif
+import AppKit
 
 public extension NSMutableAttributedString {
 	
@@ -69,8 +64,8 @@ public extension NSMutableAttributedString {
 				
 				self.addAttributes(theme.attributes(for: token), range: contentRange)
 				
-				self.addAttributes([.foregroundColor: Color.clear, .font: Font.systemFont(ofSize: 0.01)], range: startRange)
-				self.addAttributes([.foregroundColor: Color.clear, .font: Font.systemFont(ofSize: 0.01)], range: endRange)
+				self.addAttributes([.foregroundColor: NSColor.clear, .font: NSFont.systemFont(ofSize: 0.01)], range: startRange)
+				self.addAttributes([.foregroundColor: NSColor.clear, .font: NSFont.systemFont(ofSize: 0.01)], range: endRange)
 				
 				self.addAttributes(attr, range: range)
 				continue
