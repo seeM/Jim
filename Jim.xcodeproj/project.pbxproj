@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		841C6ECF29A6268D008B1FE5 /* NotebookTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841C6ECE29A6268D008B1FE5 /* NotebookTableCell.swift */; };
+		841C6EDB29A63FEE008B1FE5 /* Sourceful in Frameworks */ = {isa = PBXBuildFile; productRef = 841C6EDA29A63FEE008B1FE5 /* Sourceful */; };
+		841C6EFB29A65462008B1FE5 /* SyntaxTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841C6EFA29A65462008B1FE5 /* SyntaxTextView.swift */; };
 		8437F0F829A4F0F500D027B7 /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8437F0F729A4F0F500D027B7 /* WindowController.swift */; };
 		8437F0FA29A4F86700D027B7 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8437F0F929A4F86700D027B7 /* Message.swift */; };
 		8437F0FC29A4F88300D027B7 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8437F0FB29A4F88300D027B7 /* Session.swift */; };
@@ -25,6 +28,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		841C6ECE29A6268D008B1FE5 /* NotebookTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookTableCell.swift; sourceTree = "<group>"; };
+		841C6EFA29A65462008B1FE5 /* SyntaxTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyntaxTextView.swift; sourceTree = "<group>"; };
 		8437F0F729A4F0F500D027B7 /* WindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
 		8437F0F929A4F86700D027B7 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		8437F0FB29A4F88300D027B7 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
@@ -49,6 +54,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84C838E6299D6E2900BA3F8F /* AnyCodable in Frameworks */,
+				841C6EDB29A63FEE008B1FE5 /* Sourceful in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,8 +87,10 @@
 				8456BD4E299D05A5001E3EDA /* SidebarViewController.swift */,
 				8456BD50299D0F5E001E3EDA /* NotebookViewController.swift */,
 				8456BD45299D0268001E3EDA /* Main.storyboard */,
+				841C6ECE29A6268D008B1FE5 /* NotebookTableCell.swift */,
 				8456BD43299D0268001E3EDA /* Assets.xcassets */,
 				8456BD48299D0268001E3EDA /* Jim.entitlements */,
+				841C6EFA29A65462008B1FE5 /* SyntaxTextView.swift */,
 			);
 			path = Jim;
 			sourceTree = "<group>";
@@ -128,6 +136,7 @@
 			name = Jim;
 			packageProductDependencies = (
 				84C838E5299D6E2900BA3F8F /* AnyCodable */,
+				841C6EDA29A63FEE008B1FE5 /* Sourceful */,
 			);
 			productName = Jim;
 			productReference = 8456BD3C299D0264001E3EDA /* Jim.app */;
@@ -159,6 +168,7 @@
 			mainGroup = 8456BD33299D0264001E3EDA;
 			packageReferences = (
 				84C838E4299D6E2800BA3F8F /* XCRemoteSwiftPackageReference "AnyCodable" */,
+				841C6ED929A63FEE008B1FE5 /* XCRemoteSwiftPackageReference "Sourceful" */,
 			);
 			productRefGroup = 8456BD3D299D0264001E3EDA /* Products */;
 			projectDirPath = "";
@@ -186,11 +196,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				841C6ECF29A6268D008B1FE5 /* NotebookTableCell.swift in Sources */,
 				8456BD4F299D05A5001E3EDA /* SidebarViewController.swift in Sources */,
 				84C838DF299D6DF000BA3F8F /* JupyterService.swift in Sources */,
 				84C838E2299D6DF000BA3F8F /* Content.swift in Sources */,
 				8456BD40299D0264001E3EDA /* AppDelegate.swift in Sources */,
 				84C838EA299D6E4600BA3F8F /* StringOrArray.swift in Sources */,
+				841C6EFB29A65462008B1FE5 /* SyntaxTextView.swift in Sources */,
 				8456BD51299D0F5E001E3EDA /* NotebookViewController.swift in Sources */,
 				8437F0FA29A4F86700D027B7 /* Message.swift in Sources */,
 				8437F0F829A4F0F500D027B7 /* WindowController.swift in Sources */,
@@ -402,6 +414,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		841C6ED929A63FEE008B1FE5 /* XCRemoteSwiftPackageReference "Sourceful" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/Sourceful";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		84C838E4299D6E2800BA3F8F /* XCRemoteSwiftPackageReference "AnyCodable" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Flight-School/AnyCodable";
@@ -413,6 +433,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		841C6EDA29A63FEE008B1FE5 /* Sourceful */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 841C6ED929A63FEE008B1FE5 /* XCRemoteSwiftPackageReference "Sourceful" */;
+			productName = Sourceful;
+		};
 		84C838E5299D6E2900BA3F8F /* AnyCodable */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 84C838E4299D6E2800BA3F8F /* XCRemoteSwiftPackageReference "AnyCodable" */;

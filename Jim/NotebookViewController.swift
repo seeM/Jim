@@ -1,4 +1,5 @@
 import Cocoa
+import Sourceful
 
 class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
     @IBOutlet var tableView: NSTableView!
@@ -36,10 +37,36 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
         cells.count
     }
     
+    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+        let lines = cells[row].source.value.components(separatedBy: "\n").count
+        return 20 * CGFloat(lines)
+    }
+    
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        guard let view = tableView.makeView(withIdentifier: tableColumn!.identifier, owner: self) as? NSTableCellView else { return nil }
-        let item = cells[row]
-        view.textField?.stringValue = item.source.value
+        guard let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "notebookCell"), owner: self) as? NotebookTableCell else { return nil }
+        view.update(cell: cells[row], row: row, tableView: tableView)
         return view
+    }
+    
+    func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
+        false
+    }
+}
+
+struct JimSourceCodeTheme: SourceCodeTheme {
+    public let lineNumbersStyle: LineNumbersStyle? = nil
+    public let gutterStyle: GutterStyle = GutterStyle(backgroundColor: Color.red, minimumWidth: 0)
+    public let font = Font(name: "Menlo", size: 15)!
+    public let backgroundColor = Color(red: 0, green: 0, blue: 0, alpha: 0.06) //Color(red: 31/255.0, green: 32/255, blue: 41/255, alpha: 1.0)
+    public func color(for syntaxColorType: SourceCodeTokenType) -> Color {
+        switch syntaxColorType {
+        case .plain: return .black
+        case .number: return Color(red: 0, green: 136/255, blue: 0, alpha: 1.0)
+        case .string: return Color(red: 186/255, green: 33/255, blue: 33/255, alpha: 1.0)
+        case .identifier: return .black
+        case .keyword: return Color(red: 0, green: 128/255, blue: 0, alpha: 1.0)
+        case .comment: return Color(red: 0, green: 121/255, blue: 121/255, alpha: 1.0)
+        case .editorPlaceholder: return backgroundColor
+        }
     }
 }
