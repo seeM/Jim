@@ -12,7 +12,7 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate, NSTextViewDele
         lexer
     }
     
-    func update(cell: Cell, row: Int, tableView: NSTableView) {
+    func update(cell: Cell, row: Int, tableView: NSTableView, verticalPadding: CGFloat) {
         self.cell = cell
         self.row = row
         self.tableView = tableView
@@ -23,6 +23,7 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate, NSTextViewDele
         
         let textView = syntaxTextView.textView
         textView.delegate = self
+        textView.textContainerInset.height = verticalPadding
     }
     
     func textDidChange(_ notification: Notification) {

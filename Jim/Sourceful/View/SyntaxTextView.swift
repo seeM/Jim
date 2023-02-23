@@ -112,6 +112,7 @@ open class SyntaxTextView: NSView {
         scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
 
         scrollView.hasVerticalScroller = false
+        scrollView.verticalScrollElasticity = .none
 
         scrollView.documentView = textView
         

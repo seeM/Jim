@@ -13,6 +13,7 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
         }
     }
     var cells = [Cell]()
+    let verticalCellPadding = CGFloat(5)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,12 +39,14 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
     
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let lines = cells[row].source.value.components(separatedBy: "\n").count
-        return 20 * CGFloat(lines)
+        // No idea why the `+ 2` is needed, but it is!
+        let lineHeight = NSAttributedString(string: "A", attributes: [.font: JimSourceCodeTheme().font]).size().height + 2
+        return 2 * verticalCellPadding + lineHeight * CGFloat(lines)
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         guard let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "notebookCell"), owner: self) as? NotebookTableCell else { return nil }
-        view.update(cell: cells[row], row: row, tableView: tableView)
+        view.update(cell: cells[row], row: row, tableView: tableView, verticalPadding: verticalCellPadding)
         return view
     }
     
@@ -59,7 +62,7 @@ struct JimSourceCodeTheme: SourceCodeTheme {
     }
     public let lineNumbersStyle: LineNumbersStyle? = LineNumbersStyle(font: NSFont(name: "Menlo", size: 16)!, textColor: lineNumbersColor)
     public let gutterStyle: GutterStyle = GutterStyle(backgroundColor: NSColor.red, minimumWidth: 0)
-    public let font = NSFont(name: "Menlo", size: 15)!
+    public let font = NSFont(name: "Menlo", size: 12)!
     public let backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0.06)
     public func color(for syntaxColorType: SourceCodeTokenType) -> NSColor {
         switch syntaxColorType {
