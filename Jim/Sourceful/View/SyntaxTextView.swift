@@ -42,13 +42,13 @@ struct ThemeInfo {
 }
 
 public class CellScrollView: NSScrollView {
-    public override func scrollWheel(with event: NSEvent) {
-        if abs(event.deltaX) < abs(event.deltaY) {
-            super.nextResponder?.scrollWheel(with: event)
-        } else {
-            super.scrollWheel(with: event)
-        }
-    }
+//    public override func scrollWheel(with event: NSEvent) {
+//        if abs(event.deltaX) < abs(event.deltaY) {
+//            super.nextResponder?.scrollWheel(with: event)
+//        } else {
+//            super.scrollWheel(with: event)
+//        }
+//    }
 }
 
 @IBDesignable
@@ -71,8 +71,6 @@ open class SyntaxTextView: NSView {
     }
 
     var ignoreSelectionChange = false
-
-    let wrapperView = TextViewWrapperView()
 
     public var tintColor: NSColor! {
         set {
@@ -112,8 +110,6 @@ open class SyntaxTextView: NSView {
 
         textView.gutterWidth = 20
 
-        wrapperView.translatesAutoresizingMaskIntoConstraints = false
-
         scrollView.backgroundColor = .clear
         scrollView.drawsBackground = false
 
@@ -123,18 +119,11 @@ open class SyntaxTextView: NSView {
 
         addSubview(scrollView)
 
-        addSubview(wrapperView)
-
 
         scrollView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         scrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-
-        wrapperView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
-        wrapperView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
-        wrapperView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
-        wrapperView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
 
 
         scrollView.borderType = .noBorder
@@ -143,10 +132,6 @@ open class SyntaxTextView: NSView {
         scrollView.scrollerKnobStyle = .light
 
         scrollView.documentView = textView
-
-        scrollView.contentView.postsBoundsChangedNotifications = true
-
-        NotificationCenter.default.addObserver(self, selector: #selector(didScroll(_:)), name: NSView.boundsDidChangeNotification, object: scrollView.contentView)
 
         textView.minSize = NSSize(width: 0.0, height: self.bounds.height)
         textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
@@ -162,8 +147,6 @@ open class SyntaxTextView: NSView {
 
         //			textView.layerContentsRedrawPolicy = .beforeViewResize
 
-        wrapperView.textView = textView
-
         textView.innerDelegate = self
         textView.delegate = self
 
@@ -173,12 +156,6 @@ open class SyntaxTextView: NSView {
 
     open override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
-
-    }
-
-    @objc func didScroll(_ notification: Notification) {
-
-        wrapperView.setNeedsDisplay(wrapperView.bounds)
 
     }
 

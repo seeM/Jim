@@ -21,24 +21,24 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate, NSTextViewDele
         syntaxTextView.theme = JimSourceCodeTheme()
         syntaxTextView.delegate = self
         
-        let scrollView = syntaxTextView.scrollView
-        scrollView.verticalScrollElasticity = .none
-        scrollView.horizontalScrollElasticity = .automatic
-        scrollView.hasVerticalScroller = false
-        scrollView.hasHorizontalScroller = false
-        
-        let textView = syntaxTextView.contentTextView
-        textView.delegate = self
-        
-        textView.wantsLayer = true
-        textView.layer?.cornerRadius = 7
+//        let scrollView = syntaxTextView.scrollView
+//        scrollView.verticalScrollElasticity = .none
+//        scrollView.horizontalScrollElasticity = .automatic
+//        scrollView.hasVerticalScroller = false
+//        scrollView.hasHorizontalScroller = false
+//
+//        let textView = syntaxTextView.contentTextView
+//        textView.delegate = self
+//
+//        textView.wantsLayer = true
+//        textView.layer?.cornerRadius = 7
         
         // Enable horizontal scrolling. See: https://stackoverflow.com/questions/3174140/how-to-disable-word-wrap-of-nstextview
-        textView.isHorizontallyResizable = true
-        textView.textContainer?.widthTracksTextView = false
-        let infiniteSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        textView.maxSize = infiniteSize
-        textView.textContainer?.size = infiniteSize
+//        textView.isHorizontallyResizable = true
+//        textView.textContainer?.widthTracksTextView = false
+//        let infiniteSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+//        textView.maxSize = infiniteSize
+//        textView.textContainer?.size = infiniteSize
     }
     
     func textDidChange(_ notification: Notification) {

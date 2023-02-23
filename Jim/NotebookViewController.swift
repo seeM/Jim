@@ -53,7 +53,11 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
 }
 
 struct JimSourceCodeTheme: SourceCodeTheme {
-    public let lineNumbersStyle: LineNumbersStyle? = nil
+//    public let lineNumbersStyle: LineNumbersStyle? = nil
+    private static var lineNumbersColor: NSColor {
+        return NSColor(red: 100/255, green: 100/255, blue: 100/255, alpha: 1.0)
+    }
+    public let lineNumbersStyle: LineNumbersStyle? = LineNumbersStyle(font: NSFont(name: "Menlo", size: 16)!, textColor: lineNumbersColor)
     public let gutterStyle: GutterStyle = GutterStyle(backgroundColor: NSColor.red, minimumWidth: 0)
     public let font = NSFont(name: "Menlo", size: 15)!
     public let backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0.06)
