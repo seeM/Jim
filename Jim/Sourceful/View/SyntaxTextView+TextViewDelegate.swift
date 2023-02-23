@@ -9,16 +9,6 @@
 import Foundation
 import AppKit
 
-extension SyntaxTextView: InnerTextViewDelegate {
-	
-	func didUpdateCursorFloatingState() {
-		
-		selectionDidChange()
-		
-	}
-	
-}
-
 extension SyntaxTextView {
 
 	func isEditorPlaceholderSelected(selectedRange: NSRange, tokenRange: NSRange) -> Bool {

@@ -33,7 +33,6 @@
 		84CE599029A762990094FE3E /* RegexLexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE597229A762990094FE3E /* RegexLexer.swift */; };
 		84CE599129A762990094FE3E /* SyntaxTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE597429A762990094FE3E /* SyntaxTextView.swift */; };
 		84CE599229A762990094FE3E /* SyntaxTextView+TextViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE597529A762990094FE3E /* SyntaxTextView+TextViewDelegate.swift */; };
-		84CE599329A762990094FE3E /* InnerTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE597629A762990094FE3E /* InnerTextView.swift */; };
 		84CE599629A762990094FE3E /* SyntaxTextViewLayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE597929A762990094FE3E /* SyntaxTextViewLayoutManager.swift */; };
 		84CE599829A762990094FE3E /* SourceCodeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE597B29A762990094FE3E /* SourceCodeTheme.swift */; };
 		84CE599929A762990094FE3E /* SourceCodeToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE597C29A762990094FE3E /* SourceCodeToken.swift */; };
@@ -67,7 +66,6 @@
 		84CE597229A762990094FE3E /* RegexLexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegexLexer.swift; sourceTree = "<group>"; };
 		84CE597429A762990094FE3E /* SyntaxTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyntaxTextView.swift; sourceTree = "<group>"; };
 		84CE597529A762990094FE3E /* SyntaxTextView+TextViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SyntaxTextView+TextViewDelegate.swift"; sourceTree = "<group>"; };
-		84CE597629A762990094FE3E /* InnerTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InnerTextView.swift; sourceTree = "<group>"; };
 		84CE597929A762990094FE3E /* SyntaxTextViewLayoutManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyntaxTextViewLayoutManager.swift; sourceTree = "<group>"; };
 		84CE597B29A762990094FE3E /* SourceCodeTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SourceCodeTheme.swift; sourceTree = "<group>"; };
 		84CE597C29A762990094FE3E /* SourceCodeToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SourceCodeToken.swift; sourceTree = "<group>"; };
@@ -189,7 +187,6 @@
 			children = (
 				84CE597429A762990094FE3E /* SyntaxTextView.swift */,
 				84CE597529A762990094FE3E /* SyntaxTextView+TextViewDelegate.swift */,
-				84CE597629A762990094FE3E /* InnerTextView.swift */,
 				84CE597929A762990094FE3E /* SyntaxTextViewLayoutManager.swift */,
 			);
 			path = View;
@@ -280,7 +277,6 @@
 				84C838DF299D6DF000BA3F8F /* JupyterService.swift in Sources */,
 				84C838E2299D6DF000BA3F8F /* Content.swift in Sources */,
 				84CE598629A762990094FE3E /* Python3Lexer.swift in Sources */,
-				84CE599329A762990094FE3E /* InnerTextView.swift in Sources */,
 				84CE598229A762990094FE3E /* String+Range.swift in Sources */,
 				8456BD40299D0264001E3EDA /* AppDelegate.swift in Sources */,
 				84CE599229A762990094FE3E /* SyntaxTextView+TextViewDelegate.swift in Sources */,

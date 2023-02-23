@@ -58,7 +58,7 @@ open class SyntaxTextView: NSView {
 
     private var textViewSelectedRangeObserver: NSKeyValueObservation?
 
-    let textView: InnerTextView
+    let textView: NSTextView
 
     public var contentTextView: NSTextView {
         return textView
@@ -93,7 +93,7 @@ open class SyntaxTextView: NSView {
         setup()
     }
 
-    private static func createInnerTextView() -> InnerTextView {
+    private static func createInnerTextView() -> NSTextView {
         let textStorage = NSTextStorage()
         let layoutManager = SyntaxTextViewLayoutManager()
         let containerSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
@@ -101,14 +101,12 @@ open class SyntaxTextView: NSView {
         textContainer.widthTracksTextView = true
         layoutManager.addTextContainer(textContainer)
         textStorage.addLayoutManager(layoutManager)
-        return InnerTextView(frame: .zero, textContainer: textContainer)
+        return NSTextView(frame: .zero, textContainer: textContainer)
     }
 
     public let scrollView = CellScrollView()
 
     private func setup() {
-
-        textView.gutterWidth = 20
 
         scrollView.backgroundColor = .clear
         scrollView.drawsBackground = false
@@ -147,7 +145,6 @@ open class SyntaxTextView: NSView {
 
         //			textView.layerContentsRedrawPolicy = .beforeViewResize
 
-        textView.innerDelegate = self
         textView.delegate = self
 
         textView.string = ""
@@ -186,7 +183,6 @@ open class SyntaxTextView: NSView {
 
             cachedThemeInfo = nil
             textView.backgroundColor = theme.backgroundColor
-            textView.theme = theme
             textView.font = theme.font
 
             refreshColors()
