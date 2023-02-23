@@ -27,7 +27,7 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate, NSTextViewDele
 //        scrollView.hasVerticalScroller = false
 //        scrollView.hasHorizontalScroller = false
 //
-//        let textView = syntaxTextView.contentTextView
+//        let textView = syntaxTextView.textView
 //        textView.delegate = self
 //
 //        textView.wantsLayer = true

@@ -42,13 +42,13 @@ struct ThemeInfo {
 }
 
 public class CellScrollView: NSScrollView {
-//    public override func scrollWheel(with event: NSEvent) {
-//        if abs(event.deltaX) < abs(event.deltaY) {
-//            super.nextResponder?.scrollWheel(with: event)
-//        } else {
-//            super.scrollWheel(with: event)
-//        }
-//    }
+    public override func scrollWheel(with event: NSEvent) {
+        if abs(event.deltaX) < abs(event.deltaY) {
+            super.nextResponder?.scrollWheel(with: event)
+        } else {
+            super.scrollWheel(with: event)
+        }
+    }
 }
 
 @IBDesignable
@@ -59,10 +59,6 @@ open class SyntaxTextView: NSView {
     private var textViewSelectedRangeObserver: NSKeyValueObservation?
 
     let textView: NSTextView
-
-    public var contentTextView: NSTextView {
-        return textView
-    }
 
     public weak var delegate: SyntaxTextViewDelegate? {
         didSet {
@@ -108,26 +104,15 @@ open class SyntaxTextView: NSView {
 
     private func setup() {
 
-        scrollView.backgroundColor = .clear
-        scrollView.drawsBackground = false
-
-        scrollView.contentView.backgroundColor = .clear
-
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-
         addSubview(scrollView)
 
-
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         scrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
 
-
-        scrollView.borderType = .noBorder
-        scrollView.hasVerticalScroller = true
-        scrollView.hasHorizontalScroller = false
-        scrollView.scrollerKnobStyle = .light
+        scrollView.hasVerticalScroller = false
 
         scrollView.documentView = textView
 
@@ -143,17 +128,7 @@ open class SyntaxTextView: NSView {
         textView.textContainer?.containerSize = NSSize(width: self.bounds.width, height: .greatestFiniteMagnitude)
         textView.textContainer?.widthTracksTextView = true
 
-        //			textView.layerContentsRedrawPolicy = .beforeViewResize
-
         textView.delegate = self
-
-        textView.string = ""
-        
-    }
-
-    open override func viewDidMoveToSuperview() {
-        super.viewDidMoveToSuperview()
-
     }
 
     @IBInspectable
@@ -165,13 +140,12 @@ open class SyntaxTextView: NSView {
             textView.layer?.isOpaque = true
             textView.string = newValue
             refreshColors()
-
         }
     }
 
     public func insertText(_ text: String) {
         if shouldChangeText(insertingText: text) {
-            contentTextView.insertText(text, replacementRange: contentTextView.selectedRange())
+            textView.insertText(text, replacementRange: textView.selectedRange())
         }
     }
 
@@ -222,8 +196,6 @@ open class SyntaxTextView: NSView {
         let textStorage: NSTextStorage
 
         textStorage = textView.textStorage!
-
-        //		self.backgroundColor = theme.backgroundColor
 
         let tokens: [Token]
 
