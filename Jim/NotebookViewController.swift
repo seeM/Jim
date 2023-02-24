@@ -40,6 +40,7 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let lines = cells[row].source.value.components(separatedBy: "\n").count
         // No idea why the `+ 2` is needed, but it is!
+        // TODO: cache the theme and/or lineHeight?
         let lineHeight = NSAttributedString(string: "A", attributes: [.font: JimSourceCodeTheme().font]).size().height + 2
         return 2 * verticalCellPadding + lineHeight * CGFloat(lines)
     }
@@ -56,12 +57,6 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
 }
 
 struct JimSourceCodeTheme: SourceCodeTheme {
-//    public let lineNumbersStyle: LineNumbersStyle? = nil
-    private static var lineNumbersColor: NSColor {
-        return NSColor(red: 100/255, green: 100/255, blue: 100/255, alpha: 1.0)
-    }
-    public let lineNumbersStyle: LineNumbersStyle? = LineNumbersStyle(font: NSFont(name: "Menlo", size: 16)!, textColor: lineNumbersColor)
-    public let gutterStyle: GutterStyle = GutterStyle(backgroundColor: NSColor.red, minimumWidth: 0)
     public let font = NSFont(name: "Menlo", size: 12)!
     public let backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0.06)
     public func color(for syntaxColorType: SourceCodeTokenType) -> NSColor {
