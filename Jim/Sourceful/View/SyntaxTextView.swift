@@ -192,61 +192,40 @@ open class SyntaxTextView: NSView {
     }
 
     func colorTextView(lexerForSource: (String) -> Lexer) {
+        guard cachedTokens == nil, let theme = self.theme, let themeInfo = self.themeInfo else { return }
+        
         let source = textView.string
-
-        let textStorage: NSTextStorage
-
-        textStorage = textView.textStorage!
-
-        let tokens: [Token]
-
-        if cachedTokens == nil {
-            guard let theme = self.theme else {
-                return
-            }
-
-            guard let themeInfo = self.themeInfo else {
-                return
-            }
-
-            textView.font = theme.font
-
-            let lexer = lexerForSource(source)
-            tokens = lexer.getSavannaTokens(input: source)
-
-            let cachedTokens: [CachedToken] = tokens.map {
-
-                let nsRange = source.nsRange(fromRange: $0.range)
-                return CachedToken(token: $0, nsRange: nsRange)
-            }
-
-            self.cachedTokens = cachedTokens
-
-            createAttributes(theme: theme, themeInfo: themeInfo, textStorage: textStorage, cachedTokens: cachedTokens, source: source)
-        }
+        let textStorage = textView.textStorage!
+        
+        textView.font = theme.font
+        
+        let lexer = lexerForSource(source)
+        let tokens = lexer.getSavannaTokens(input: source)
+        let cachedTokens = tokens.map { CachedToken(token: $0, nsRange: source.nsRange(fromRange: $0.range)) }
+        self.cachedTokens = cachedTokens
+        
+        createAttributes(theme: theme, themeInfo: themeInfo, textStorage: textStorage, cachedTokens: cachedTokens, source: source)
     }
 
     func createAttributes(theme: SyntaxColorTheme, themeInfo: ThemeInfo, textStorage: NSTextStorage, cachedTokens: [CachedToken], source: String) {
 
+        // Buffer a series of changes to the receiver's characters or attributes
         textStorage.beginEditing()
 
         var attributes = [NSAttributedString.Key: Any]()
 
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.paragraphSpacing = 2.0
+        paragraphStyle.paragraphSpacing = 2.0 // TODO: This might be why the tableView doesn't correctly estimate the height
         paragraphStyle.defaultTabInterval = themeInfo.spaceWidth * 4
-        paragraphStyle.tabStops = []
-
-        let wholeRange = NSRange(location: 0, length: (source as NSString).length)
+        paragraphStyle.tabStops = [] // TODO: What does this do?
 
         attributes[.paragraphStyle] = paragraphStyle
 
         for (attr, value) in theme.globalAttributes() {
-
             attributes[attr] = value
-
         }
 
+        let wholeRange = NSRange(location: 0, length: source.count)
         textStorage.setAttributes(attributes, range: wholeRange)
 
         for cachedToken in cachedTokens {

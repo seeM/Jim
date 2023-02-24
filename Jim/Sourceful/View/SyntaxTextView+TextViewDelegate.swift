@@ -42,39 +42,39 @@ extension SyntaxTextView {
 }
 
 extension SyntaxTextView: NSTextViewDelegate {
-		
-		open func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
-			
-			let text = replacementString ?? ""
-			
-			return self.shouldChangeText(insertingText: text)
-		}
-		
-		open func textDidChange(_ notification: Notification) {
-			guard let textView = notification.object as? NSTextView, textView == self.textView else {
-				return
-			}
-			
-			didUpdateText()
-		}
-        
-        func refreshColors() {
-            self.invalidateCachedTokens()
-            
-            if let delegate = delegate {
-                colorTextView(lexerForSource: { (source) -> Lexer in
-                    return delegate.lexerForSource(source)
-                })
-            }
-        }
-		
-		open func textViewDidChangeSelection(_ notification: Notification) {
-			
-			contentDidChangeSelection()
+    
+    open func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
 
-		}
-		
-	}
+        let text = replacementString ?? ""
+
+        return self.shouldChangeText(insertingText: text)
+    }
+
+    open func textDidChange(_ notification: Notification) {
+        guard let textView = notification.object as? NSTextView, textView == self.textView else {
+            return
+        }
+
+        didUpdateText()
+    }
+    
+    func refreshColors() {
+        self.invalidateCachedTokens()
+        
+        if let delegate = delegate {
+            colorTextView(lexerForSource: { (source) -> Lexer in
+                return delegate.lexerForSource(source)
+            })
+        }
+    }
+    
+    open func textViewDidChangeSelection(_ notification: Notification) {
+
+        contentDidChangeSelection()
+
+    }
+    
+}
 
 extension SyntaxTextView {
 
