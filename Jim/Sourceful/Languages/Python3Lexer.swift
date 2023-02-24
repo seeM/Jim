@@ -39,7 +39,7 @@ public class Python3Lexer: SourceCodeRegexLexer {
 		generators.append(regexGenerator("('.*')|(\".*\")", tokenType: .string))
 
 		// Editor placeholder
-		var editorPlaceholderPattern = "(<#)[^\"\\n]*"
+		var editorPlaceholderPattern = "(<#)[^\"\\n]*?"
 		editorPlaceholderPattern += "(#>)"
 		generators.append(regexGenerator(editorPlaceholderPattern, tokenType: .editorPlaceholder))
 
