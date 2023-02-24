@@ -94,22 +94,14 @@ extension SyntaxTextView {
 			}
 			
 			insertingText += newLinePrefix
-		}
-		
-		guard let textStorage = textView.textStorage else {
-			return true
-		}
-		
-		if origInsertingText == "\n" {
+            
             ignoreShouldChange = true
             textView.insertText(insertingText, replacementRange: selectedRange)
             ignoreShouldChange = false
-			
-			didUpdateText()
-			
-			updateSelectedRange(NSRange(location: selectedRange.lowerBound + insertingText.count, length: 0))
-
-			return false
+            didUpdateText()
+            updateSelectedRange(NSRange(location: selectedRange.lowerBound + insertingText.count, length: 0))
+            
+            return false
 		}
 		
 		return true
