@@ -15,7 +15,6 @@ public enum SourceCodeTokenType {
 	case identifier
 	case keyword
 	case comment
-	case editorPlaceholder
 }
 
 protocol SourceCodeToken: Token {
@@ -25,10 +24,6 @@ protocol SourceCodeToken: Token {
 }
 
 extension SourceCodeToken {
-	
-	var isEditorPlaceholder: Bool {
-		return type == .editorPlaceholder
-	}
 	
 	var isPlain: Bool {
 		return type == .plain

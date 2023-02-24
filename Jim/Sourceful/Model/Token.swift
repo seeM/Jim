@@ -10,11 +10,6 @@ import Foundation
 
 public protocol Token {
 	
-	/// When true, this token will be treated as a placeholder.
-	/// Users can tab between placeholder. Typing in a placeholder replaces
-	/// it completely.
-	var isEditorPlaceholder: Bool { get }
-	
 	/// When true, no attributes will be requested for this token.
 	/// This causes a performance win for a large amount of tokens
 	/// that don't require any attributes.

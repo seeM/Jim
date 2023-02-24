@@ -91,12 +91,7 @@ open class SyntaxTextView: NSView {
 
     private static func createInnerTextView() -> NSTextView {
         // We'll set the container size and text view frame later
-        let textStorage = NSTextStorage()
-        let layoutManager = SyntaxTextViewLayoutManager()
-        let textContainer = NSTextContainer(size: .zero)
-        layoutManager.addTextContainer(textContainer)
-        textStorage.addLayoutManager(layoutManager)
-        return NSTextView(frame: .zero, textContainer: textContainer)
+        return NSTextView(frame: .zero)
     }
 
     public let scrollView = CellScrollView()
@@ -205,9 +200,7 @@ open class SyntaxTextView: NSView {
 
         let tokens: [Token]
 
-        if let cachedTokens = cachedTokens {
-            updateAttributes(textStorage: textStorage, cachedTokens: cachedTokens, source: source)
-        } else {
+        if cachedTokens == nil {
             guard let theme = self.theme else {
                 return
             }
@@ -230,53 +223,6 @@ open class SyntaxTextView: NSView {
             self.cachedTokens = cachedTokens
 
             createAttributes(theme: theme, themeInfo: themeInfo, textStorage: textStorage, cachedTokens: cachedTokens, source: source)
-        }
-    }
-
-    func updateAttributes(textStorage: NSTextStorage, cachedTokens: [CachedToken], source: String) {
-
-        let selectedRange = textView.selectedRange
-
-        let fullRange = NSRange(location: 0, length: (source as NSString).length)
-
-        var rangesToUpdate = [(NSRange, EditorPlaceholderState)]()
-
-        textStorage.enumerateAttribute(.editorPlaceholder, in: fullRange, options: []) { (value, range, stop) in
-
-            if let state = value as? EditorPlaceholderState {
-
-                var newState: EditorPlaceholderState = .inactive
-
-                if isEditorPlaceholderSelected(selectedRange: selectedRange, tokenRange: range) {
-                    newState = .active
-                }
-
-                if newState != state {
-                    rangesToUpdate.append((range, newState))
-                }
-
-            }
-
-        }
-
-        var didBeginEditing = false
-
-        if !rangesToUpdate.isEmpty {
-            textStorage.beginEditing()
-            didBeginEditing = true
-        }
-
-        for (range, state) in rangesToUpdate {
-
-            var attr = [NSAttributedString.Key: Any]()
-            attr[.editorPlaceholder] = state
-
-            textStorage.addAttributes(attr, range: range)
-
-        }
-
-        if didBeginEditing {
-            textStorage.endEditing()
         }
     }
 
@@ -303,8 +249,6 @@ open class SyntaxTextView: NSView {
 
         textStorage.setAttributes(attributes, range: wholeRange)
 
-        let selectedRange = textView.selectedRange
-
         for cachedToken in cachedTokens {
 
             let token = cachedToken.token
@@ -314,32 +258,6 @@ open class SyntaxTextView: NSView {
             }
 
             let range = cachedToken.nsRange
-
-            if token.isEditorPlaceholder {
-
-                let startRange = NSRange(location: range.lowerBound, length: 2)
-                let endRange = NSRange(location: range.upperBound - 2, length: 2)
-
-                let contentRange = NSRange(location: range.lowerBound + 2, length: range.length - 4)
-
-                var attr = [NSAttributedString.Key: Any]()
-
-                var state: EditorPlaceholderState = .inactive
-
-                if isEditorPlaceholderSelected(selectedRange: selectedRange, tokenRange: range) {
-                    state = .active
-                }
-
-                attr[.editorPlaceholder] = state
-
-                textStorage.addAttributes(theme.attributes(for: token), range: contentRange)
-
-                textStorage.addAttributes([.foregroundColor: NSColor.clear, .font: NSFont.systemFont(ofSize: 0.01)], range: startRange)
-                textStorage.addAttributes([.foregroundColor: NSColor.clear, .font: NSFont.systemFont(ofSize: 0.01)], range: endRange)
-
-                textStorage.addAttributes(attr, range: range)
-                continue
-            }
 
             textStorage.addAttributes(theme.attributes(for: token), range: range)
         }

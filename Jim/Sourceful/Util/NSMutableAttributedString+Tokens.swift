@@ -51,26 +51,6 @@ public extension NSMutableAttributedString {
 			
 			let range = source.nsRange(fromRange: tokenRange)
 			
-			if token.isEditorPlaceholder {
-				
-				let startRange = NSRange(location: range.lowerBound, length: 2)
-				let endRange = NSRange(location: range.upperBound - 2, length: 2)
-				
-				let contentRange = NSRange(location: range.lowerBound + 2, length: range.length - 4)
-				
-				var attr = [NSAttributedString.Key: Any]()
-				
-				attr[.editorPlaceholder] = EditorPlaceholderState.inactive
-				
-				self.addAttributes(theme.attributes(for: token), range: contentRange)
-				
-				self.addAttributes([.foregroundColor: NSColor.clear, .font: NSFont.systemFont(ofSize: 0.01)], range: startRange)
-				self.addAttributes([.foregroundColor: NSColor.clear, .font: NSFont.systemFont(ofSize: 0.01)], range: endRange)
-				
-				self.addAttributes(attr, range: range)
-				continue
-			}
-			
 			self.setAttributes(theme.attributes(for: token), range: range)
 			
 		}

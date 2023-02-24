@@ -67,7 +67,6 @@ struct JimSourceCodeTheme: SourceCodeTheme {
         case .identifier: return .black
         case .keyword: return NSColor(red: 0, green: 128/255, blue: 0, alpha: 1.0)
         case .comment: return NSColor(red: 0, green: 121/255, blue: 121/255, alpha: 1.0)
-        case .editorPlaceholder: return backgroundColor
         }
     }
 }

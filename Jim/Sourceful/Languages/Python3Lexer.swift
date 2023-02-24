@@ -38,11 +38,6 @@ public class Python3Lexer: SourceCodeRegexLexer {
 		// Single-line string literal
 		generators.append(regexGenerator("('.*')|(\".*\")", tokenType: .string))
 
-		// Editor placeholder
-		var editorPlaceholderPattern = "(<#)[^\"\\n]*?"
-		editorPlaceholderPattern += "(#>)"
-		generators.append(regexGenerator(editorPlaceholderPattern, tokenType: .editorPlaceholder))
-
 		return generators.compactMap( { $0 })
 	}()
 	
