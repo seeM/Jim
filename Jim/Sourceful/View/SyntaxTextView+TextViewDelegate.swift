@@ -19,20 +19,6 @@ extension SyntaxTextView {
 		self.delegate?.didChangeSelectedRange(self, selectedRange: range)
 	}
 	
-	func selectionDidChange() {
-		
-		guard let delegate = delegate else {
-			return
-		}
-		
-		colorTextView(lexerForSource: { (source) -> Lexer in
-			return delegate.lexerForSource(source)
-		})
-		
-		previousSelectedRange = textView.selectedRange
-		
-	}
-	
     func didUpdateText() {
         
         refreshColors()
@@ -66,12 +52,6 @@ extension SyntaxTextView: NSTextViewDelegate {
                 return delegate.lexerForSource(source)
             })
         }
-    }
-    
-    open func textViewDidChangeSelection(_ notification: Notification) {
-
-        contentDidChangeSelection()
-
     }
     
 }
@@ -133,20 +113,6 @@ extension SyntaxTextView {
 		}
 		
 		return true
-	}
-	
-	func contentDidChangeSelection() {
-		
-		if ignoreSelectionChange {
-			return
-		}
-		
-		ignoreSelectionChange = true
-		
-		selectionDidChange()
-		
-		ignoreSelectionChange = false
-		
 	}
 	
 }
