@@ -59,6 +59,8 @@ extension SyntaxTextView: NSTextViewDelegate {
 extension SyntaxTextView {
 
 	func shouldChangeText(insertingText: String) -> Bool {
+        
+        if ignoreShouldChange { return true }
 
 		let selectedRange = textView.selectedRange
 
@@ -72,6 +74,7 @@ extension SyntaxTextView {
 			
 			var currentLine = nsText.substring(with: nsText.lineRange(for: textView.selectedRange))
 			
+            // Remove trailing newline to avoid adding it to newLinePrefix
 			if currentLine.hasSuffix("\n") {
 				currentLine.removeLast()
 			}
@@ -93,17 +96,14 @@ extension SyntaxTextView {
 			insertingText += newLinePrefix
 		}
 		
-		let textStorage: NSTextStorage
-		
-		guard let _textStorage = textView.textStorage else {
+		guard let textStorage = textView.textStorage else {
 			return true
 		}
 		
-		textStorage = _textStorage
-		
 		if origInsertingText == "\n" {
-
-			textStorage.replaceCharacters(in: selectedRange, with: insertingText)
+            ignoreShouldChange = true
+            textView.insertText(insertingText, replacementRange: selectedRange)
+            ignoreShouldChange = false
 			
 			didUpdateText()
 			

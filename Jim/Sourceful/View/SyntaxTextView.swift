@@ -67,6 +67,7 @@ open class SyntaxTextView: NSView {
     }
 
     var ignoreSelectionChange = false
+    var ignoreShouldChange = false
 
     public var tintColor: NSColor! {
         set {
