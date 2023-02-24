@@ -1,6 +1,6 @@
 import Cocoa
 
-class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate, NSTextViewDelegate {
+class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     @IBOutlet var syntaxTextView: SyntaxTextView!
     var cell: Cell!
     var tableView: NSTableView!
@@ -22,13 +22,11 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate, NSTextViewDele
         syntaxTextView.delegate = self
         
         let textView = syntaxTextView.textView
-        textView.delegate = self
         textView.textContainerInset.height = verticalPadding
     }
     
-    func textDidChange(_ notification: Notification) {
-        guard let textView = notification.object as? NSTextView else { return }
-        cell.source.value = textView.string
+    func didChangeText(_ syntaxTextView: SyntaxTextView) {
+        cell.source.value = syntaxTextView.text
         // Disable the animation since it causes a bobble on newlines
         NSAnimationContext.runAnimationGroup { context in
             context.duration = 0
