@@ -107,8 +107,10 @@ open class SyntaxTextView: NSView {
         scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
 
-        scrollView.hasVerticalScroller = false
         scrollView.verticalScrollElasticity = .none
+        scrollView.horizontalScrollElasticity = .automatic
+        scrollView.hasVerticalScroller = false
+        scrollView.hasHorizontalScroller = false
 
         scrollView.documentView = textView
         
@@ -121,14 +123,18 @@ open class SyntaxTextView: NSView {
         
         // Infinite max size text view and container + resizable text view allows for horizontal scrolling.
         // Height is currently controlled by the table view.
-        textView.textContainer?.size = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        textView.minSize = NSSize(width: 0.0, height: self.bounds.height)
+        textView.minSize = NSSize(width: 0, height: self.bounds.height)
         textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.autoresizingMask = [.width, .height]
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = true
         textView.isEditable = true
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.allowsUndo = true
+        
+        textView.textContainer?.size = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.textContainer?.widthTracksTextView = false
+        textView.textContainer?.heightTracksTextView = false
 
         textView.delegate = self
     }
