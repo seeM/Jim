@@ -41,13 +41,42 @@ struct ThemeInfo {
 
 }
 
+public class HuggingTextView: NSTextView {
+    public override var intrinsicContentSize: NSSize {
+        guard let textContainer = textContainer, let layoutManager = layoutManager else { return super.intrinsicContentSize }
+        layoutManager.ensureLayout(for: textContainer)
+        return layoutManager.usedRect(for: textContainer).size
+    }
+
+    public override func didChangeText() {
+        super.didChangeText()
+        invalidateIntrinsicContentSize()
+        enclosingScrollView?.invalidateIntrinsicContentSize()
+    }
+}
+
+
 public class CellScrollView: NSScrollView {
+    public var textView: HuggingTextView!
+    
+    override public init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+    }
+
     public override func scrollWheel(with event: NSEvent) {
         if abs(event.deltaX) < abs(event.deltaY) {
             super.nextResponder?.scrollWheel(with: event)
         } else {
             super.scrollWheel(with: event)
         }
+    }
+    
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    public override var intrinsicContentSize: NSSize {
+        return NSSize(width: -1, height: textView.intrinsicContentSize.width)
     }
 }
 
@@ -58,7 +87,7 @@ open class SyntaxTextView: NSView {
 
     private var textViewSelectedRangeObserver: NSKeyValueObservation?
 
-    let textView: NSTextView
+    let textView: HuggingTextView
 
     public weak var delegate: SyntaxTextViewDelegate? {
         didSet {
@@ -90,51 +119,63 @@ open class SyntaxTextView: NSView {
         setup()
     }
 
-    private static func createInnerTextView() -> NSTextView {
+    private static func createInnerTextView() -> HuggingTextView {
         // We'll set the container size and text view frame later
-        return NSTextView(frame: .zero)
+        return HuggingTextView(frame: .zero)
     }
 
     public let scrollView = CellScrollView()
+    
+    open override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+        let path = NSBezierPath(roundedRect: bounds, xRadius: 7, yRadius: 7)
+        NSColor(red: 0, green: 0, blue: 0, alpha: 0.06).setFill()
+        path.fill()
+    }
 
     private func setup() {
 
         addSubview(scrollView)
-
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        scrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-
-        scrollView.verticalScrollElasticity = .none
-        scrollView.horizontalScrollElasticity = .automatic
+        
+        scrollView.textView = textView
+        
+        scrollView.setContentCompressionResistancePriority(.fittingSizeCompression, for: .vertical)
+        
+        scrollView.borderType = .noBorder
         scrollView.hasVerticalScroller = false
         scrollView.hasHorizontalScroller = false
+        scrollView.horizontalScrollElasticity = .automatic
+        scrollView.verticalScrollElasticity = .none
 
-        scrollView.documentView = textView
-        
-        // Using the scroll view's background is better than the text view's since we want the rounded background
-        // to stay rounded even while scrolling.
-        scrollView.drawsBackground = true
-        scrollView.wantsLayer = true
-        scrollView.layer?.cornerRadius = 7
-        textView.backgroundColor = .clear
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5).isActive = true
+        scrollView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -5).isActive = true
+
+        scrollView.drawsBackground = false
+        textView.drawsBackground = false
         
         // Infinite max size text view and container + resizable text view allows for horizontal scrolling.
         // Height is currently controlled by the table view.
-        textView.minSize = NSSize(width: 0, height: self.bounds.height)
-        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        textView.autoresizingMask = [.width, .height]
-        textView.isVerticallyResizable = true
-        textView.isHorizontallyResizable = true
         textView.isEditable = true
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.allowsUndo = true
-        
-        textView.textContainer?.size = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.minSize = NSSize(width: 0, height: scrollView.bounds.height)
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = true
         textView.textContainer?.widthTracksTextView = false
         textView.textContainer?.heightTracksTextView = false
+        textView.textContainer?.size = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+
+        scrollView.documentView = textView
+        
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
+        textView.trailingAnchor.constraint(greaterThanOrEqualTo: scrollView.trailingAnchor).isActive = true
+        textView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        textView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
 
         textView.delegate = self
     }

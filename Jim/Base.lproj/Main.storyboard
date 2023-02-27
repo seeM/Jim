@@ -843,7 +843,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="453" height="297"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" id="Red-m2-hBf">
+                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" rowHeight="24" usesAutomaticRowHeights="YES" viewBased="YES" id="Red-m2-hBf">
                                     <rect key="frame" x="0.0" y="0.0" width="453" height="297"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="17" height="14"/>
@@ -865,20 +865,6 @@
                                                 <tableCellView identifier="notebookCell" id="UQI-4j-dZq" customClass="NotebookTableCell" customModule="Jim" customModuleProvider="target">
                                                     <rect key="frame" x="18" y="7" width="416" height="24"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    <subviews>
-                                                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="oA3-aL-M6P" customClass="SyntaxTextView" customModule="Jim" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="0.0" width="416" height="24"/>
-                                                        </customView>
-                                                    </subviews>
-                                                    <constraints>
-                                                        <constraint firstAttribute="trailing" secondItem="oA3-aL-M6P" secondAttribute="trailing" id="064-rD-y6V"/>
-                                                        <constraint firstItem="oA3-aL-M6P" firstAttribute="leading" secondItem="UQI-4j-dZq" secondAttribute="leading" id="HF3-VE-29v"/>
-                                                        <constraint firstAttribute="bottom" secondItem="oA3-aL-M6P" secondAttribute="bottom" id="XPY-kT-YTP"/>
-                                                        <constraint firstItem="oA3-aL-M6P" firstAttribute="top" secondItem="UQI-4j-dZq" secondAttribute="top" id="h1c-Mf-okl"/>
-                                                    </constraints>
-                                                    <connections>
-                                                        <outlet property="syntaxTextView" destination="oA3-aL-M6P" id="Oj7-Wb-1Fi"/>
-                                                    </connections>
                                                 </tableCellView>
                                             </prototypeCellViews>
                                         </tableColumn>
