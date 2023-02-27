@@ -46,6 +46,10 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
 //        return 2 * verticalCellPadding + lineHeight * CGFloat(lines)// + 300
 //    }
     
+    func tableView(_ tableView: NSTableView, didAdd rowView: NSTableRowView, forRow row: Int) {
+        rowView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         guard let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "notebookCell"), owner: self) as? NotebookTableCell else { return nil }
         view.update(cell: cells[row], row: row, tableView: tableView, verticalPadding: verticalCellPadding)

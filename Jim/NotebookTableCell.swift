@@ -1,5 +1,12 @@
 import Cocoa
 
+class StackView: NSStackView {
+    override func addArrangedSubview(_ view: NSView) {
+        super.addArrangedSubview(view)
+        view.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
+    }
+}
+
 class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     var cell: Cell!
     var tableView: NSTableView!
@@ -22,48 +29,29 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
 //        print("render output text: \(text)")
 //    }
     
-//    override var intrinsicContentSize: NSSize {
-//        return NSSize(width: 100, height: 24)
-//    }
-    
     func update(cell: Cell, row: Int, tableView: NSTableView, verticalPadding: CGFloat) {
         self.cell = cell
         self.row = row
         self.tableView = tableView
         
-//        let stackView = NSStackView()
-//        stackView.orientation = .vertical
-//        stackView.alignment = .leading
-//        stackView.distribution = .gravityAreas
-//        addSubview(stackView)
-//
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-//        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-//        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-//        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        
-//        let tf1 = NSTextField(labelWithString: "Hello world!")
-//        stackView.addArrangedSubview(tf1)
-        
+        let stackView = StackView()
+        stackView.orientation = .vertical
+        stackView.distribution = .gravityAreas
+        addSubview(stackView)
+
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+                
         let syntaxTextView = SyntaxTextView()
-//        stackView.addArrangedSubview(syntaxTextView)
-        addSubview(syntaxTextView)
         syntaxTextView.text = cell.source.value
         syntaxTextView.theme = JimSourceCodeTheme()
         syntaxTextView.delegate = self
-        
-        syntaxTextView.translatesAutoresizingMaskIntoConstraints = false
-        syntaxTextView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        syntaxTextView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        syntaxTextView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        syntaxTextView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-//        syntaxTextView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-//        syntaxTextView.setContentHuggingPriority(.fittingSizeCompression, for: .vertical)
-        
-//        let textView = syntaxTextView.textView
-        
-//        syntaxTextView.heightAnchor.constraint(equalTo: textView.heightAnchor).isActive = true
+        stackView.addArrangedSubview(syntaxTextView)
+
+        // ----------
         
 //        guard let outputs = cell.outputs else { return }
 //        for output in outputs {

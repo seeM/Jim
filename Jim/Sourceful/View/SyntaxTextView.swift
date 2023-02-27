@@ -57,8 +57,6 @@ public class HuggingTextView: NSTextView {
 
 
 public class CellScrollView: NSScrollView {
-    public var textView: HuggingTextView!
-    
     override public init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
     }
@@ -73,10 +71,6 @@ public class CellScrollView: NSScrollView {
     
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    public override var intrinsicContentSize: NSSize {
-        return NSSize(width: -1, height: textView.intrinsicContentSize.width)
     }
 }
 
@@ -134,13 +128,8 @@ open class SyntaxTextView: NSView {
     }
 
     private func setup() {
-
         addSubview(scrollView)
-        
-        scrollView.textView = textView
-        
-        scrollView.setContentCompressionResistancePriority(.fittingSizeCompression, for: .vertical)
-        
+                
         scrollView.borderType = .noBorder
         scrollView.hasVerticalScroller = false
         scrollView.hasHorizontalScroller = false
@@ -158,7 +147,6 @@ open class SyntaxTextView: NSView {
         
         // Infinite max size text view and container + resizable text view allows for horizontal scrolling.
         // Height is currently controlled by the table view.
-        textView.isEditable = true
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.allowsUndo = true
         textView.minSize = NSSize(width: 0, height: scrollView.bounds.height)
