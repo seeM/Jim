@@ -142,7 +142,6 @@ open class SyntaxTextView: NSView {
         textView.drawsBackground = false
         
         // Infinite max size text view and container + resizable text view allows for horizontal scrolling.
-        // Height is currently controlled by the table view.
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.allowsUndo = true
         textView.minSize = NSSize(width: 0, height: scrollView.bounds.height)
@@ -257,7 +256,7 @@ open class SyntaxTextView: NSView {
         var attributes = [NSAttributedString.Key: Any]()
 
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.paragraphSpacing = 2.0 // TODO: This might be why the tableView doesn't correctly estimate the height
+        paragraphStyle.paragraphSpacing = 2.0
         paragraphStyle.defaultTabInterval = themeInfo.spaceWidth * 4
         paragraphStyle.tabStops = [] // TODO: What does this do?
 

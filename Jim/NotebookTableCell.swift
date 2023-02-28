@@ -4,10 +4,12 @@ class StackView: NSStackView {
     override func addArrangedSubview(_ view: NSView) {
         super.addArrangedSubview(view)
         view.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
+        view.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
     }
 }
 
 class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
+    var stackView: NSStackView!
     var cell: Cell!
     var tableView: NSTableView!
     var row: Int!
@@ -18,23 +20,24 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         lexer
     }
     
-//    func outputText(_ text: String) {
-//        let outputTextView = NSTextView()
-//        stackView.addArrangedSubview(outputTextView)
-////        outputTextView.autoresizingMask = [.width, .height]
-//        outputTextView.string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines)
-//        outputTextView.font = NSFont(name: "Menlo", size: 12)!
-//        outputTextView.backgroundColor = .red
-//        outputTextView.drawsBackground = true
-//        print("render output text: \(text)")
-//    }
+    func addText(_ text: String) {
+        let string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines)
+        let textField = NSTextField(wrappingLabelWithString: string)
+        stackView.addArrangedSubview(textField)
+    }
+    
+    func addImage(_ image: NSImage) {
+        let imageView = NSImageView(image: image)
+        imageView.imageAlignment = .alignTopLeft
+        stackView.addArrangedSubview(imageView)
+    }
     
     func update(cell: Cell, row: Int, tableView: NSTableView, verticalPadding: CGFloat) {
         self.cell = cell
         self.row = row
         self.tableView = tableView
         
-        let stackView = StackView()
+        stackView = StackView()
         stackView.orientation = .vertical
         stackView.distribution = .gravityAreas
         addSubview(stackView)
@@ -44,38 +47,26 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-                
+        
         let syntaxTextView = SyntaxTextView()
         syntaxTextView.text = cell.source.value
         syntaxTextView.theme = JimSourceCodeTheme()
         syntaxTextView.delegate = self
         stackView.addArrangedSubview(syntaxTextView)
 
-        // ----------
-        
-//        guard let outputs = cell.outputs else { return }
-//        for output in outputs {
-//            switch output {
-//            case .stream(let output): outputText(output.text)
-//            case .displayData(let output):
-//                if let text = output.data.text {
-//                    outputText(text.value)
-//                }
-//                if let image = output.data.image {
-//                    let imageView = NSImageView(image: image.value)
-//                    stackView.addArrangedSubview(imageView)
-//                }
-//            case .executeResult(let output):
-//                if let text = output.data.text {
-//                    outputText(text.value)
-//                }
-//                if let image = output.data.image {
-//                    let imageView = NSImageView(image: image.value)
-//                    stackView.addArrangedSubview(imageView)
-//                }
-//            case .error(let output): outputText(output.traceback.joined(separator: "\n"))
-//            }
-//        }
+        guard let outputs = cell.outputs else { return }
+        for output in outputs {
+            switch output {
+            case .stream(let output): addText(output.text)
+            case .displayData(let output):
+                if let text = output.data.text { addText(text.value) }
+                if let image = output.data.image { addImage(image.value) }
+            case .executeResult(let output):
+                if let text = output.data.text { addText(text.value) }
+                if let image = output.data.image { addImage(image.value) }
+            case .error(let output): addText(output.traceback.joined(separator: "\n"))
+            }
+        }
     }
     
     func didChangeText(_ syntaxTextView: SyntaxTextView) {

@@ -63,7 +63,7 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 struct JimSourceCodeTheme: SourceCodeTheme {
     public let font = NSFont(name: "Menlo", size: 12)!
-    public let backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0.06)
+    public let backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0.05)
     public func color(for syntaxColorType: SourceCodeTokenType) -> NSColor {
         switch syntaxColorType {
         case .plain: return .black
