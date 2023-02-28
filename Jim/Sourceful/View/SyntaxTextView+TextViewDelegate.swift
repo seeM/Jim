@@ -54,7 +54,7 @@ extension SyntaxTextView: NSTextViewDelegate {
     
     public func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         let event = NSApp.currentEvent
-        if event!.modifierFlags.intersection(.deviceIndependentFlagsMask) == NSEvent.ModifierFlags.shift {
+        if event!.keyCode == 36 && event!.modifierFlags.intersection(.deviceIndependentFlagsMask) == NSEvent.ModifierFlags.shift {
             delegate?.didCommit(self)
             return true
         }
