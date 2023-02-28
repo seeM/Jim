@@ -47,12 +47,45 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
         return view
     }
     
+    let inputLineHeight: CGFloat = {
+        let string = NSAttributedString(string: "A", attributes: [.font: JimSourceCodeTheme.shared.font])
+        return string.size().height
+    }()
+    
+    func textHeight(_ text: String) -> CGFloat {
+        CGFloat(text.components(separatedBy: "\n").count)
+    }
+    
+    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+        let cell = cells[row]
+        let numInputLines = textHeight(cell.source.value)
+        let inputHeight = numInputLines * inputLineHeight
+        var outputHeights = [CGFloat]()
+        if let outputs = cell.outputs {
+            for output in outputs {
+                switch output {
+                case .stream(let output): outputHeights.append(textHeight(output.text))
+                case .displayData(let output):
+                    if let text = output.data.text { outputHeights.append(textHeight(text.value)) }
+                    if let image = output.data.image { outputHeights.append(image.value.size.height) }
+                case .executeResult(let output):
+                    if let text = output.data.text { outputHeights.append(textHeight(text.value)) }
+                    if let image = output.data.image { outputHeights.append(image.value.size.height) }
+                case .error(let output): outputHeights.append(CGFloat(output.traceback.count))
+                }
+            }
+        }
+        let outputHeight = outputHeights.reduce(0, { $0 + $1 })
+        return inputHeight + outputHeight
+    }
+    
     func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
         false
     }
 }
 
 struct JimSourceCodeTheme: SourceCodeTheme {
+    static let shared = JimSourceCodeTheme()
     public let font = NSFont(name: "Menlo", size: 12)!
     public let backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0.05)
     public func color(for syntaxColorType: SourceCodeTokenType) -> NSColor {

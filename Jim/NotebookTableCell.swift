@@ -22,24 +22,59 @@ class OutputTextView: NSTextView {
 }
 
 class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
-    var stackView: NSStackView!
-    var outputStackView: NSStackView!
+    let stackView = StackView()
+    let syntaxTextView = SyntaxTextView()
+    let outputStackView = StackView()
     var cell: Cell!
     var tableView: NSTableView!
     var row: Int!
-    var syntaxTextView: SyntaxTextView!
     
     let lexer = Python3Lexer()
+    
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect); create()
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder); create()
+    }
+    
+    private func create() {
+        stackView.orientation = .vertical
+        stackView.distribution = .gravityAreas
+        
+        addSubview(stackView)
+
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        
+        syntaxTextView.theme = JimSourceCodeTheme.shared
+        syntaxTextView.delegate = self
+        stackView.addArrangedSubview(syntaxTextView)
+        
+        outputStackView.orientation = .vertical
+        outputStackView.distribution = .gravityAreas
+        stackView.addArrangedSubview(outputStackView)
+    }
     
     func lexerForSource(_ source: String) -> Lexer {
         lexer
     }
     
-    func updateOutputs() {
-        // TODO: Add one output at a time, as it streams in
+    func emptyOutputStack() {
         for view in outputStackView.arrangedSubviews {
+            outputStackView.removeArrangedSubview(view)
+            NSLayoutConstraint.deactivate(view.constraints)
             view.removeFromSuperview()
         }
+    }
+    
+    func updateOutputs() {
+        // TODO: Add one output at a time, as it streams in
         guard let outputs = cell.outputs else { return }
         for output in outputs {
             switch output {
@@ -79,33 +114,14 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     }
     
     func update(cell: Cell, row: Int, tableView: NSTableView) {
+        emptyOutputStack()
+//        Task {
         self.cell = cell
         self.row = row
         self.tableView = tableView
-        
-        stackView = StackView()
-        stackView.orientation = .vertical
-        stackView.distribution = .gravityAreas
-        addSubview(stackView)
-        
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        
-        syntaxTextView = SyntaxTextView()
         syntaxTextView.text = cell.source.value
-        syntaxTextView.theme = JimSourceCodeTheme()
-        syntaxTextView.delegate = self
-        stackView.addArrangedSubview(syntaxTextView)
-        
-        outputStackView = StackView()
-        outputStackView.orientation = .vertical
-        outputStackView.distribution = .gravityAreas
-        stackView.addArrangedSubview(outputStackView)
-        
         updateOutputs()
+//        }
     }
     
     func didChangeText(_ syntaxTextView: SyntaxTextView) {
@@ -128,6 +144,7 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
             case .shell: break
             }
             Task.detached { @MainActor in
+                self.emptyOutputStack()
                 self.updateOutputs()
             }
         }

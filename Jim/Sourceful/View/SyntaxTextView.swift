@@ -183,6 +183,7 @@ open class SyntaxTextView: NSView {
         set {
             textView.layer?.isOpaque = true
             textView.string = newValue
+            textView.didChangeText()
             refreshColors()
         }
     }
