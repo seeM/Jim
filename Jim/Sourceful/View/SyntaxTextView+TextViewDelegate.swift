@@ -10,20 +10,9 @@ import Foundation
 import AppKit
 
 extension SyntaxTextView {
-
-	func updateSelectedRange(_ range: NSRange) {
-		textView.selectedRange = range
-			
-		self.textView.scrollRangeToVisible(range)
-		
-		self.delegate?.didChangeSelectedRange(self, selectedRange: range)
-	}
-	
     func didUpdateText() {
-        
         refreshColors()
         delegate?.didChangeText(self)
-        
     }
 }
 
@@ -60,7 +49,6 @@ extension SyntaxTextView: NSTextViewDelegate {
         }
         return false
     }
-    
 }
 
 extension SyntaxTextView {
@@ -132,7 +120,6 @@ extension SyntaxTextView {
             textView.insertText(insertingText, replacementRange: selectedRange)
             ignoreShouldChange = false
             didUpdateText()
-            updateSelectedRange(NSRange(location: location, length: 0))
             return false
         }
 		
