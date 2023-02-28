@@ -8,6 +8,19 @@ class StackView: NSStackView {
     }
 }
 
+class OutputTextView: NSTextView {
+    public override var intrinsicContentSize: NSSize {
+        guard let textContainer = textContainer, let layoutManager = layoutManager else { return super.intrinsicContentSize }
+        layoutManager.ensureLayout(for: textContainer)
+        return NSSize(width: -1, height: layoutManager.usedRect(for: textContainer).size.height)
+    }
+    
+    override func resize(withOldSuperviewSize oldSize: NSSize) {
+        invalidateIntrinsicContentSize()
+        super.resize(withOldSuperviewSize: oldSize)
+    }
+}
+
 class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     var stackView: NSStackView!
     var outputStackView: NSStackView!
@@ -43,8 +56,19 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     
     func addText(_ text: String) {
         let string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines)
-        let textField = NSTextField(wrappingLabelWithString: string)
-        outputStackView.addArrangedSubview(textField)
+        // TODO: Extract class?
+        let textView = OutputTextView()
+        textView.drawsBackground = false
+        textView.minSize = .zero
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.textContainer?.widthTracksTextView = true
+        textView.textContainer?.heightTracksTextView = false
+        textView.textContainer?.size.height = CGFloat.greatestFiniteMagnitude
+        textView.isEditable = false
+        textView.string = string
+        outputStackView.addArrangedSubview(textView)
     }
     
     func addImage(_ image: NSImage) {
