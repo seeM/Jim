@@ -24,10 +24,7 @@ extension SyntaxTextView: NSTextViewDelegate {
     }
 
     open func textDidChange(_ notification: Notification) {
-        guard let textView = notification.object as? NSTextView, textView == self.textView else {
-            return
-        }
-
+        guard let textView = notification.object as? NSTextView, textView == self.textView else { return }
         didUpdateText()
     }
     
@@ -42,10 +39,18 @@ extension SyntaxTextView: NSTextViewDelegate {
     }
     
     public func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
-        let event = NSApp.currentEvent
-        if event!.keyCode == 36 && event!.modifierFlags.intersection(.deviceIndependentFlagsMask) == NSEvent.ModifierFlags.shift {
+        guard let event = NSApp.currentEvent else { return false }
+        if event.keyCode == 36 && event.modifierFlags.intersection(.deviceIndependentFlagsMask) == NSEvent.ModifierFlags.shift {
             delegate?.didCommit(self)
             return true
+        } else if event.keyCode == 125 && event.modifierFlags == .init(rawValue: 10486016) {
+            if textView.selectedRange().location == textView.string.count {
+                delegate?.nextCell(self)
+            }
+        } else if event.keyCode == 126 && event.modifierFlags == .init(rawValue: 10486016) {
+            if textView.selectedRange().location == 0 {
+                delegate?.previousCell(self)
+            }
         }
         return false
     }

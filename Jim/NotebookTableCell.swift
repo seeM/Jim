@@ -27,6 +27,7 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     var cell: Cell!
     var tableView: NSTableView!
     var row: Int!
+    var syntaxTextView: SyntaxTextView!
     
     let lexer = Python3Lexer()
     
@@ -93,7 +94,7 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
-        let syntaxTextView = SyntaxTextView()
+        syntaxTextView = SyntaxTextView()
         syntaxTextView.text = cell.source.value
         syntaxTextView.theme = JimSourceCodeTheme()
         syntaxTextView.delegate = self
@@ -130,5 +131,25 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
                 self.updateOutputs()
             }
         }
+    }
+    
+    private func focusCell(_ row: Int, direction: Int) {
+        let newRow = row + direction
+        let cellView = tableView.view(atColumn: 0, row: newRow, makeIfNecessary: false) as! NotebookTableCell
+        let textView = cellView.syntaxTextView.textView
+        cellView.window?.makeFirstResponder(textView)
+        let location = direction > 0 ? 0 : textView.string.count
+        textView.setSelectedRange(NSRange(location: location, length: 0))
+        tableView.scrollRowToVisible(newRow)
+    }
+    
+    func previousCell(_ syntaxTextView: SyntaxTextView) {
+        if row == 0 { return }
+        focusCell(row, direction: -1)
+    }
+    
+    func nextCell(_ syntaxTextView: SyntaxTextView) {
+        if row == tableView.numberOfRows - 1 { return }
+        focusCell(row, direction: 1)
     }
 }

@@ -19,6 +19,10 @@ public protocol SyntaxTextViewDelegate: AnyObject {
     func textViewDidBeginEditing(_ syntaxTextView: SyntaxTextView)
 
     func lexerForSource(_ source: String) -> Lexer
+    
+    func previousCell(_ syntaxTextView: SyntaxTextView)
+    
+    func nextCell(_ syntaxTextView: SyntaxTextView)
 
 }
 
