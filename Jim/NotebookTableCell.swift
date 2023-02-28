@@ -71,10 +71,5 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     
     func didChangeText(_ syntaxTextView: SyntaxTextView) {
         cell.source.value = syntaxTextView.text
-        // Disable the animation since it causes a bobble on newlines
-        NSAnimationContext.runAnimationGroup { context in
-            context.duration = 0
-            tableView.noteHeightOfRows(withIndexesChanged: .init(integer: row))
-        }
     }
 }
