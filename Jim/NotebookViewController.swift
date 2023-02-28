@@ -13,7 +13,6 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
         }
     }
     var cells = [Cell]()
-    let verticalCellPadding = CGFloat(5)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,21 +37,13 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
         cells.count
     }
     
-//    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-//        let lines = cells[row].source.value.components(separatedBy: "\n").count
-//        // No idea why the `+ 2` is needed, but it is!
-//        // TODO: cache the theme and/or lineHeight?
-//        let lineHeight = NSAttributedString(string: "A", attributes: [.font: JimSourceCodeTheme().font]).size().height + 2
-//        return 2 * verticalCellPadding + lineHeight * CGFloat(lines)// + 300
-//    }
-    
     func tableView(_ tableView: NSTableView, didAdd rowView: NSTableRowView, forRow row: Int) {
         rowView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         guard let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "notebookCell"), owner: self) as? NotebookTableCell else { return nil }
-        view.update(cell: cells[row], row: row, tableView: tableView, verticalPadding: verticalCellPadding)
+        view.update(cell: cells[row], row: row, tableView: tableView)
         return view
     }
     

@@ -10,6 +10,7 @@ class StackView: NSStackView {
 
 class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     var stackView: NSStackView!
+    var outputStackView: NSStackView!
     var cell: Cell!
     var tableView: NSTableView!
     var row: Int!
@@ -20,40 +21,11 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         lexer
     }
     
-    func addText(_ text: String) {
-        let string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines)
-        let textField = NSTextField(wrappingLabelWithString: string)
-        stackView.addArrangedSubview(textField)
-    }
-    
-    func addImage(_ image: NSImage) {
-        let imageView = NSImageView(image: image)
-        imageView.imageAlignment = .alignTopLeft
-        stackView.addArrangedSubview(imageView)
-    }
-    
-    func update(cell: Cell, row: Int, tableView: NSTableView, verticalPadding: CGFloat) {
-        self.cell = cell
-        self.row = row
-        self.tableView = tableView
-        
-        stackView = StackView()
-        stackView.orientation = .vertical
-        stackView.distribution = .gravityAreas
-        addSubview(stackView)
-
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        
-        let syntaxTextView = SyntaxTextView()
-        syntaxTextView.text = cell.source.value
-        syntaxTextView.theme = JimSourceCodeTheme()
-        syntaxTextView.delegate = self
-        stackView.addArrangedSubview(syntaxTextView)
-
+    func updateOutputs() {
+        // TODO: Add one output at a time, as it streams in
+        for view in outputStackView.arrangedSubviews {
+            view.removeFromSuperview()
+        }
         guard let outputs = cell.outputs else { return }
         for output in outputs {
             switch output {
@@ -69,7 +41,70 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         }
     }
     
+    func addText(_ text: String) {
+        let string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines)
+        let textField = NSTextField(wrappingLabelWithString: string)
+        outputStackView.addArrangedSubview(textField)
+    }
+    
+    func addImage(_ image: NSImage) {
+        let imageView = NSImageView(image: image)
+        imageView.imageAlignment = .alignTopLeft
+        outputStackView.addArrangedSubview(imageView)
+    }
+    
+    func update(cell: Cell, row: Int, tableView: NSTableView) {
+        self.cell = cell
+        self.row = row
+        self.tableView = tableView
+        
+        stackView = StackView()
+        stackView.orientation = .vertical
+        stackView.distribution = .gravityAreas
+        addSubview(stackView)
+        
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        
+        let syntaxTextView = SyntaxTextView()
+        syntaxTextView.text = cell.source.value
+        syntaxTextView.theme = JimSourceCodeTheme()
+        syntaxTextView.delegate = self
+        stackView.addArrangedSubview(syntaxTextView)
+        
+        outputStackView = StackView()
+        outputStackView.orientation = .vertical
+        outputStackView.distribution = .gravityAreas
+        stackView.addArrangedSubview(outputStackView)
+        
+        updateOutputs()
+    }
+    
     func didChangeText(_ syntaxTextView: SyntaxTextView) {
         cell.source.value = syntaxTextView.text
+    }
+    
+    func didCommit(_ syntaxTextView: SyntaxTextView) {
+        let jupyter = JupyterService.shared
+        cell.outputs = []
+        jupyter.webSocketSend(code: cell.source.value) { msg in
+            switch msg.channel {
+            case .iopub:
+                switch msg.content {
+                case .stream(let content): self.cell.outputs!.append(.stream(content))
+                case .executeResult(let content): self.cell.outputs!.append(.executeResult(content))
+                case .displayData(let content): self.cell.outputs!.append(.displayData(content))
+                case .error(let content): self.cell.outputs!.append(.error(content))
+                default: break
+                }
+            case .shell: break
+            }
+            Task.detached { @MainActor in
+                self.updateOutputs()
+            }
+        }
     }
 }

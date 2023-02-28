@@ -15,6 +15,8 @@ public protocol SyntaxTextViewDelegate: AnyObject {
     func didChangeText(_ syntaxTextView: SyntaxTextView)
 
     func didChangeSelectedRange(_ syntaxTextView: SyntaxTextView, selectedRange: NSRange)
+    
+    func didCommit(_ syntaxTextView: SyntaxTextView)
 
     func textViewDidBeginEditing(_ syntaxTextView: SyntaxTextView)
 
