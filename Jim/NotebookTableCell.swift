@@ -1,6 +1,11 @@
 import Cocoa
 
 class StackView: NSStackView {
+//    override func draw(_ dirtyRect: NSRect) {
+//        super.draw(dirtyRect)
+//        NSColor.red.setStroke()
+//        NSBezierPath(rect: bounds).stroke()
+//    }
     override func addArrangedSubview(_ view: NSView) {
         super.addArrangedSubview(view)
         view.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
@@ -43,6 +48,7 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     private func create() {
         stackView.orientation = .vertical
         stackView.distribution = .gravityAreas
+        stackView.spacing = 0
         
         addSubview(stackView)
 
@@ -56,6 +62,7 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         syntaxTextView.delegate = self
         stackView.addArrangedSubview(syntaxTextView)
         
+        outputStackView.spacing = 0
         outputStackView.orientation = .vertical
         outputStackView.distribution = .gravityAreas
         stackView.addArrangedSubview(outputStackView)

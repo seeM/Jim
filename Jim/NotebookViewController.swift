@@ -49,34 +49,40 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
     
     let inputLineHeight: CGFloat = {
         let string = NSAttributedString(string: "A", attributes: [.font: JimSourceCodeTheme.shared.font])
+        return string.size().height + 2
+    }()
+    
+    let outputLineHeight: CGFloat = {
+        let string = NSAttributedString(string: "A")
         return string.size().height
     }()
     
-    func textHeight(_ text: String) -> CGFloat {
-        CGFloat(text.components(separatedBy: "\n").count)
+    func textHeight(_ text: String, lineHeight: CGFloat) -> CGFloat {
+        CGFloat(text.components(separatedBy: "\n").count) * lineHeight
     }
     
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let cell = cells[row]
-        let numInputLines = textHeight(cell.source.value)
-        let inputHeight = numInputLines * inputLineHeight
+        let inputVerticalPadding = CGFloat(5)
+        let inputHeight = 2 * inputVerticalPadding + textHeight(cell.source.value, lineHeight: inputLineHeight)
         var outputHeights = [CGFloat]()
         if let outputs = cell.outputs {
             for output in outputs {
                 switch output {
-                case .stream(let output): outputHeights.append(textHeight(output.text))
+                case .stream(let output): outputHeights.append(textHeight(output.text, lineHeight: outputLineHeight))
                 case .displayData(let output):
-                    if let text = output.data.text { outputHeights.append(textHeight(text.value)) }
+                    if let text = output.data.text { outputHeights.append(textHeight(text.value, lineHeight: outputLineHeight)) }
                     if let image = output.data.image { outputHeights.append(image.value.size.height) }
                 case .executeResult(let output):
-                    if let text = output.data.text { outputHeights.append(textHeight(text.value)) }
+                    if let text = output.data.text { outputHeights.append(textHeight(text.value, lineHeight: outputLineHeight)) }
                     if let image = output.data.image { outputHeights.append(image.value.size.height) }
-                case .error(let output): outputHeights.append(CGFloat(output.traceback.count))
+                case .error(let output): outputHeights.append(CGFloat(output.traceback.count)*outputLineHeight)
                 }
             }
         }
         let outputHeight = outputHeights.reduce(0, { $0 + $1 })
-        return inputHeight + outputHeight
+        let height = inputHeight + outputHeight
+        return height
     }
     
     func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
