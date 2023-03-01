@@ -47,12 +47,12 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     
     private func create() {
         stackView.orientation = .vertical
-        stackView.distribution = .gravityAreas
         stackView.spacing = 0
         
         addSubview(stackView)
 
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.setHuggingPriority(.required, for: .vertical)
         stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
@@ -62,9 +62,9 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         syntaxTextView.delegate = self
         stackView.addArrangedSubview(syntaxTextView)
         
+        outputStackView.setHuggingPriority(.required, for: .vertical)
         outputStackView.spacing = 0
         outputStackView.orientation = .vertical
-        outputStackView.distribution = .gravityAreas
         stackView.addArrangedSubview(outputStackView)
     }
     

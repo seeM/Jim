@@ -171,6 +171,7 @@ open class SyntaxTextView: NSView {
         textView.trailingAnchor.constraint(equalTo: textViewContainer.trailingAnchor).isActive = true
         textView.topAnchor.constraint(equalTo: textViewContainer.topAnchor, constant: 5).isActive = true
         textView.bottomAnchor.constraint(equalTo: textViewContainer.bottomAnchor, constant: -5).isActive = true
+        textView.setContentHuggingPriority(.required, for: .vertical)
 
         textView.delegate = self
     }
