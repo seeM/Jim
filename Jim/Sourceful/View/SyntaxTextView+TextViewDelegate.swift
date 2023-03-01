@@ -40,17 +40,44 @@ extension SyntaxTextView: NSTextViewDelegate {
     
     public func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         guard let event = NSApp.currentEvent else { return false }
-        if event.keyCode == 36 && event.modifierFlags.intersection(.deviceIndependentFlagsMask) == NSEvent.ModifierFlags.shift {
+        let modifierFlags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        let isCommand = modifierFlags == [.command, .shift]
+        if event.keyCode == 36 && modifierFlags == .shift {
             delegate?.didCommit(self)
+            delegate?.nextCell(self)
             return true
         } else if event.keyCode == 125 && event.modifierFlags == .init(rawValue: 10486016) {
             if textView.selectedRange().location == textView.string.count {
                 delegate?.nextCell(self)
+                return true
             }
         } else if event.keyCode == 126 && event.modifierFlags == .init(rawValue: 10486016) {
             if textView.selectedRange().location == 0 {
                 delegate?.previousCell(self)
+                return true
             }
+        } else if event.keyCode == 45 && isCommand {
+            delegate?.nextCell(self)
+            return true
+        } else if event.keyCode == 35 && isCommand {
+            delegate?.previousCell(self)
+            return true
+        } else if event.keyCode == 11 && isCommand {
+            delegate?.createCellBelow(self)
+            return true
+        } else if event.keyCode == 0 && isCommand {
+//            print("Create above")
+//            delegate?.createCellAbove(self)
+            return true
+        } else if event.keyCode == 7 && isCommand {
+            delegate?.cutCell(self)
+            return true
+        } else if event.keyCode == 9 && isCommand {
+            delegate?.pasteCellBelow(self)
+            return true
+        } else if event.keyCode == 6 && isCommand {
+            delegate?.undoCutCell(self)
+            return true
         }
         return false
     }

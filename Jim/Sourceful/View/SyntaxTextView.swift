@@ -23,6 +23,14 @@ public protocol SyntaxTextViewDelegate: AnyObject {
     func previousCell(_ syntaxTextView: SyntaxTextView)
     
     func nextCell(_ syntaxTextView: SyntaxTextView)
+    
+    func createCellBelow(_ syntaxTextView: SyntaxTextView)
+    
+    func cutCell(_ syntaxTextView: SyntaxTextView)
+
+    func pasteCellBelow(_ syntaxTextView: SyntaxTextView)
+
+    func undoCutCell(_ syntaxTextView: SyntaxTextView)
 
 }
 
@@ -44,6 +52,11 @@ struct ThemeInfo {
 }
 
 public class HuggingTextView: NSTextView {
+//    public override func draw(_ dirtyRect: NSRect) {
+//        super.draw(dirtyRect)
+//        NSColor.red.setStroke()
+//        NSBezierPath(rect: bounds).stroke()
+//    }
     public override var intrinsicContentSize: NSSize {
         guard let textContainer = textContainer, let layoutManager = layoutManager else { return super.intrinsicContentSize }
         layoutManager.ensureLayout(for: textContainer)
@@ -144,6 +157,7 @@ open class SyntaxTextView: NSView {
         textView.drawsBackground = false
         
         // Infinite max size text view and container + resizable text view allows for horizontal scrolling.
+        // textView.isRichText = false
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.allowsUndo = true
         textView.minSize = NSSize(width: 0, height: scrollView.bounds.height)

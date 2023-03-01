@@ -39,7 +39,6 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect); create()
-        
     }
     
     required init?(coder: NSCoder) {
@@ -176,5 +175,21 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     func nextCell(_ syntaxTextView: SyntaxTextView) {
         if row == tableView.numberOfRows - 1 { return }
         focusCell(row, direction: 1)
+    }
+    
+    func createCellBelow(_ syntaxTextView: SyntaxTextView) {
+        print("Create below")
+    }
+    
+    func cutCell(_ syntaxTextView: SyntaxTextView) {
+        print("Cut")
+    }
+
+    func pasteCellBelow(_ syntaxTextView: SyntaxTextView) {
+        print("Paste below")
+    }
+
+    func undoCutCell(_ syntaxTextView: SyntaxTextView) {
+        print("Undo cut")
     }
 }
