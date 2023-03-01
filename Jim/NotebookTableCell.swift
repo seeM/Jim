@@ -159,7 +159,7 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     
     private func focusCell(_ row: Int, direction: Int) {
         let newRow = row + direction
-        let cellView = tableView.view(atColumn: 0, row: newRow, makeIfNecessary: false) as! NotebookTableCell
+        let cellView = tableView.view(atColumn: 0, row: newRow, makeIfNecessary: true) as! NotebookTableCell
         let textView = cellView.syntaxTextView.textView
         cellView.window?.makeFirstResponder(textView)
         let location = direction > 0 ? 0 : textView.string.count
