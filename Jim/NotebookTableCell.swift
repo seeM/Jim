@@ -33,7 +33,8 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     let outputStackView = StackView()
     var cell: Cell!
     var tableView: NSTableView!
-    var row: Int!
+    var row: Int { tableView.row(for: self) }
+    var notebook: Notebook!
     
     let lexer = Python3Lexer()
     
@@ -120,15 +121,13 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         outputStackView.addArrangedSubview(imageView)
     }
     
-    func update(cell: Cell, row: Int, tableView: NSTableView) {
+    func update(cell: Cell, tableView: NSTableView, notebook: Notebook) {
         emptyOutputStack()
-//        Task {
         self.cell = cell
-        self.row = row
         self.tableView = tableView
+        self.notebook = notebook
         syntaxTextView.text = cell.source.value
         updateOutputs()
-//        }
     }
     
     func didChangeText(_ syntaxTextView: SyntaxTextView) {
@@ -177,8 +176,18 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         focusCell(row, direction: 1)
     }
     
+    private func createCell(at row: Int, withAnimation: NSTableView.AnimationOptions) {
+        let cell = Cell()
+        notebook.content.cells!.insert(cell, at: row)
+        tableView.insertRows(at: .init(integer: row), withAnimation: withAnimation)
+    }
+    
+    func createCellAbove(_ syntaxTextView: SyntaxTextView) {
+        createCell(at: row, withAnimation: .slideUp)
+    }
+    
     func createCellBelow(_ syntaxTextView: SyntaxTextView) {
-        print("Create below")
+        createCell(at: row + 1, withAnimation: .slideDown)
     }
     
     func cutCell(_ syntaxTextView: SyntaxTextView) {

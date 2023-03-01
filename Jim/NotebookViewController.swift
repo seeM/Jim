@@ -7,12 +7,11 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
     var notebook: Notebook? {
         didSet {
             guard let notebook = notebook else { return }
-            cells = notebook.content.cells ?? []
             tableView.reloadData()
             view.window?.title = notebook.name
         }
     }
-    var cells = [Cell]()
+    var cells: [Cell] { notebook?.content.cells ?? []}
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +38,7 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         guard let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "notebookCell"), owner: self) as? NotebookTableCell else { return nil }
-        view.update(cell: cells[row], row: row, tableView: tableView)
+        view.update(cell: cells[row], tableView: tableView, notebook: notebook!)
         return view
     }
     

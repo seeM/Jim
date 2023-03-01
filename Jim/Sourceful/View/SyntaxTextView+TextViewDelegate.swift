@@ -66,8 +66,7 @@ extension SyntaxTextView: NSTextViewDelegate {
             delegate?.createCellBelow(self)
             return true
         } else if event.keyCode == 0 && isCommand {
-//            print("Create above")
-//            delegate?.createCellAbove(self)
+            delegate?.createCellAbove(self)
             return true
         } else if event.keyCode == 7 && isCommand {
             delegate?.cutCell(self)

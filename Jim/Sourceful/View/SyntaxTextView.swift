@@ -24,6 +24,8 @@ public protocol SyntaxTextViewDelegate: AnyObject {
     
     func nextCell(_ syntaxTextView: SyntaxTextView)
     
+    func createCellAbove(_ syntaxTextView: SyntaxTextView)
+    
     func createCellBelow(_ syntaxTextView: SyntaxTextView)
     
     func cutCell(_ syntaxTextView: SyntaxTextView)
