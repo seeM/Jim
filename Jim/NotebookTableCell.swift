@@ -10,6 +10,7 @@ class StackView: NSStackView {
         super.addArrangedSubview(view)
         view.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
         view.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        view.setContentHuggingPriority(.required, for: .vertical)
     }
 }
 
