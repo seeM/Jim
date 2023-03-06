@@ -72,27 +72,7 @@ public class HuggingTextView: NSTextView {
     }
 }
 
-
-public class CellScrollView: NSScrollView {
-    override public init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-    }
-
-    public override func scrollWheel(with event: NSEvent) {
-        if abs(event.deltaX) < abs(event.deltaY) {
-            super.nextResponder?.scrollWheel(with: event)
-        } else {
-            super.scrollWheel(with: event)
-        }
-    }
-    
-    public required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-@IBDesignable
-open class SyntaxTextView: NSView {
+open class SyntaxTextView: NSScrollView {
 
     var previousSelectedRange: NSRange?
 
@@ -135,11 +115,17 @@ open class SyntaxTextView: NSView {
         return HuggingTextView(frame: .zero)
     }
 
-    public let scrollView = CellScrollView()
+    public var scrollView: NSScrollView { self }
+    
+    public override func scrollWheel(with event: NSEvent) {
+        if abs(event.deltaX) < abs(event.deltaY) {
+            super.nextResponder?.scrollWheel(with: event)
+        } else {
+            super.scrollWheel(with: event)
+        }
+    }
 
     private func setup() {
-        addSubview(scrollView)
-        
         scrollView.borderType = .lineBorder
         scrollView.autohidesScrollers = true
         scrollView.hasVerticalScroller = false
