@@ -1,6 +1,6 @@
 import Cocoa
 
-class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
+class NotebookViewController: NSViewController {
     @IBOutlet var tableView: NSTableView!
     
     let jupyter = JupyterService.shared
@@ -12,6 +12,16 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
         }
     }
     var cells: [Cell] { notebook?.content.cells ?? []}
+    
+    let inputLineHeight: CGFloat = {
+        let string = NSAttributedString(string: "A", attributes: [.font: JimSourceCodeTheme.shared.font])
+        return string.size().height + 2
+    }()
+    
+    let outputLineHeight: CGFloat = {
+        let string = NSAttributedString(string: "A")
+        return string.size().height
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,26 +41,20 @@ class NotebookViewController: NSViewController, NSTableViewDelegate, NSTableView
             }
         }
     }
-    
+}
+
+extension NotebookViewController: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
         cells.count
     }
-    
+}
+
+extension NotebookViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         guard let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "notebookCell"), owner: self) as? NotebookTableCell else { return nil }
         view.update(cell: cells[row], tableView: tableView, notebook: notebook!)
         return view
     }
-    
-    let inputLineHeight: CGFloat = {
-        let string = NSAttributedString(string: "A", attributes: [.font: JimSourceCodeTheme.shared.font])
-        return string.size().height + 2
-    }()
-    
-    let outputLineHeight: CGFloat = {
-        let string = NSAttributedString(string: "A")
-        return string.size().height
-    }()
     
     func textHeight(_ text: String, lineHeight: CGFloat) -> CGFloat {
         CGFloat(text.components(separatedBy: "\n").count) * lineHeight

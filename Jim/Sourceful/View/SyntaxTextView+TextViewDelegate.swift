@@ -64,15 +64,18 @@ extension SyntaxTextView: NSTextViewDelegate {
             return true
         } else if event.keyCode == 11 && isCommand {
             delegate?.createCellBelow(self)
+            delegate?.nextCell(self)
             return true
         } else if event.keyCode == 0 && isCommand {
             delegate?.createCellAbove(self)
+            delegate?.previousCell(self)
             return true
         } else if event.keyCode == 7 && isCommand {
             delegate?.cutCell(self)
             return true
         } else if event.keyCode == 9 && isCommand {
             delegate?.pasteCellBelow(self)
+            delegate?.nextCell(self)
             return true
         } else if event.keyCode == 6 && isCommand {
             delegate?.undoCutCell(self)

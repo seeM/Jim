@@ -28,7 +28,6 @@ class OutputTextView: NSTextView {
 }
 
 class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
-    let stackView = StackView()
     let syntaxTextView = SyntaxTextView()
     let outputStackView = StackView()
     var cell: Cell!
@@ -47,41 +46,41 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     }
     
     private func create() {
-        stackView.orientation = .vertical
-        stackView.spacing = 0
-        
-        addSubview(stackView)
+        addSubview(syntaxTextView)
 
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.setHuggingPriority(.required, for: .vertical)
-        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        syntaxTextView.translatesAutoresizingMaskIntoConstraints = false
+        syntaxTextView.setContentHuggingPriority(.required, for: .vertical)
+        syntaxTextView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        syntaxTextView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        syntaxTextView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         
         syntaxTextView.theme = JimSourceCodeTheme.shared
         syntaxTextView.delegate = self
-        stackView.addArrangedSubview(syntaxTextView)
         
+        addSubview(outputStackView)
+
+        outputStackView.translatesAutoresizingMaskIntoConstraints = false
         outputStackView.setHuggingPriority(.required, for: .vertical)
+        outputStackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        outputStackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        outputStackView.topAnchor.constraint(equalTo: syntaxTextView.bottomAnchor).isActive = true
+        outputStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        
         outputStackView.spacing = 0
         outputStackView.orientation = .vertical
-        stackView.addArrangedSubview(outputStackView)
     }
     
     func lexerForSource(_ source: String) -> Lexer {
         lexer
     }
     
-    func emptyOutputStack() {
+    func updateOutputs() {
         for view in outputStackView.arrangedSubviews {
-            outputStackView.removeArrangedSubview(view)
-            NSLayoutConstraint.deactivate(view.constraints)
+//            outputStackView.removeArrangedSubview(view)
+//            NSLayoutConstraint.deactivate(view.constraints)
             view.removeFromSuperview()
         }
-    }
-    
-    func updateOutputs() {
+
         // TODO: Add one output at a time, as it streams in
         guard let outputs = cell.outputs else { return }
         for output in outputs {
@@ -98,6 +97,7 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         }
     }
     
+    // TODO: make reuseable views?
     func addText(_ text: String) {
         let string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines)
         // TODO: Extract class?
@@ -122,7 +122,6 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
     }
     
     func update(cell: Cell, tableView: NSTableView, notebook: Notebook) {
-        emptyOutputStack()
         self.cell = cell
         self.tableView = tableView
         self.notebook = notebook
@@ -150,7 +149,6 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
             case .shell: break
             }
             Task.detached { @MainActor in
-                self.emptyOutputStack()
                 self.updateOutputs()
             }
         }
@@ -176,18 +174,18 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         focusCell(row, direction: 1)
     }
     
-    private func createCell(at row: Int, withAnimation: NSTableView.AnimationOptions) {
+    private func createCell(at row: Int) {
         let cell = Cell()
         notebook.content.cells!.insert(cell, at: row)
-        tableView.insertRows(at: .init(integer: row), withAnimation: withAnimation)
+        tableView.insertRows(at: .init(integer: row))
     }
     
     func createCellAbove(_ syntaxTextView: SyntaxTextView) {
-        createCell(at: row, withAnimation: .slideUp)
+        createCell(at: row)
     }
     
     func createCellBelow(_ syntaxTextView: SyntaxTextView) {
-        createCell(at: row + 1, withAnimation: .slideDown)
+        createCell(at: row + 1)
     }
     
     func cutCell(_ syntaxTextView: SyntaxTextView) {
