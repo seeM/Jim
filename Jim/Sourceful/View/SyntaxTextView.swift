@@ -34,6 +34,7 @@ public protocol SyntaxTextViewDelegate: AnyObject {
 
     func undoCutCell(_ syntaxTextView: SyntaxTextView)
 
+    func didBecomeFirstResponder(_ syntaxTextView: SyntaxTextView)
 }
 
 // Provide default empty implementations of methods that are optional.
@@ -69,6 +70,12 @@ public class HuggingTextView: NSTextView {
         super.didChangeText()
         invalidateIntrinsicContentSize()
         enclosingScrollView?.invalidateIntrinsicContentSize()
+    }
+    
+    public override func becomeFirstResponder() -> Bool {
+        let syntaxTextView = enclosingScrollView as! SyntaxTextView
+        syntaxTextView.delegate?.didBecomeFirstResponder(syntaxTextView)
+        return super.becomeFirstResponder()
     }
 }
 

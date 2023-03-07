@@ -27,7 +27,7 @@ class OutputTextView: NSTextView {
     }
 }
 
-class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
+class NotebookTableCell: NSTableCellView {
     let syntaxTextView = SyntaxTextView()
     let outputStackView = StackView()
     var cell: Cell!
@@ -68,10 +68,6 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         
         outputStackView.spacing = 0
         outputStackView.orientation = .vertical
-    }
-    
-    func lexerForSource(_ source: String) -> Lexer {
-        lexer
     }
     
     func updateOutputs() {
@@ -127,6 +123,12 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
         self.notebook = notebook
         syntaxTextView.text = cell.source.value
         updateOutputs()
+    }
+}
+
+extension NotebookTableCell: SyntaxTextViewDelegate {
+    func lexerForSource(_ source: String) -> Lexer {
+        lexer
     }
     
     func didChangeText(_ syntaxTextView: SyntaxTextView) {
@@ -198,5 +200,9 @@ class NotebookTableCell: NSTableCellView, SyntaxTextViewDelegate {
 
     func undoCutCell(_ syntaxTextView: SyntaxTextView) {
         print("Undo cut")
+    }
+    
+    func didBecomeFirstResponder(_ syntaxTextView: SyntaxTextView) {
+        tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
     }
 }

@@ -8,6 +8,7 @@ class NotebookViewController: NSViewController {
         didSet {
             guard let notebook = notebook else { return }
             tableView.reloadData()
+            view.window?.makeFirstResponder(tableView)
             view.window?.title = notebook.name
         }
     }
@@ -84,8 +85,6 @@ extension NotebookViewController: NSTableViewDelegate {
         return height
     }
     
-    func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-        false
     }
 }
 
