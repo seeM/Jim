@@ -3,6 +3,7 @@ import Cocoa
 protocol NotebookTableViewDelegate: AnyObject {
     func createCell(_ tableView: NotebookTableView, at row: Int, cell: Cell)
     func cutCell()
+    func copyCell()
     func pasteCell(at row: Int)
     func undoCutCell()
     func executeCell(_ tableView: NotebookTableView)
@@ -74,6 +75,9 @@ class NotebookTableView: NSTableView {
             return
         } else if event.keyCode == 6 {
             notebookDelegate?.undoCutCell()
+            return
+        } else if event.keyCode == 8 {
+            notebookDelegate?.copyCell()
             return
         } else {
             print(event.keyCode)
@@ -200,6 +204,10 @@ extension NotebookViewController: NotebookTableViewDelegate {
             createCell(tableView, at: row)
         }
         tableView.focusCell(at: row)
+    }
+    
+    func copyCell() {
+        previouslyRemovedCell = notebook!.content.cells![tableView.selectedRow]
     }
     
     func pasteCell(at row: Int) {
