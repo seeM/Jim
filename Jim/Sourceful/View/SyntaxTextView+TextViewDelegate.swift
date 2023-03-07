@@ -43,7 +43,6 @@ extension SyntaxTextView: NSTextViewDelegate {
         let modifierFlags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
         if event.keyCode == 36 && modifierFlags == .shift {
             delegate?.didCommit(self)
-            delegate?.nextCell(self)
             return true
         } else if event.keyCode == 125 && event.modifierFlags == .init(rawValue: 10486016) {
             if textView.selectedRange().location == textView.string.count {

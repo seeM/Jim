@@ -31,7 +31,7 @@ class NotebookTableCell: NSTableCellView {
     let syntaxTextView = SyntaxTextView()
     let outputStackView = StackView()
     var cell: Cell!
-    var tableView: NSTableView!
+    var tableView: NotebookTableView!
     var row: Int { tableView.row(for: self) }
     var notebook: Notebook!
     
@@ -117,25 +117,15 @@ class NotebookTableCell: NSTableCellView {
         outputStackView.addArrangedSubview(imageView)
     }
     
-    func update(cell: Cell, tableView: NSTableView, notebook: Notebook) {
+    func update(cell: Cell, tableView: NotebookTableView, notebook: Notebook) {
         self.cell = cell
         self.tableView = tableView
         self.notebook = notebook
         syntaxTextView.text = cell.source.value
         updateOutputs()
     }
-}
-
-extension NotebookTableCell: SyntaxTextViewDelegate {
-    func lexerForSource(_ source: String) -> Lexer {
-        lexer
-    }
     
-    func didChangeText(_ syntaxTextView: SyntaxTextView) {
-        cell.source.value = syntaxTextView.text
-    }
-    
-    func didCommit(_ syntaxTextView: SyntaxTextView) {
+    func runCell() {
         let jupyter = JupyterService.shared
         cell.outputs = []
         jupyter.webSocketSend(code: cell.source.value) { msg in
@@ -155,39 +145,34 @@ extension NotebookTableCell: SyntaxTextViewDelegate {
             }
         }
     }
+}
+
+extension NotebookTableCell: SyntaxTextViewDelegate {
+    func lexerForSource(_ source: String) -> Lexer {
+        lexer
+    }
     
-    private func focusCell(_ row: Int, direction: Int) {
-        let newRow = row + direction
-        let cellView = tableView.view(atColumn: 0, row: newRow, makeIfNecessary: true) as! NotebookTableCell
-        let textView = cellView.syntaxTextView.textView
-        cellView.window?.makeFirstResponder(textView)
-        let location = direction > 0 ? 0 : textView.string.count
-        textView.setSelectedRange(NSRange(location: location, length: 0))
-        tableView.scrollRowToVisible(newRow)
+    func didChangeText(_ syntaxTextView: SyntaxTextView) {
+        cell.source.value = syntaxTextView.text
+    }
+    
+    func didCommit(_ syntaxTextView: SyntaxTextView) {
+        endEditMode(syntaxTextView)
+        tableView.runCellSelectBelow()
     }
     
     func previousCell(_ syntaxTextView: SyntaxTextView) {
         if row == 0 { return }
-        focusCell(row, direction: -1)
+        tableView.selectCellAbove()
+        let textView = tableView.selectedCellView!.syntaxTextView.textView
+        textView.setSelectedRange(NSRange(location: textView.string.count, length: 0))
     }
     
     func nextCell(_ syntaxTextView: SyntaxTextView) {
         if row == tableView.numberOfRows - 1 { return }
-        focusCell(row, direction: 1)
-    }
-    
-    private func createCell(at row: Int) {
-        let cell = Cell()
-        notebook.content.cells!.insert(cell, at: row)
-        tableView.insertRows(at: .init(integer: row))
-    }
-    
-    func createCellAbove(_ syntaxTextView: SyntaxTextView) {
-        createCell(at: row)
-    }
-    
-    func createCellBelow(_ syntaxTextView: SyntaxTextView) {
-        createCell(at: row + 1)
+        tableView.selectCellBelow()
+        let textView = tableView.selectedCellView!.syntaxTextView.textView
+        textView.setSelectedRange(NSRange(location: 0, length: 0))
     }
     
     func didBecomeFirstResponder(_ syntaxTextView: SyntaxTextView) {
