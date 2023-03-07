@@ -1,7 +1,103 @@
 import Cocoa
 
+protocol NotebookTableViewDelegate: AnyObject {
+    func createCell(_ tableView: NotebookTableView, at row: Int, cell: Cell)
+    func cutCell()
+    func pasteCell(at row: Int)
+    func undoCutCell()
+    func executeCell(_ tableView: NotebookTableView)
+}
+
+extension NotebookTableViewDelegate {
+    func createCell(_ tableView: NotebookTableView, at row: Int, cell: Cell = Cell()) {
+        createCell(tableView, at: row, cell: cell)
+    }
+}
+
+class NotebookTableView: NSTableView {
+    var notebookDelegate: NotebookTableViewDelegate?
+    
+    func focusCell(at tryRow: Int) {
+        let row = tryRow < 0 ? 0 : tryRow >= numberOfRows ? numberOfRows - 1: tryRow
+        selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+        scrollRowToVisible(row)
+    }
+    
+    private func enterEditMode(at row: Int) {
+        let cellView = view(atColumn: selectedColumn, row: row, makeIfNecessary: false) as! NotebookTableCell
+        let textView = cellView.syntaxTextView.textView
+        scrollRowToVisible(row)
+        window?.makeFirstResponder(cellView.syntaxTextView.textView)
+        textView.scrollRangeToVisible(textView.selectedRange())
+    }
+    
+    override func keyDown(with event: NSEvent) {
+        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        if event.keyCode == 36 && flags == .shift {
+            notebookDelegate?.executeCell(self)
+            let row = selectedRow + 1
+            if row == numberOfRows {
+                notebookDelegate?.createCell(self, at: row)
+                enterEditMode(at: row)
+            } else {
+                focusCell(at: row)
+            }
+            return
+        } else if event.keyCode == 36 {
+            enterEditMode(at: selectedRow)
+            return
+        } else if event.keyCode == 40 {  // k
+            focusCell(at: selectedRow - 1)
+            return
+        } else if event.keyCode == 38 {  // j
+            focusCell(at: selectedRow + 1)
+            return
+        } else if event.keyCode == 0 {   // a
+            notebookDelegate?.createCell(self, at: selectedRow)
+            focusCell(at: selectedRow - 1)
+            return
+        } else if event.keyCode == 11 {  // b
+            let row = selectedRow + 1
+            notebookDelegate?.createCell(self, at: row)
+            focusCell(at: row)
+            return
+        } else if event.keyCode == 7 {
+            notebookDelegate?.cutCell()
+            return
+        } else if event.keyCode == 9 && flags == .shift {
+            notebookDelegate?.pasteCell(at: selectedRow)
+            focusCell(at: selectedRow - 1)
+            return
+        } else if event.keyCode == 9 {
+            notebookDelegate?.pasteCell(at: selectedRow + 1)
+            focusCell(at: selectedRow + 1)
+            return
+        } else if event.keyCode == 6 {
+            notebookDelegate?.undoCutCell()
+            return
+        } else {
+            print(event.keyCode)
+        }
+        
+        super.keyDown(with: event)
+    }
+}
+
+class NotebookTableRowView: NSTableRowView {
+//    override func drawSelection(in dirtyRect: NSRect) {
+//        if self.selectionHighlightStyle != .none {
+//            let selectionRect = NSInsetRect(self.bounds, 2.5, 2.5)
+//            NSColor(calibratedWhite: 0.65, alpha: 1).setStroke()
+//            NSColor(calibratedWhite: 0.82, alpha: 1).setFill()
+//            let selectionPath = NSBezierPath.init(roundedRect: selectionRect, xRadius: 6, yRadius: 6)
+//            selectionPath.fill()
+//            selectionPath.stroke()
+//        }
+//    }
+}
+
 class NotebookViewController: NSViewController {
-    @IBOutlet var tableView: NSTableView!
+    @IBOutlet var tableView: NotebookTableView!
     
     let jupyter = JupyterService.shared
     var notebook: Notebook? {
@@ -13,6 +109,9 @@ class NotebookViewController: NSViewController {
         }
     }
     var cells: [Cell] { notebook?.content.cells ?? []}
+    
+    var previouslyRemovedCell: Cell?
+    var previouslyRemovedRow: Int?
     
     let inputLineHeight: CGFloat = {
         let string = NSAttributedString(string: "A", attributes: [.font: JimSourceCodeTheme.shared.font])
@@ -26,6 +125,7 @@ class NotebookViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.notebookDelegate = self
         tableView.usesAutomaticRowHeights = true
     }
     
@@ -85,6 +185,43 @@ extension NotebookViewController: NSTableViewDelegate {
         return height
     }
     
+    func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+        NotebookTableRowView()
+    }
+}
+
+extension NotebookViewController: NotebookTableViewDelegate {
+    func cutCell() {
+        let row = tableView.selectedRow
+        previouslyRemovedRow = row
+        previouslyRemovedCell = notebook!.content.cells!.remove(at: row)
+        tableView.removeRows(at: .init(integer: row))
+        if tableView.numberOfRows == 0 {
+            createCell(tableView, at: row)
+        }
+        tableView.focusCell(at: row)
+    }
+    
+    func pasteCell(at row: Int) {
+        guard let cell = previouslyRemovedCell else { return }
+        createCell(tableView, at: row, cell: cell)
+    }
+    
+    func undoCutCell() {
+        guard let cell = previouslyRemovedCell,
+              let row = previouslyRemovedRow else { return }
+        createCell(tableView, at: row, cell: cell)
+    }
+    
+    func createCell(_ tableView: NotebookTableView, at row: Int, cell: Cell = Cell()) {
+        notebook!.content.cells!.insert(cell, at: row)
+        tableView.insertRows(at: .init(integer: row))
+    }
+    
+    func executeCell(_ tableView: NotebookTableView) {
+        let cellView = tableView.view(atColumn: tableView.selectedColumn, row: tableView.selectedRow, makeIfNecessary: false) as! NotebookTableCell
+        let syntaxTextView = cellView.syntaxTextView
+        cellView.didCommit(syntaxTextView)
     }
 }
 

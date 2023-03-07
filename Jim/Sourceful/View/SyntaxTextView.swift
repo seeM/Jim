@@ -23,18 +23,10 @@ public protocol SyntaxTextViewDelegate: AnyObject {
     func previousCell(_ syntaxTextView: SyntaxTextView)
     
     func nextCell(_ syntaxTextView: SyntaxTextView)
-    
-    func createCellAbove(_ syntaxTextView: SyntaxTextView)
-    
-    func createCellBelow(_ syntaxTextView: SyntaxTextView)
-    
-    func cutCell(_ syntaxTextView: SyntaxTextView)
-
-    func pasteCellBelow(_ syntaxTextView: SyntaxTextView)
-
-    func undoCutCell(_ syntaxTextView: SyntaxTextView)
 
     func didBecomeFirstResponder(_ syntaxTextView: SyntaxTextView)
+    
+    func endEditMode(_ syntaxTextView: SyntaxTextView)
 }
 
 // Provide default empty implementations of methods that are optional.

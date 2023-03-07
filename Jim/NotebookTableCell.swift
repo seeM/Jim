@@ -190,19 +190,11 @@ extension NotebookTableCell: SyntaxTextViewDelegate {
         createCell(at: row + 1)
     }
     
-    func cutCell(_ syntaxTextView: SyntaxTextView) {
-        print("Cut")
-    }
-
-    func pasteCellBelow(_ syntaxTextView: SyntaxTextView) {
-        print("Paste below")
-    }
-
-    func undoCutCell(_ syntaxTextView: SyntaxTextView) {
-        print("Undo cut")
-    }
-    
     func didBecomeFirstResponder(_ syntaxTextView: SyntaxTextView) {
         tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+    }
+    
+    func endEditMode(_ syntaxTextView: SyntaxTextView) {
+        window?.makeFirstResponder(tableView)
     }
 }

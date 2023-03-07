@@ -41,7 +41,6 @@ extension SyntaxTextView: NSTextViewDelegate {
     public func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         guard let event = NSApp.currentEvent else { return false }
         let modifierFlags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-        let isCommand = modifierFlags == [.command, .shift]
         if event.keyCode == 36 && modifierFlags == .shift {
             delegate?.didCommit(self)
             delegate?.nextCell(self)
@@ -56,29 +55,8 @@ extension SyntaxTextView: NSTextViewDelegate {
                 delegate?.previousCell(self)
                 return true
             }
-        } else if event.keyCode == 45 && isCommand {
-            delegate?.nextCell(self)
-            return true
-        } else if event.keyCode == 35 && isCommand {
-            delegate?.previousCell(self)
-            return true
-        } else if event.keyCode == 11 && isCommand {
-            delegate?.createCellBelow(self)
-            delegate?.nextCell(self)
-            return true
-        } else if event.keyCode == 0 && isCommand {
-            delegate?.createCellAbove(self)
-            delegate?.previousCell(self)
-            return true
-        } else if event.keyCode == 7 && isCommand {
-            delegate?.cutCell(self)
-            return true
-        } else if event.keyCode == 9 && isCommand {
-            delegate?.pasteCellBelow(self)
-            delegate?.nextCell(self)
-            return true
-        } else if event.keyCode == 6 && isCommand {
-            delegate?.undoCutCell(self)
+        } else if event.keyCode == 53 {
+            delegate?.endEditMode(self)
             return true
         }
         return false
