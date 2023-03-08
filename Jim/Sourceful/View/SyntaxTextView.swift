@@ -65,7 +65,6 @@ public class HuggingTextView: NSTextView {
     }
     
     public override func becomeFirstResponder() -> Bool {
-        scrollRangeToVisible(selectedRange())
         let syntaxTextView = enclosingScrollView as! SyntaxTextView
         syntaxTextView.delegate?.didBecomeFirstResponder(syntaxTextView)
         return super.becomeFirstResponder()

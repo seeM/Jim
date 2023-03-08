@@ -29,7 +29,9 @@ class NotebookTableView: NSTableView {
     }
     
     func enterEditMode() {
-        window?.makeFirstResponder(selectedCellView!.syntaxTextView.textView)
+        let textView = selectedCellView!.syntaxTextView.textView
+        window?.makeFirstResponder(textView)
+        textView.scrollRangeToVisible(textView.selectedRange())
     }
     
     func insertCell(at row: Int, cell: Cell = Cell()) {
