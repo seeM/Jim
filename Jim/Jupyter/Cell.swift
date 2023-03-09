@@ -98,12 +98,14 @@ struct ExecuteResultOutput: Codable, Hashable {
 }
 
 struct OutputData: Codable, Hashable {
-    let text: StringOrArray?
+    let plainText: StringOrArray?
+    let markdownText: StringOrArray?
     let widgetView: WidgetView?
     let image: Base64Image?
     
     enum CodingKeys: String, CodingKey {
-        case text = "text/plain"
+        case plainText = "text/plain"
+        case markdownText = "text/markdown"
         case image = "image/png"
         case widgetView = "application/vnd.jupyter.widget-view+json"
     }
