@@ -4,6 +4,7 @@ protocol NotebookTableViewDelegate: AnyObject {
     func insertCell(_ cell: Cell, at row: Int)
     func removeCell(at row: Int) -> Cell
     func selectedCell() -> Cell
+    func save()
 }
 
 class NotebookTableView: NSTableView {
@@ -125,6 +126,8 @@ class NotebookTableView: NSTableView {
             undoCellDeletion()
         } else if event.keyCode == 8 {  // c
             copyCell()
+        } else if event.keyCode == 1 && flags == .command { // cmd + s
+            notebookDelegate?.save()
         } else {
             print(event.keyCode)
             super.keyDown(with: event)
@@ -258,6 +261,15 @@ extension NotebookViewController: NotebookTableViewDelegate {
     
     func selectedCell() -> Cell {
         notebook!.content.cells![tableView.selectedRow]
+    }
+    
+    func save() {
+        Task {
+            switch await jupyter.updateContent(notebook!.path, content: notebook!) {
+            case .success(_): break  // TODO: update UI
+            case .failure(let error): print("Failed to save notebook, error:", error)  // TODO: show alert
+            }
+        }
     }
 }
 
