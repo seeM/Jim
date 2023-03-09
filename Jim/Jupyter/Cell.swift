@@ -1,3 +1,4 @@
+import AnyCodable
 import Foundation
 
 class Cell: Codable, Identifiable {
@@ -5,12 +6,16 @@ class Cell: Codable, Identifiable {
     let cellType: CellType
     var source: StringOrArray
     var outputs: [Output]?
+    let metadata: [String: AnyCodable]?
+    let executionCount: Int?
     
-    init(id: String? = nil, cellType: CellType = .code, source: StringOrArray = StringOrArray(""), outputs: [Output]? = []) {
+    init(id: String? = nil, cellType: CellType = .code, source: StringOrArray = StringOrArray(""), outputs: [Output]? = [], metadata: [String: AnyCodable]? = nil) {
         self.id = id ?? UUID().uuidString
         self.cellType = cellType
         self.source = source
         self.outputs = outputs
+        self.metadata = metadata
+        self.executionCount = nil  // TODO
     }
     
     convenience init(from cell: Cell) {
@@ -23,6 +28,30 @@ class Cell: Codable, Identifiable {
         self.cellType = try container.decode(CellType.self, forKey: .cellType)
         self.source = try container.decode(StringOrArray.self, forKey: .source)
         self.outputs = try container.decodeIfPresent([Output].self, forKey: .outputs)
+        self.metadata = try container.decodeIfPresent([String: AnyCodable].self, forKey: .metadata)
+        self.executionCount = try container.decodeIfPresent(Int.self, forKey: .executionCount)
+    }
+    
+    enum CodingKeys: CodingKey {
+        case id
+        case cellType
+        case source
+        case outputs
+        case metadata
+        case executionCount
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.cellType, forKey: .cellType)
+        try container.encode(self.source, forKey: .source)
+        try container.encodeIfPresent(self.outputs, forKey: .outputs)
+        try container.encodeIfPresent(self.metadata, forKey: .metadata)
+        // TODO: Make Cell an enum?
+        switch self.cellType {
+        case .code: try container.encode(self.executionCount, forKey: .executionCount)
+        default: break
+        }
     }
 }
 
@@ -54,21 +83,12 @@ enum Output: Codable, Hashable, Identifiable {
     }
     
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
         var typeContainer = encoder.singleValueContainer()
         switch self {
-        case .stream(let output):
-            try typeContainer.encode(output)
-            try container.encode(OutputType.stream, forKey: .outputType)
-        case .displayData(let output):
-            try typeContainer.encode(output)
-            try container.encode(OutputType.displayData, forKey: .outputType)
-        case .executeResult(let output):
-            try typeContainer.encode(output)
-            try container.encode(OutputType.executeResult, forKey: .outputType)
-        case .error(let output):
-            try typeContainer.encode(output)
-            try container.encode(OutputType.error, forKey: .outputType)
+        case .stream(let output): try typeContainer.encode(output)
+        case .displayData(let output): try typeContainer.encode(output)
+        case .executeResult(let output): try typeContainer.encode(output)
+        case .error(let output): try typeContainer.encode(output)
         }
     }
 }
@@ -81,6 +101,7 @@ enum OutputType: String, Codable {
 }
 
 struct StreamOutput: Codable, Hashable {
+    let outputType: OutputType
     let name: StreamName
     let text: String
 }
@@ -90,11 +111,39 @@ enum StreamName: String, Codable {
 }
 
 struct DisplayDataOutput: Codable, Hashable {
+    let outputType: OutputType
     let data: OutputData
+    var metadata: [String: AnyCodable]?
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.outputType, forKey: .outputType)
+        try container.encode(self.data, forKey: .data)
+        if let metadata {
+            try container.encode(metadata, forKey: .metadata)
+        } else {
+            try container.encode(AnyCodable([:]), forKey: .metadata)
+        }
+    }
 }
 
 struct ExecuteResultOutput: Codable, Hashable {
+    let outputType: OutputType
     let data: OutputData
+    var metadata: [String: AnyCodable]?
+    let executionCount: Int?
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.outputType, forKey: .outputType)
+        try container.encode(self.data, forKey: .data)
+        if let metadata {
+            try container.encode(metadata, forKey: .metadata)
+        } else {
+            try container.encode(AnyCodable([:]), forKey: .metadata)
+        }
+        try container.encode(executionCount, forKey: .executionCount)
+    }
 }
 
 struct OutputData: Codable, Hashable {
@@ -118,6 +167,7 @@ struct WidgetView: Codable, Hashable {
 }
 
 struct ErrorOutput: Codable, Hashable {
+    let outputType: OutputType
     let traceback: [String]
     let ename: String
     let evalue: String
