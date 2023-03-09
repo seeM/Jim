@@ -17,4 +17,13 @@ struct StringOrArray: Codable, Hashable, Equatable {
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "StringOrArray value cannot be decoded")
         }
     }
+    
+    enum CodingKeys: CodingKey {
+        case value
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(self.value)
+    }
 }
