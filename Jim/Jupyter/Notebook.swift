@@ -16,30 +16,30 @@ class NotebookContent: Codable {
     var cells: [Cell]?
     let nbformat: Int
     let nbformatMinor: Int
-    let metadata: NotebookMetadata
+    let metadata: [String: AnyCodable]
 }
 
-struct NotebookMetadata: Codable {
-    let widgets: NotebookMetadataWidgets?
-}
-
-struct NotebookMetadataWidgets: Codable {
-    let widgetState: NotebookMetadataWidgetState
-    
-    enum CodingKeys: String, CodingKey {
-        case widgetState = "application/vnd.jupyter.widget-state+json"
-    }
-}
-
-struct NotebookMetadataWidgetState: Codable {
-    let state: [String: WidgetModel]
-    let versionMajor: Int
-    let versionMinor: Int
-}
-
-struct WidgetModel: Codable {
-    let modelModule: String
-    let modelModuleVersion: String
-    let modelName: String
-    let state: AnyCodable
-}
+//struct NotebookMetadata: Codable {
+//    let widgets: NotebookMetadataWidgets?
+//}
+//
+//struct NotebookMetadataWidgets: Codable {
+//    let widgetState: NotebookMetadataWidgetState
+//
+//    enum CodingKeys: String, CodingKey {
+//        case widgetState = "application/vnd.jupyter.widget-state+json"
+//    }
+//}
+//
+//struct NotebookMetadataWidgetState: Codable {
+//    let state: [String: WidgetModel]
+//    let versionMajor: Int
+//    let versionMinor: Int
+//}
+//
+//struct WidgetModel: Codable {
+//    let modelModule: String
+//    let modelModuleVersion: String
+//    let modelName: String
+//    let state: AnyCodable
+//}
