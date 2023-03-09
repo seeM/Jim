@@ -74,6 +74,7 @@ public class HuggingTextView: NSTextView {
 open class SyntaxTextView: NSScrollView {
 
     var previousSelectedRange: NSRange?
+    var uniqueUndoManager: UndoManager?
 
     private var textViewSelectedRangeObserver: NSKeyValueObservation?
 

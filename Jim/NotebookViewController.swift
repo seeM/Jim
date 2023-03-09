@@ -87,12 +87,12 @@ class NotebookTableView: NSTableView {
     
     func pasteCellAbove() {
         guard let cell = previouslyRemovedCell else { return }
-        insertCellAbove(cell: cell)
+        insertCellAbove(cell: Cell(from: cell))
     }
     
     func pasteCellBelow() {
         guard let cell = previouslyRemovedCell else { return }
-        insertCellBelow(cell: cell)
+        insertCellBelow(cell: Cell(from: cell))
     }
     
     func undoCellDeletion() {
@@ -158,6 +158,7 @@ class NotebookViewController: NSViewController {
         }
     }
     var cells: [Cell] { notebook?.content.cells ?? []}
+    var undoManagers = [String: UndoManager]()
     
     let inputLineHeight: CGFloat = {
         let string = NSAttributedString(string: "A", attributes: [.font: JimSourceCodeTheme.shared.font])
@@ -199,7 +200,15 @@ extension NotebookViewController: NSTableViewDataSource {
 extension NotebookViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         guard let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "notebookCell"), owner: self) as? NotebookTableCell else { return nil }
-        view.update(cell: cells[row], tableView: tableView as! NotebookTableView, notebook: notebook!)
+        let cell = cells[row]
+        
+        var undoManager: UndoManager! = undoManagers[cell.id]
+        if undoManager == nil {
+            undoManager = UndoManager()
+            undoManagers[cell.id] = undoManager
+        }
+        
+        view.update(cell: cells[row], tableView: tableView as! NotebookTableView, notebook: notebook!, undoManager: undoManager)
         return view
     }
     

@@ -117,10 +117,11 @@ class NotebookTableCell: NSTableCellView {
         outputStackView.addArrangedSubview(imageView)
     }
     
-    func update(cell: Cell, tableView: NotebookTableView, notebook: Notebook) {
+    func update(cell: Cell, tableView: NotebookTableView, notebook: Notebook, undoManager: UndoManager) {
         self.cell = cell
         self.tableView = tableView
         self.notebook = notebook
+        syntaxTextView.uniqueUndoManager = undoManager
         syntaxTextView.text = cell.source.value
         updateOutputs()
     }

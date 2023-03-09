@@ -60,6 +60,10 @@ extension SyntaxTextView: NSTextViewDelegate {
         }
         return false
     }
+    
+    public func undoManager(for view: NSTextView) -> UndoManager? {
+        uniqueUndoManager
+    }
 }
 
 extension SyntaxTextView {
