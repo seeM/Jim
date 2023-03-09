@@ -169,7 +169,6 @@ class JupyterService {
                 print("Error: \(error)")
                 return
             }
-//            print("Sent WebSocket message: \(msg)")
         }
     }
 }
