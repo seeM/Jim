@@ -40,22 +40,25 @@ extension SyntaxTextView: NSTextViewDelegate {
     
     public func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         guard let event = NSApp.currentEvent else { return false }
-        let modifierFlags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-        if event.keyCode == 36 && modifierFlags == .shift {
+        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        if event.keyCode == 36 && flags == .shift {
             delegate?.didCommit(self)
             return true
-        } else if event.keyCode == 125 && event.modifierFlags == .init(rawValue: 10486016) {
+        } else if event.keyCode == 125 {
             if textView.selectedRange().location == textView.string.count {
                 delegate?.nextCell(self)
                 return true
             }
-        } else if event.keyCode == 126 && event.modifierFlags == .init(rawValue: 10486016) {
+        } else if event.keyCode == 126 {
             if textView.selectedRange().location == 0 {
                 delegate?.previousCell(self)
                 return true
             }
         } else if event.keyCode == 53 {
             delegate?.endEditMode(self)
+            return true
+        } else if event.keyCode == 1 && flags == .command {
+            delegate?.save()
             return true
         }
         return false

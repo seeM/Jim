@@ -27,6 +27,8 @@ public protocol SyntaxTextViewDelegate: AnyObject {
     func didBecomeFirstResponder(_ syntaxTextView: SyntaxTextView)
     
     func endEditMode(_ syntaxTextView: SyntaxTextView)
+    
+    func save()
 }
 
 // Provide default empty implementations of methods that are optional.

@@ -152,7 +152,7 @@ class NotebookViewController: NSViewController {
     @IBOutlet var tableView: NotebookTableView!
     
     let jupyter = JupyterService.shared
-    var notebook: Notebook? {
+    var notebook: Notebook! {
         didSet {
             guard let notebook = notebook else { return }
             tableView.reloadData()
@@ -211,7 +211,7 @@ extension NotebookViewController: NSTableViewDelegate {
             undoManagers[cell.id] = undoManager
         }
         
-        view.update(cell: cells[row], tableView: tableView as! NotebookTableView, notebook: notebook!, undoManager: undoManager)
+        view.update(cell: cells[row], tableView: tableView as! NotebookTableView, notebook: notebook, undoManager: undoManager)
         return view
     }
     
@@ -252,21 +252,22 @@ extension NotebookViewController: NSTableViewDelegate {
 
 extension NotebookViewController: NotebookTableViewDelegate {
     func insertCell(_ cell: Cell, at row: Int) {
-        notebook!.content.cells!.insert(cell, at: row)
+        notebook.content.cells.insert(cell, at: row)
     }
     
     func removeCell(at row: Int) -> Cell {
-        notebook!.content.cells!.remove(at: row)
+        notebook.content.cells.remove(at: row)
     }
     
     func selectedCell() -> Cell {
-        notebook!.content.cells![tableView.selectedRow]
+        notebook.content.cells[tableView.selectedRow]
     }
     
     func save() {
         Task {
-            switch await jupyter.updateContent(notebook!.path, content: notebook!) {
-            case .success(_): break  // TODO: update UI
+//            switch await jupyter.getContent(notebook.path, type: Notebook) 
+            switch await jupyter.updateContent(notebook.path, content: notebook) {
+            case .success(_): print("Saved!")  // TODO: update UI
             case .failure(let error): print("Failed to save notebook, error:", error)  // TODO: show alert
             }
         }

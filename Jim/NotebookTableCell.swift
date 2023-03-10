@@ -185,4 +185,8 @@ extension NotebookTableCell: SyntaxTextViewDelegate {
     func endEditMode(_ syntaxTextView: SyntaxTextView) {
         window?.makeFirstResponder(tableView)
     }
+    
+    func save() {
+        tableView.notebookDelegate?.save()
+    }
 }

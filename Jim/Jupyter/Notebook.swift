@@ -13,7 +13,7 @@ class Notebook: Codable {
 }
 
 class NotebookContent: Codable {
-    var cells: [Cell]?
+    var cells: [Cell]
     let nbformat: Int
     let nbformatMinor: Int
     let metadata: [String: AnyCodable]
