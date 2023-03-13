@@ -36,6 +36,7 @@
 		84ED48F629B9C0A70069AFD8 /* Notebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ED48F029B9C0A70069AFD8 /* Notebook.swift */; };
 		84ED48F729B9C0A70069AFD8 /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ED48F129B9C0A70069AFD8 /* Content.swift */; };
 		84ED48FB29BF2EFA0069AFD8 /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ED48FA29BF2EFA0069AFD8 /* Output.swift */; };
+		84ED491929BF50720069AFD8 /* NotebookTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ED491829BF50720069AFD8 /* NotebookTableView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +70,7 @@
 		84ED48F029B9C0A70069AFD8 /* Notebook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notebook.swift; sourceTree = "<group>"; };
 		84ED48F129B9C0A70069AFD8 /* Content.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Content.swift; sourceTree = "<group>"; };
 		84ED48FA29BF2EFA0069AFD8 /* Output.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Output.swift; sourceTree = "<group>"; };
+		84ED491829BF50720069AFD8 /* NotebookTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookTableView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 		8456BD3E299D0264001E3EDA /* Jim */ = {
 			isa = PBXGroup;
 			children = (
+				84ED491729BF4DA40069AFD8 /* Views */,
 				84ED48EB29B9C0A70069AFD8 /* Jupyter */,
 				84CE595F29A762990094FE3E /* Sourceful */,
 				84C838E7299D6E4600BA3F8F /* Utils */,
@@ -110,7 +113,6 @@
 				8456BD4E299D05A5001E3EDA /* SidebarViewController.swift */,
 				8456BD50299D0F5E001E3EDA /* NotebookViewController.swift */,
 				8456BD45299D0268001E3EDA /* Main.storyboard */,
-				841C6ECE29A6268D008B1FE5 /* NotebookTableCell.swift */,
 				8456BD43299D0268001E3EDA /* Assets.xcassets */,
 				8456BD48299D0268001E3EDA /* Jim.entitlements */,
 			);
@@ -191,6 +193,15 @@
 			path = Jupyter;
 			sourceTree = "<group>";
 		};
+		84ED491729BF4DA40069AFD8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				841C6ECE29A6268D008B1FE5 /* NotebookTableCell.swift */,
+				84ED491829BF50720069AFD8 /* NotebookTableView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -268,6 +279,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84ED48F229B9C0A70069AFD8 /* Session.swift in Sources */,
+				84ED491929BF50720069AFD8 /* NotebookTableView.swift in Sources */,
 				84CE599929A762990094FE3E /* SourceCodeToken.swift in Sources */,
 				841C6ECF29A6268D008B1FE5 /* NotebookTableCell.swift in Sources */,
 				8456BD4F299D05A5001E3EDA /* SidebarViewController.swift in Sources */,

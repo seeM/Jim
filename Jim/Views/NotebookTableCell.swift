@@ -1,11 +1,6 @@
 import Cocoa
 
-class StackView: NSStackView {
-//    override func draw(_ dirtyRect: NSRect) {
-//        super.draw(dirtyRect)
-//        NSColor.red.setStroke()
-//        NSBezierPath(rect: bounds).stroke()
-//    }
+class OutputStackView: NSStackView {
     override func addArrangedSubview(_ view: NSView) {
         super.addArrangedSubview(view)
         view.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
@@ -29,12 +24,11 @@ class OutputTextView: NSTextView {
 
 class NotebookTableCell: NSTableCellView {
     let syntaxTextView = SyntaxTextView()
-    let outputStackView = StackView()
+    let outputStackView = OutputStackView()
     var cell: Cell!
     var tableView: NotebookTableView!
     var row: Int { tableView.row(for: self) }
     var notebook: Notebook!
-    
     let lexer = Python3Lexer()
     
     override init(frame frameRect: NSRect) {
