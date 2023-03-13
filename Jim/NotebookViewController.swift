@@ -129,7 +129,7 @@ class NotebookTableView: NSTableView {
         } else if event.keyCode == 1 && flags == .command { // cmd + s
             notebookDelegate?.save()
         } else {
-            print(event.keyCode)
+//            print(event.keyCode)
             super.keyDown(with: event)
         }
     }
@@ -265,10 +265,36 @@ extension NotebookViewController: NotebookTableViewDelegate {
     
     func save() {
         Task {
-//            switch await jupyter.getContent(notebook.path, type: Notebook) 
+            switch await jupyter.getContent(notebook.path, type: Notebook.self) {
+            case .success(let diskNotebook):
+                // TODO: need a margin? lab uses 500
+                if diskNotebook.lastModified >  notebook.lastModified {
+                    let alert = NSAlert()
+                    alert.messageText = "Failed to save \(notebook.path)"
+                    alert.informativeText = "The content on disk is newer. Do you want to overwrite the file on disk with your changes?"
+                    alert.alertStyle = .warning
+                    alert.addButton(withTitle: "Overwrite")
+                    alert.addButton(withTitle: "Discard")
+                    let discardButton = alert.buttons[1]
+                    discardButton.keyEquivalent = "\u{1b}"
+                    let overwriteButton = alert.buttons[0]
+//                    overwriteButton.hasDestructiveAction = true
+                    let response = alert.runModal()
+                    if response != .alertFirstButtonReturn {
+                        return
+                    }
+                }
+            case .failure(let error):
+                print("Failed to get content while saving notebook, error:", error)  // TODO: show alert
+                return
+            }
             switch await jupyter.updateContent(notebook.path, content: notebook) {
-            case .success(_): print("Saved!")  // TODO: update UI
-            case .failure(let error): print("Failed to save notebook, error:", error)  // TODO: show alert
+            case .success(let content):
+                print("Saved!")  // TODO: update UI
+                self.notebook.lastModified = content.lastModified
+                self.notebook.size = content.size
+            case .failure(let error):
+                print("Failed to save notebook, error:", error)  // TODO: show alert
             }
         }
     }
