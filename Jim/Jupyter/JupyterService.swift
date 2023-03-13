@@ -26,6 +26,10 @@ class JupyterService {
     private var task: URLSessionWebSocketTask?
     private var executeRequests = [String: (Cancellable, PassthroughSubject<Message, Never>)]()
     
+    static var nbformatUserInfoKey: CodingUserInfoKey {
+        .init(rawValue: "nbformat")!
+    }
+    
     init() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
@@ -111,6 +115,9 @@ class JupyterService {
     func updateContent<T: Encodable>(_ path: String, content: T) async -> Result<Content,JupyterError> {
         let contentJson: Data
         do {
+            if let notebook = content as? Notebook {
+                encoder.userInfo[JupyterService.nbformatUserInfoKey] = (notebook.content.nbformat, notebook.content.nbformatMinor)
+            }
             contentJson = try encoder.encode(content)
         } catch {
             print("Error encoding content of type \(T.self)")

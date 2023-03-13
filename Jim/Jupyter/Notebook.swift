@@ -11,6 +11,16 @@ class Notebook: Codable {
     var size: Int?
     let type: ContentType
     var dirty = false
+    
+    enum CodingKeys: CodingKey {
+        case name
+        case path
+        case lastModified
+        case created
+        case content
+        case size
+        case type
+    }
 }
 
 class NotebookContent: Codable {

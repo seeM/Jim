@@ -43,7 +43,9 @@ class Cell: Codable, Identifiable {
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(self.id, forKey: .id)
+        if encoder.userInfo[JupyterService.nbformatUserInfoKey] as! (Int, Int) >= (4, 5) {
+            try container.encode(self.id, forKey: .id)
+        }
         try container.encode(self.cellType, forKey: .cellType)
         try container.encode(self.source, forKey: .source)
         try container.encodeIfPresent(self.outputs, forKey: .outputs)
