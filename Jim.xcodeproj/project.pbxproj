@@ -35,6 +35,7 @@
 		84ED48F529B9C0A70069AFD8 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ED48EF29B9C0A70069AFD8 /* Message.swift */; };
 		84ED48F629B9C0A70069AFD8 /* Notebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ED48F029B9C0A70069AFD8 /* Notebook.swift */; };
 		84ED48F729B9C0A70069AFD8 /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ED48F129B9C0A70069AFD8 /* Content.swift */; };
+		84ED48FB29BF2EFA0069AFD8 /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ED48FA29BF2EFA0069AFD8 /* Output.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +68,7 @@
 		84ED48EF29B9C0A70069AFD8 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		84ED48F029B9C0A70069AFD8 /* Notebook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notebook.swift; sourceTree = "<group>"; };
 		84ED48F129B9C0A70069AFD8 /* Content.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Content.swift; sourceTree = "<group>"; };
+		84ED48FA29BF2EFA0069AFD8 /* Output.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Output.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -184,6 +186,7 @@
 				84ED48EF29B9C0A70069AFD8 /* Message.swift */,
 				84ED48F029B9C0A70069AFD8 /* Notebook.swift */,
 				84ED48F129B9C0A70069AFD8 /* Content.swift */,
+				84ED48FA29BF2EFA0069AFD8 /* Output.swift */,
 			);
 			path = Jupyter;
 			sourceTree = "<group>";
@@ -276,6 +279,7 @@
 				84CE598229A762990094FE3E /* String+Range.swift in Sources */,
 				84ED48F629B9C0A70069AFD8 /* Notebook.swift in Sources */,
 				8456BD40299D0264001E3EDA /* AppDelegate.swift in Sources */,
+				84ED48FB29BF2EFA0069AFD8 /* Output.swift in Sources */,
 				84CE599229A762990094FE3E /* SyntaxTextView+TextViewDelegate.swift in Sources */,
 				84C838EA299D6E4600BA3F8F /* StringOrArray.swift in Sources */,
 				8456BD51299D0F5E001E3EDA /* NotebookViewController.swift in Sources */,
