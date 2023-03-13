@@ -85,10 +85,12 @@ class NotebookTableCell: NSTableCellView {
             case .displayData(let output):
                 if let plainText = output.data.plainText { addText(plainText.value) }
                 if let markdownText = output.data.markdownText { addText(markdownText.value) }
+                if let htmlText = output.data.markdownText { addText(htmlText.value) }
                 if let image = output.data.image { addImage(image.value) }
             case .executeResult(let output):
                 if let plainText = output.data.plainText { addText(plainText.value) }
                 if let markdownText = output.data.markdownText { addText(markdownText.value) }
+                if let htmlText = output.data.markdownText { addText(htmlText.value) }
                 if let image = output.data.image { addImage(image.value) }
             case .error(let output): addText(output.traceback.joined(separator: "\n"))
             }

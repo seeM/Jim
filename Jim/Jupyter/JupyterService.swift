@@ -103,7 +103,7 @@ class JupyterService {
             return .success(result)
         } catch {
             print("Error decoding response of type \(T.self):", error)
-            print("Data:", String(data: data, encoding: .utf8)?.prefix(1000))
+            print("Data:", String(data: data, encoding: .utf8)!.prefix(1000))
             return .failure(JupyterError.decodeError)
         }
     }

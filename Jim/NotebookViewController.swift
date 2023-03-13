@@ -231,10 +231,12 @@ extension NotebookViewController: NSTableViewDelegate {
                 case .displayData(let output):
                     if let plainText = output.data.plainText { outputHeights.append(textHeight(plainText.value, lineHeight: outputLineHeight)) }
                     if let markdownText = output.data.markdownText { outputHeights.append(textHeight(markdownText.value, lineHeight: outputLineHeight)) }
+                    if let htmlText = output.data.markdownText { outputHeights.append(textHeight(htmlText.value, lineHeight: outputLineHeight)) }
                     if let image = output.data.image { outputHeights.append(image.value.size.height) }
                 case .executeResult(let output):
                     if let plainText = output.data.plainText { outputHeights.append(textHeight(plainText.value, lineHeight: outputLineHeight)) }
                     if let markdownText = output.data.markdownText { outputHeights.append(textHeight(markdownText.value, lineHeight: outputLineHeight)) }
+                    if let htmlText = output.data.markdownText { outputHeights.append(textHeight(htmlText.value, lineHeight: outputLineHeight)) }
                     if let image = output.data.image { outputHeights.append(image.value.size.height) }
                 case .error(let output): outputHeights.append(CGFloat(output.traceback.count)*outputLineHeight)
                 }
