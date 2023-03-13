@@ -252,11 +252,13 @@ extension NotebookViewController: NSTableViewDelegate {
 
 extension NotebookViewController: NotebookTableViewDelegate {
     func insertCell(_ cell: Cell, at row: Int) {
+        notebook.dirty = true
         notebook.content.cells.insert(cell, at: row)
     }
     
     func removeCell(at row: Int) -> Cell {
-        notebook.content.cells.remove(at: row)
+        notebook.dirty = true
+        return notebook.content.cells.remove(at: row)
     }
     
     func selectedCell() -> Cell {
@@ -271,31 +273,42 @@ extension NotebookViewController: NotebookTableViewDelegate {
                 if diskNotebook.lastModified >  notebook.lastModified {
                     let alert = NSAlert()
                     alert.messageText = "Failed to save \(notebook.path)"
-                    alert.informativeText = "The content on disk is newer. Do you want to overwrite the file on disk with your changes?"
+                    alert.informativeText = "The content on disk is newer. Do you want to overwrite it with your changes or discard them and revert to the on disk content?"
                     alert.alertStyle = .warning
                     alert.addButton(withTitle: "Overwrite")
                     alert.addButton(withTitle: "Discard")
+                    alert.addButton(withTitle: "Cancel")
                     let discardButton = alert.buttons[1]
-                    discardButton.keyEquivalent = "\u{1b}"
+                    discardButton.hasDestructiveAction = true
                     let overwriteButton = alert.buttons[0]
-//                    overwriteButton.hasDestructiveAction = true
+                    overwriteButton.hasDestructiveAction = true
                     let response = alert.runModal()
-                    if response != .alertFirstButtonReturn {
-                        return
+                    switch response {
+                    case .alertFirstButtonReturn:
+                        await _save()
+                    case .alertSecondButtonReturn:
+                        self.notebook = diskNotebook
+                    default: break
                     }
+                } else {
+                    await _save()
                 }
             case .failure(let error):
                 print("Failed to get content while saving notebook, error:", error)  // TODO: show alert
                 return
             }
-            switch await jupyter.updateContent(notebook.path, content: notebook) {
-            case .success(let content):
-                print("Saved!")  // TODO: update UI
-                self.notebook.lastModified = content.lastModified
-                self.notebook.size = content.size
-            case .failure(let error):
-                print("Failed to save notebook, error:", error)  // TODO: show alert
-            }
+        }
+    }
+    
+    private func _save() async {
+        switch await jupyter.updateContent(notebook.path, content: notebook) {
+        case .success(let content):
+            print("Saved!")  // TODO: update UI
+            self.notebook.lastModified = content.lastModified
+            self.notebook.size = content.size
+            self.notebook.dirty = false
+        case .failure(let error):
+            print("Failed to save notebook, error:", error)  // TODO: show alert
         }
     }
 }

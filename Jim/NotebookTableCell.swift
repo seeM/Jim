@@ -130,6 +130,7 @@ class NotebookTableCell: NSTableCellView {
     
     func runCell() {
         let jupyter = JupyterService.shared
+        notebook.dirty = true
         cell.outputs = []
         jupyter.webSocketSend(code: cell.source.value) { msg in
             switch msg.channel {
@@ -157,6 +158,7 @@ extension NotebookTableCell: SyntaxTextViewDelegate {
     
     func didChangeText(_ syntaxTextView: SyntaxTextView) {
         cell.source.value = syntaxTextView.text
+        notebook.dirty = true
     }
     
     func didCommit(_ syntaxTextView: SyntaxTextView) {

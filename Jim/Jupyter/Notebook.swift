@@ -5,11 +5,12 @@ class Notebook: Codable {
     let name: String
     var id: String { name }
     let path: String
-    let lastModified: Date
+    var lastModified: Date
     let created: Date
     var content: NotebookContent
-    let size: Int?
+    var size: Int?
     let type: ContentType
+    var dirty = false
 }
 
 class NotebookContent: Codable {
