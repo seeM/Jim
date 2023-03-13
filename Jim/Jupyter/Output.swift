@@ -51,7 +51,6 @@ enum OutputType: String, Codable {
 }
 
 struct StreamOutput: Codable, Hashable {
-    let outputType: OutputType
     let name: StreamName
     let text: String
 }

@@ -23,6 +23,7 @@ class OutputTextView: NSTextView {
 }
 
 class NotebookTableCell: NSTableCellView {
+    let runButton = RunButton()
     let syntaxTextView = SyntaxTextView()
     let outputStackView = OutputStackView()
     var cell: Cell!
@@ -40,18 +41,30 @@ class NotebookTableCell: NSTableCellView {
     }
     
     private func create() {
+        runButton.button.image = NSImage(systemSymbolName: "play.fill", accessibilityDescription: "Run cell")
+        runButton.callback = self.runCell
+        
+        syntaxTextView.theme = JimSourceCodeTheme.shared
+        syntaxTextView.delegate = self
+        
         addSubview(syntaxTextView)
+        addSubview(runButton)
+        addSubview(outputStackView)
+        
+        runButton.translatesAutoresizingMaskIntoConstraints = false
+        let runButtonTopAnchorConstraint = runButton.topAnchor.constraint(lessThanOrEqualTo: syntaxTextView.topAnchor, constant: syntaxTextView.padding)
+        runButtonTopAnchorConstraint.isActive = true
+        runButtonTopAnchorConstraint.priority = .defaultLow
+        let runButtonCenterYConstraint = runButton.centerYAnchor.constraint(lessThanOrEqualTo: syntaxTextView.centerYAnchor)
+        runButtonCenterYConstraint.isActive = true
+        runButtonCenterYConstraint.priority = .defaultLow
+        runButton.trailingAnchor.constraint(equalTo: syntaxTextView.trailingAnchor, constant: -syntaxTextView.padding).isActive = true
 
         syntaxTextView.translatesAutoresizingMaskIntoConstraints = false
         syntaxTextView.setContentHuggingPriority(.required, for: .vertical)
         syntaxTextView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         syntaxTextView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         syntaxTextView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        
-        syntaxTextView.theme = JimSourceCodeTheme.shared
-        syntaxTextView.delegate = self
-        
-        addSubview(outputStackView)
 
         outputStackView.translatesAutoresizingMaskIntoConstraints = false
         outputStackView.setHuggingPriority(.required, for: .vertical)
@@ -64,37 +77,33 @@ class NotebookTableCell: NSTableCellView {
         outputStackView.orientation = .vertical
     }
     
-    func updateOutputs() {
+    func clearOutputs() {
         for view in outputStackView.arrangedSubviews {
 //            outputStackView.removeArrangedSubview(view)
 //            NSLayoutConstraint.deactivate(view.constraints)
             view.removeFromSuperview()
         }
-
-        // TODO: Add one output at a time, as it streams in
-        guard let outputs = cell.outputs else { return }
-        for output in outputs {
-            switch output {
-            case .stream(let output): addText(output.text)
-            case .displayData(let output):
-                if let plainText = output.data.plainText { addText(plainText.value) }
-                if let markdownText = output.data.markdownText { addText(markdownText.value) }
-                if let htmlText = output.data.markdownText { addText(htmlText.value) }
-                if let image = output.data.image { addImage(image.value) }
-            case .executeResult(let output):
-                if let plainText = output.data.plainText { addText(plainText.value) }
-                if let markdownText = output.data.markdownText { addText(markdownText.value) }
-                if let htmlText = output.data.markdownText { addText(htmlText.value) }
-                if let image = output.data.image { addImage(image.value) }
-            case .error(let output): addText(output.traceback.joined(separator: "\n"))
-            }
+    }
+    
+    func appendOutputSubview(_ output: Output) {
+        switch output {
+        case .stream(let output): appendOutputTextSubview(output.text)
+        case .displayData(let output):
+            if let plainText = output.data.plainText { appendOutputTextSubview(plainText.value) }
+            if let markdownText = output.data.markdownText { appendOutputTextSubview(markdownText.value) }
+            if let htmlText = output.data.markdownText { appendOutputTextSubview(htmlText.value) }
+            if let image = output.data.image { appendOutputImageSubview(image.value) }
+        case .executeResult(let output):
+            if let plainText = output.data.plainText { appendOutputTextSubview(plainText.value) }
+            if let markdownText = output.data.markdownText { appendOutputTextSubview(markdownText.value) }
+            if let htmlText = output.data.markdownText { appendOutputTextSubview(htmlText.value) }
+            if let image = output.data.image { appendOutputImageSubview(image.value) }
+        case .error(let output): appendOutputTextSubview(output.traceback.joined(separator: "\n"))
         }
     }
     
-    // TODO: make reuseable views?
-    func addText(_ text: String) {
+    func appendOutputTextSubview(_ text: String) {
         let string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines)
-        // TODO: Extract class?
         let textView = OutputTextView()
         textView.drawsBackground = false
         textView.minSize = .zero
@@ -109,7 +118,7 @@ class NotebookTableCell: NSTableCellView {
         outputStackView.addArrangedSubview(textView)
     }
     
-    func addImage(_ image: NSImage) {
+    func appendOutputImageSubview(_ image: NSImage) {
         let imageView = NSImageView(image: image)
         imageView.imageAlignment = .alignTopLeft
         outputStackView.addArrangedSubview(imageView)
@@ -121,27 +130,49 @@ class NotebookTableCell: NSTableCellView {
         self.notebook = notebook
         syntaxTextView.uniqueUndoManager = undoManager
         syntaxTextView.text = cell.source.value
-        updateOutputs()
+        clearOutputs()
+        if let outputs = cell.outputs {
+            for output in outputs {
+                appendOutputSubview(output)
+            }
+        }
     }
     
     func runCell() {
         let jupyter = JupyterService.shared
         notebook.dirty = true
+        runButton.toggle()
+        clearOutputs()
         cell.outputs = []
         jupyter.webSocketSend(code: cell.source.value) { msg in
             switch msg.channel {
             case .iopub:
+                var output: Output?
                 switch msg.content {
-                case .stream(let content): self.cell.outputs!.append(.stream(content))
-                case .executeResult(let content): self.cell.outputs!.append(.executeResult(content))
-                case .displayData(let content): self.cell.outputs!.append(.displayData(content))
-                case .error(let content): self.cell.outputs!.append(.error(content))
+                case .stream(let content):
+                    output = .stream(content)
+                case .executeResult(let content):
+                    output = .executeResult(content)
+                case .displayData(let content):
+                    output = .displayData(content)
+                case .error(let content):
+                    output = .error(content)
                 default: break
                 }
-            case .shell: break
-            }
-            Task.detached { @MainActor in
-                self.updateOutputs()
+                if let output {
+                    Task.detached { @MainActor in
+                        self.appendOutputSubview(output)
+                    }
+                    self.cell.outputs!.append(output)
+                }
+            case .shell:
+                switch msg.content {
+                case .executeReply(_):
+                    Task.detached { @MainActor in
+                        self.runButton.toggle()
+                    }
+                default: break
+                }
             }
         }
     }

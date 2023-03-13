@@ -37,6 +37,7 @@
 		84ED48F729B9C0A70069AFD8 /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ED48F129B9C0A70069AFD8 /* Content.swift */; };
 		84ED48FB29BF2EFA0069AFD8 /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ED48FA29BF2EFA0069AFD8 /* Output.swift */; };
 		84ED491929BF50720069AFD8 /* NotebookTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ED491829BF50720069AFD8 /* NotebookTableView.swift */; };
+		84ED491B29BF517C0069AFD8 /* RunButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ED491A29BF517C0069AFD8 /* RunButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		84ED48F129B9C0A70069AFD8 /* Content.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Content.swift; sourceTree = "<group>"; };
 		84ED48FA29BF2EFA0069AFD8 /* Output.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Output.swift; sourceTree = "<group>"; };
 		84ED491829BF50720069AFD8 /* NotebookTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookTableView.swift; sourceTree = "<group>"; };
+		84ED491A29BF517C0069AFD8 /* RunButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +200,7 @@
 			children = (
 				841C6ECE29A6268D008B1FE5 /* NotebookTableCell.swift */,
 				84ED491829BF50720069AFD8 /* NotebookTableView.swift */,
+				84ED491A29BF517C0069AFD8 /* RunButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -289,6 +292,7 @@
 				84CE598529A762990094FE3E /* NSMutableAttributedString+Tokens.swift in Sources */,
 				84CE598629A762990094FE3E /* Python3Lexer.swift in Sources */,
 				84CE598229A762990094FE3E /* String+Range.swift in Sources */,
+				84ED491B29BF517C0069AFD8 /* RunButton.swift in Sources */,
 				84ED48F629B9C0A70069AFD8 /* Notebook.swift in Sources */,
 				8456BD40299D0264001E3EDA /* AppDelegate.swift in Sources */,
 				84ED48FB29BF2EFA0069AFD8 /* Output.swift in Sources */,

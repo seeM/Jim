@@ -90,6 +90,7 @@ open class SyntaxTextView: NSScrollView {
 
     var ignoreSelectionChange = false
     var ignoreShouldChange = false
+    var padding = CGFloat(5)  // TODO: Ideally this should be passed in
 
     public var tintColor: NSColor! {
         set {
@@ -128,7 +129,7 @@ open class SyntaxTextView: NSScrollView {
     }
 
     private func setup() {
-        scrollView.borderType = .lineBorder
+        scrollView.borderType = .noBorder
         scrollView.autohidesScrollers = true
         scrollView.hasVerticalScroller = false
         scrollView.hasHorizontalScroller = true
@@ -157,6 +158,7 @@ open class SyntaxTextView: NSScrollView {
         textView.textContainer?.widthTracksTextView = false
         textView.textContainer?.heightTracksTextView = false
         textView.textContainer?.size = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.textContainer?.lineFragmentPadding = padding
 
         let textViewContainer = NSView()
         textViewContainer.addSubview(textView)
@@ -173,8 +175,8 @@ open class SyntaxTextView: NSScrollView {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.leadingAnchor.constraint(equalTo: textViewContainer.leadingAnchor).isActive = true
         textView.trailingAnchor.constraint(equalTo: textViewContainer.trailingAnchor).isActive = true
-        textView.topAnchor.constraint(equalTo: textViewContainer.topAnchor, constant: 5).isActive = true
-        textView.bottomAnchor.constraint(equalTo: textViewContainer.bottomAnchor, constant: -5).isActive = true
+        textView.topAnchor.constraint(equalTo: textViewContainer.topAnchor, constant: padding).isActive = true
+        textView.bottomAnchor.constraint(equalTo: textViewContainer.bottomAnchor, constant: -padding).isActive = true
         textView.setContentHuggingPriority(.required, for: .vertical)
 
         textView.delegate = self

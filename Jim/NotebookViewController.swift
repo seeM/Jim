@@ -1,16 +1,16 @@
 import Cocoa
 
 class NotebookTableRowView: NSTableRowView {
-//    override func drawSelection(in dirtyRect: NSRect) {
-//        if self.selectionHighlightStyle != .none {
-//            let selectionRect = NSInsetRect(self.bounds, 2.5, 2.5)
-//            NSColor(calibratedWhite: 0.65, alpha: 1).setStroke()
-//            NSColor(calibratedWhite: 0.82, alpha: 1).setFill()
-//            let selectionPath = NSBezierPath.init(roundedRect: selectionRect, xRadius: 6, yRadius: 6)
-//            selectionPath.fill()
-//            selectionPath.stroke()
-//        }
-//    }
+    // Never render the selected row's children as "emphasized"
+    override var isEmphasized: Bool { get { false } set {} }
+    
+    override func drawSelection(in dirtyRect: NSRect) {
+        // TODO: How do I get these values programmatically?
+        let borderRect = NSInsetRect(self.bounds, 5, 7)
+        let leftMarginRect = NSRect(x: borderRect.minX, y: borderRect.minY, width: 5, height: borderRect.height)
+        NSColor(red: 0, green: 125/255, blue: 250/255, alpha: 1).setFill()
+        NSBezierPath.init(roundedRect: leftMarginRect, xRadius: 2, yRadius: 2).fill()
+    }
 }
 
 class NotebookViewController: NSViewController {
@@ -113,7 +113,8 @@ extension NotebookViewController: NSTableViewDelegate {
     }
     
     func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
-        NotebookTableRowView()
+        let rowView = NotebookTableRowView()
+        return rowView
     }
 }
 
