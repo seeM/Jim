@@ -139,6 +139,7 @@ class NotebookTableCell: NSTableCellView {
     }
     
     func runCell() {
+        guard cell.cellType == .code else { return }
         let jupyter = JupyterService.shared
         notebook.dirty = true
         runButton.toggle()
