@@ -208,3 +208,57 @@ struct JimSourceCodeTheme: SourceCodeTheme {
         }
     }
 }
+
+extension NotebookViewController: NSToolbarItemValidation {
+    func validateToolbarItem(_ item: NSToolbarItem) -> Bool {
+        notebook != nil
+    }
+    
+    @IBAction func insertClicked(_ sender: NSView) {
+        tableView.insertCellBelow()
+    }
+    
+    @IBAction func cutClicked(_ sender: NSView) {
+        tableView.cutCell()
+    }
+    
+    @IBAction func copyClicked(_ sender: NSView) {
+        tableView.copyCell()
+    }
+    
+    @IBAction func pasteClicked(_ sender: NSView) {
+        tableView.pasteCellBelow()
+    }
+    
+    @IBAction func moveUpClicked(_ sender: NSView) {
+        // TODO: make a function
+        tableView.cutCell()
+        tableView.selectCellAbove()
+        tableView.pasteCellAbove()
+    }
+    
+    @IBAction func moveDownClicked(_ sender: NSView) {
+        // TODO: make a function
+        tableView.cutCell()
+        tableView.pasteCellBelow()
+    }
+    
+    @IBAction func runClicked(_ sender: NSView) {
+        tableView.runCellSelectBelow()
+    }
+
+    @IBAction func interruptClicked(_ sender: NSView) {
+        // TODO
+        print("interrupt")
+    }
+    
+    @IBAction func restartClicked(_ sender: NSView) {
+        // TODO
+        print("restart kernel")
+    }
+    
+    @IBAction func restartAndRerunAllClicked(_ sender: NSView) {
+        // TODO
+        print("restart kernel and rerun all cells")
+    }
+}
