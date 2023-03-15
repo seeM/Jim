@@ -8,7 +8,12 @@ protocol NotebookTableViewDelegate: AnyObject {
 }
 
 class NotebookTableView: NSTableView {
-    var previouslyRemovedCell: Cell?
+    var copyBuffer: Cell?
+    var previouslyRemovedCell: Cell? {
+        didSet {
+            copyBuffer = previouslyRemovedCell
+        }
+    }
     var previouslyRemovedRow: Int?
     var notebookDelegate: NotebookTableViewDelegate?
     var selectedCellView: NotebookTableCell? {
@@ -83,16 +88,16 @@ class NotebookTableView: NSTableView {
     }
     
     func copyCell() {
-        previouslyRemovedCell = notebookDelegate?.selectedCell()
+        copyBuffer = notebookDelegate?.selectedCell()
     }
     
     func pasteCellAbove() {
-        guard let cell = previouslyRemovedCell else { return }
+        guard let cell = copyBuffer else { return }
         insertCellAbove(cell: Cell(from: cell))
     }
     
     func pasteCellBelow() {
-        guard let cell = previouslyRemovedCell else { return }
+        guard let cell = copyBuffer else { return }
         insertCellBelow(cell: Cell(from: cell))
     }
     
