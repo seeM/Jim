@@ -3,7 +3,8 @@ import Foundation
 
 class Cell: Codable, Identifiable {
     let id: String
-    let cellType: CellType
+    // TODO: don't think it should be var, should make a new cell...
+    var cellType: CellType
     var source: StringOrArray
     var outputs: [Output]?
     let metadata: [String: AnyCodable]?

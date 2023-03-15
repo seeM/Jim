@@ -128,6 +128,13 @@ extension NotebookViewController: NSTableViewDelegate {
         let rowView = NotebookTableRowView()
         return rowView
     }
+    
+    func tableViewSelectionDidChange(_ notification: Notification) {
+        let windowController = view.window!.windowController as! WindowController
+        if let title = selectedCell()?.cellType.rawValue.capitalized {
+            windowController.cellTypeComboBox.cell?.title = title
+        }
+    }
 }
 
 extension NotebookViewController: NotebookTableViewDelegate {
@@ -141,8 +148,8 @@ extension NotebookViewController: NotebookTableViewDelegate {
         return notebook.content.cells.remove(at: row)
     }
     
-    func selectedCell() -> Cell {
-        notebook.content.cells[tableView.selectedRow]
+    func selectedCell() -> Cell? {
+        tableView.selectedRow == -1 ? nil : notebook.content.cells[tableView.selectedRow]
     }
     
     func save() {
@@ -260,5 +267,13 @@ extension NotebookViewController: NSToolbarItemValidation {
     @IBAction func restartAndRerunAllClicked(_ sender: NSView) {
         // TODO
         print("restart kernel and rerun all cells")
+    }
+    
+    @IBAction func setCellTypeClicked(_ sender: NSComboBox) {
+        let rawValue = (sender.objectValueOfSelectedItem as! String).lowercased()
+        // TODO: update the cell's outputs etc to match type...
+        // TODO: make this undoable too?
+        // TODO: make a command for this
+        notebook.content.cells[tableView.selectedRow].cellType = .init(rawValue: rawValue)!
     }
 }

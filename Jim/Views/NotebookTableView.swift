@@ -3,7 +3,7 @@ import Cocoa
 protocol NotebookTableViewDelegate: AnyObject {
     func insertCell(_ cell: Cell, at row: Int)
     func removeCell(at row: Int) -> Cell
-    func selectedCell() -> Cell
+    func selectedCell() -> Cell?
     func save()
 }
 
