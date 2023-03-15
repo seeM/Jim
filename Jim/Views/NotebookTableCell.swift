@@ -32,6 +32,14 @@ class NotebookTableCell: NSTableCellView {
     var notebook: Notebook!
     let lexer = Python3Lexer()
     
+    var isExecuting = false {
+        didSet {
+//            syntaxTextView.isExecuting = isExecuting
+            tableView.rowView(atRow: row, makeIfNecessary: false)!.needsDisplay = true
+//            runButton.inProgress = isExecuting
+        }
+    }
+    
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect); create()
     }
@@ -58,17 +66,20 @@ class NotebookTableCell: NSTableCellView {
         let runButtonCenterYConstraint = runButton.centerYAnchor.constraint(lessThanOrEqualTo: syntaxTextView.centerYAnchor)
         runButtonCenterYConstraint.isActive = true
         runButtonCenterYConstraint.priority = .defaultLow
-        runButton.trailingAnchor.constraint(equalTo: syntaxTextView.trailingAnchor, constant: -syntaxTextView.padding).isActive = true
+        runButton.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        runButton.setContentHuggingPriority(.required, for: .horizontal)
+        runButton.isHidden = true
 
         syntaxTextView.translatesAutoresizingMaskIntoConstraints = false
         syntaxTextView.setContentHuggingPriority(.required, for: .vertical)
         syntaxTextView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+//        syntaxTextView.leadingAnchor.constraint(equalTo: runButton.trailingAnchor, constant: syntaxTextView.padding).isActive = true
         syntaxTextView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         syntaxTextView.topAnchor.constraint(equalTo: topAnchor).isActive = true
 
         outputStackView.translatesAutoresizingMaskIntoConstraints = false
         outputStackView.setHuggingPriority(.required, for: .vertical)
-        outputStackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        outputStackView.leadingAnchor.constraint(equalTo: syntaxTextView.leadingAnchor).isActive = true
         outputStackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         outputStackView.topAnchor.constraint(equalTo: syntaxTextView.bottomAnchor).isActive = true
         outputStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -142,7 +153,7 @@ class NotebookTableCell: NSTableCellView {
         guard cell.cellType == .code else { return }
         let jupyter = JupyterService.shared
         notebook.dirty = true
-        runButton.toggle()
+        isExecuting = true
         clearOutputs()
         cell.outputs = []
         jupyter.webSocketSend(code: cell.source.value) { msg in
@@ -170,7 +181,7 @@ class NotebookTableCell: NSTableCellView {
                 switch msg.content {
                 case .executeReply(_):
                     Task.detached { @MainActor in
-                        self.runButton.toggle()
+                        self.isExecuting = false
                     }
                 default: break
                 }

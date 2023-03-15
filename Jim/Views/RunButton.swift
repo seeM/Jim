@@ -16,6 +16,11 @@ class RunButton: NSView {
     let button = InnerRunButton()
     let progress = NSProgressIndicator()
     var callback: (() -> ())?
+    var inProgress = false {
+        didSet {
+            progress.isHidden = !inProgress
+        }
+    }
     
     init() {
         super.init(frame: .zero)
@@ -24,6 +29,7 @@ class RunButton: NSView {
         button.action = #selector(onClick)
         button.bezelStyle = .recessed
         button.showsBorderOnlyWhileMouseInside = true
+        button.isHidden = true
         
         progress.isIndeterminate = true
         progress.startAnimation(self)
@@ -39,6 +45,8 @@ class RunButton: NSView {
         heightAnchor.constraint(equalTo: button.heightAnchor).isActive = true
         
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.setContentHuggingPriority(.required, for: .horizontal)
+        button.setContentHuggingPriority(.required, for: .vertical)
         button.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         button.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         
@@ -49,11 +57,6 @@ class RunButton: NSView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    func toggle() {
-        button.isHidden = !button.isHidden
-        progress.isHidden = !progress.isHidden
     }
     
     @objc private func onClick() {

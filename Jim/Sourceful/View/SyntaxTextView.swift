@@ -91,6 +91,7 @@ open class SyntaxTextView: NSScrollView {
     var ignoreSelectionChange = false
     var ignoreShouldChange = false
     var padding = CGFloat(5)  // TODO: Ideally this should be passed in
+//    var isExecuting = false
 
     public var tintColor: NSColor! {
         set {
@@ -127,6 +128,14 @@ open class SyntaxTextView: NSScrollView {
             super.scrollWheel(with: event)
         }
     }
+    
+//    open override func draw(_ dirtyRect: NSRect) {
+//        super.draw(dirtyRect)
+//        let width = 5.0
+//        let leftMarginRect = NSRect(x: bounds.maxX - width, y: bounds.minY, width: width, height: bounds.height)
+//        NSColor(red: 0, green: 125/255, blue: 250/255, alpha: 1).setFill()
+//        NSBezierPath.init(roundedRect: leftMarginRect, xRadius: 2, yRadius: 2).fill()
+//    }
 
     private func setup() {
         scrollView.borderType = .noBorder
