@@ -60,6 +60,26 @@ class NotebookTableView: NSTableView {
         selectCellBelow()
     }
     
+    func removeCell(at row: Int) -> Cell {
+        removeRows(at: .init(integer: row))
+        return notebookDelegate!.removeCell(at: row)
+    }
+    
+    func moveCell(at row: Int, to: Int) {
+        if to < 0 || to >= numberOfRows { return }
+        let cell = removeCell(at: row)
+        insertCell(at: to, cell: cell)
+        selectCell(at: to)
+    }
+    
+    func moveCellUp() {
+        moveCell(at: selectedRow, to: selectedRow - 1)
+    }
+    
+    func moveCellDown() {
+        moveCell(at: selectedRow, to: selectedRow + 1)
+    }
+    
     func runCell() {
         selectedCellView!.runCell()
     }
@@ -79,8 +99,7 @@ class NotebookTableView: NSTableView {
     func cutCell() {
         let row = selectedRow
         previouslyRemovedRow = row
-        previouslyRemovedCell = notebookDelegate?.removeCell(at: row)
-        removeRows(at: .init(integer: row))
+        previouslyRemovedCell = removeCell(at: row)
         if numberOfRows == 0 {
             insertCell(at: row)
         }

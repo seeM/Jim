@@ -238,16 +238,11 @@ extension NotebookViewController: NSToolbarItemValidation {
     }
     
     @IBAction func moveUpClicked(_ sender: NSView) {
-        // TODO: make a function
-        tableView.cutCell()
-        tableView.selectCellAbove()
-        tableView.pasteCellAbove()
+        tableView.moveCellUp()
     }
     
     @IBAction func moveDownClicked(_ sender: NSView) {
-        // TODO: make a function
-        tableView.cutCell()
-        tableView.pasteCellBelow()
+        tableView.moveCellDown()
     }
     
     @IBAction func runClicked(_ sender: NSView) {
