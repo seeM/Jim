@@ -152,8 +152,9 @@ open class SyntaxTextView: NSScrollView {
         scrollView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
 
         scrollView.drawsBackground = true
-        scrollView.wantsLayer = true
-        scrollView.layer?.cornerRadius = 3
+//        scrollView.wantsLayer = true
+//        scrollView.layer?.cornerRadius = 3
+//        scrollView.layer?.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         textView.drawsBackground = false
         
         // Infinite max size text view and container + resizable text view allows for horizontal scrolling.

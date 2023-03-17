@@ -47,17 +47,42 @@ class NotebookTableCell: NSTableCellView {
     required init?(coder: NSCoder) {
         super.init(coder: coder); create()
     }
-    
+
     private func create() {
+        let containerView = NSView()
+        
+        containerView.wantsLayer = true
+        containerView.layer?.backgroundColor = .white
+        containerView.layer?.masksToBounds = true
+        containerView.layer?.cornerRadius = 5
+                
+        shadow = NSShadow()
+        shadow?.shadowBlurRadius = 3
+        shadow?.shadowOffset = .init(width: 0, height: -2)
+        shadow?.shadowColor = .black.withAlphaComponent(0.2)
+
+        outputStackView.wantsLayer = true
+        outputStackView.layer?.backgroundColor = .white
+        
         runButton.button.image = NSImage(systemSymbolName: "play.fill", accessibilityDescription: "Run cell")
         runButton.callback = self.runCell
         
         syntaxTextView.theme = JimSourceCodeTheme.shared
         syntaxTextView.delegate = self
         
-        addSubview(syntaxTextView)
-        addSubview(runButton)
-        addSubview(outputStackView)
+        outputStackView.spacing = 0
+        outputStackView.orientation = .vertical
+        
+        addSubview(containerView)
+        containerView.addSubview(syntaxTextView)
+        containerView.addSubview(runButton)
+        containerView.addSubview(outputStackView)
+        
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        containerView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        containerView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        containerView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         
         runButton.translatesAutoresizingMaskIntoConstraints = false
         let runButtonTopAnchorConstraint = runButton.topAnchor.constraint(lessThanOrEqualTo: syntaxTextView.topAnchor, constant: syntaxTextView.padding)
@@ -66,26 +91,23 @@ class NotebookTableCell: NSTableCellView {
         let runButtonCenterYConstraint = runButton.centerYAnchor.constraint(lessThanOrEqualTo: syntaxTextView.centerYAnchor)
         runButtonCenterYConstraint.isActive = true
         runButtonCenterYConstraint.priority = .defaultLow
-        runButton.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        runButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         runButton.setContentHuggingPriority(.required, for: .horizontal)
         runButton.isHidden = true
 
         syntaxTextView.translatesAutoresizingMaskIntoConstraints = false
         syntaxTextView.setContentHuggingPriority(.required, for: .vertical)
-        syntaxTextView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        syntaxTextView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
 //        syntaxTextView.leadingAnchor.constraint(equalTo: runButton.trailingAnchor, constant: syntaxTextView.padding).isActive = true
-        syntaxTextView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        syntaxTextView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        syntaxTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        syntaxTextView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
 
         outputStackView.translatesAutoresizingMaskIntoConstraints = false
         outputStackView.setHuggingPriority(.required, for: .vertical)
         outputStackView.leadingAnchor.constraint(equalTo: syntaxTextView.leadingAnchor).isActive = true
-        outputStackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        outputStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         outputStackView.topAnchor.constraint(equalTo: syntaxTextView.bottomAnchor).isActive = true
-        outputStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        
-        outputStackView.spacing = 0
-        outputStackView.orientation = .vertical
+        outputStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
     }
     
     func clearOutputs() {
