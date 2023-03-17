@@ -48,6 +48,8 @@ struct Message: Codable {
         case .displayData: self.content = .displayData(try container.decode(DisplayDataOutput.self, forKey: .content))
         case .commOpen: self.content = .commOpen(try container.decode(CommOpenContent.self, forKey: .content))
         case .commMessage: self.content = .commMessage(try container.decode(CommMessageContent.self, forKey: .content))
+        case .shutdownRequest: self.content = .shutdownRequest(try container.decode(ShutdownRequestContent.self, forKey: .content))
+        case .shutdownReply: self.content = .shutdownReply(try container.decode(ShutdownReplyContent.self, forKey: .content))
         }
     }
     
@@ -73,6 +75,8 @@ struct Message: Codable {
         case .displayData(let content): try container.encode(content, forKey: .content)
         case .commOpen(let content): try container.encode(content, forKey: .content)
         case .commMessage(let content): try container.encode(content, forKey: .content)
+        case .shutdownRequest(let content): try container.encode(content, forKey: .content)
+        case .shutdownReply(let content): try container.encode(content, forKey: .content)
         }
     }
 }
@@ -111,6 +115,8 @@ enum MessageType: String, Codable {
     case displayData = "display_data"
     case commOpen = "comm_open"
     case commMessage = "comm_msg"
+    case shutdownRequest = "shutdown_request"
+    case shutdownReply = "shutdown_reply"
     //    case execute_reply, inspect_request, inspect_reply, complete_request, complete_reply, history_request, history_reply, is_complete_request, is_complete_reply, connect_request, connect_reply, comm_info_request, comm_info_reply, kernel_info_request, kernel_info_reply, shutdown_request, shutdown_reply, interrupt_request, interrupt_reply, debug_request, debug_reply, stream, display_data, update_display_data, execute_input, execute_result, error, status, clear_output, debug_event, input_request, input_reply, comm_msg, comm_close
 }
 
@@ -126,6 +132,8 @@ enum MessageContent {
     case error(ErrorOutput)
     case commOpen(CommOpenContent)
     case commMessage(CommMessageContent)
+    case shutdownRequest(ShutdownRequestContent)
+    case shutdownReply(ShutdownReplyContent)
     
     enum CodingKeys: String, CodingKey {
         case msgType
@@ -216,4 +224,13 @@ struct KernelInfoRequestContent: Codable {
 struct ExecuteInputContent: Codable {
     let code: String
     let executionCount: Int
+}
+
+struct ShutdownRequestContent: Codable {
+    let restart: Bool
+}
+
+struct ShutdownReplyContent: Codable {
+    let status: String  // TODO: make enum?
+    let restart: Bool
 }

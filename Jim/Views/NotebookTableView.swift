@@ -126,6 +126,17 @@ class NotebookTableView: NSTableView {
         insertCell(at: row, cell: cell)
     }
     
+    func interruptKernel() {
+        Task { await JupyterService.shared.interruptKernel() }
+    }
+    
+    func restartKernel() {
+        Task { await JupyterService.shared.restartKernel() }
+    }
+    
+    var keys = [UInt16]()
+    var timer: Timer?
+    
     override func keyDown(with event: NSEvent) {
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
         if event.keyCode == 36 && flags == .shift {  // shift+enter
@@ -152,8 +163,26 @@ class NotebookTableView: NSTableView {
             copyCell()
         } else if event.keyCode == 1 && flags == .command { // cmd + s
             notebookDelegate?.save()
+        } else if [34, 5, 29].contains(where: { $0 == event.keyCode }) { // i, g, 00
+            // TODO: Think we should rather keep a keymap.
+            //       Make it a nested dict and somehow use that to determine whether to wait for more keys.
+            keys.append(event.keyCode)
+            if let timer {
+                timer.invalidate()
+            }
+            if keys == [34, 34] { // i, i
+                interruptKernel()
+            } else if keys == [29, 29] {
+                restartKernel()
+            } else {
+                timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { timer in
+                    self.keys = []
+                }
+                return
+            }
+            keys = []
         } else {
-//            print(event.keyCode)
+            print(event.keyCode)
             super.keyDown(with: event)
         }
     }

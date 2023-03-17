@@ -1,30 +1,5 @@
 import Cocoa
 
-class NotebookTableRowView: NSTableRowView {
-    // Never render the selected row's children as "emphasized"
-    override var isEmphasized: Bool { get { false } set {} }
-    
-    override func drawSelection(in dirtyRect: NSRect) {
-        // TODO: How do I get these values programmatically?
-        let borderRect = NSInsetRect(self.bounds, 5, 7)
-        
-        let leftMarginRect = NSRect(x: borderRect.minX, y: borderRect.minY, width: 5, height: borderRect.height)
-        NSColor(red: 0, green: 125/255, blue: 250/255, alpha: 1).setFill()
-        NSBezierPath.init(roundedRect: leftMarginRect, xRadius: 2, yRadius: 2).fill()
-    }
-    
-    override func draw(_ dirtyRect: NSRect) {
-        super.draw(dirtyRect)
-        let view = (self.view(atColumn: 0) as! NotebookTableCell)
-        if view.isExecuting {
-            let borderRect = NSInsetRect(self.bounds, 5, 7)
-            let rightMarginRect = NSRect(x: borderRect.maxX-5, y: borderRect.minY, width: 5, height: borderRect.height)
-            NSColor(red: 0, green: 125/255, blue: 250/255, alpha: 1).setFill()
-            NSBezierPath.init(roundedRect: rightMarginRect, xRadius: 2, yRadius: 2).fill()
-        }
-    }
-}
-
 class NotebookViewController: NSViewController {
     @IBOutlet var tableView: NotebookTableView!
     
@@ -125,8 +100,7 @@ extension NotebookViewController: NSTableViewDelegate {
     }
     
     func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
-        let rowView = NotebookTableRowView()
-        return rowView
+        NotebookTableRowView()
     }
     
     func tableViewSelectionDidChange(_ notification: Notification) {
@@ -250,13 +224,11 @@ extension NotebookViewController: NSToolbarItemValidation {
     }
 
     @IBAction func interruptClicked(_ sender: NSView) {
-        // TODO
-        print("interrupt")
+        tableView.interruptKernel()
     }
     
     @IBAction func restartClicked(_ sender: NSView) {
-        // TODO
-        print("restart kernel")
+        tableView.restartKernel()
     }
     
     @IBAction func restartAndRerunAllClicked(_ sender: NSView) {

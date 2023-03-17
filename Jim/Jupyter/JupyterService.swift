@@ -76,8 +76,8 @@ class JupyterService {
         
         return request
     }
-
-    func request<T: Decodable>(type: T.Type, path: String, method: String = "GET", json: [String: Any]? = nil, jsonData: Data? = nil) async -> Result<T,JupyterError> {
+    
+    func request(path: String, method: String = "GET", json: [String: Any]? = nil, jsonData: Data? = nil) async -> Result<Data,JupyterError> {
         guard let request = makeRequest(path: path, method: method, json: json, jsonData: jsonData) else {
             return .failure(JupyterError.notAuthenticated)
         }
@@ -98,6 +98,10 @@ class JupyterService {
             }
         }
         
+        return .success(data)
+    }
+
+    func decode<T: Decodable>(type: T.Type, data: Data) -> Result<T,JupyterError> {
         do {
             let result = try decoder.decode(T.self, from: data)
             return .success(result)
@@ -109,7 +113,8 @@ class JupyterService {
     }
 
     func getContent<T: Decodable>(_ path: String = "", type: T.Type) async -> Result<T,JupyterError> {
-        return await request(type: type, path: "api/contents/" + path.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!)
+        let data = await request(path: "api/contents/" + path.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!)
+        return data.flatMap { decode(type: type, data: $0) }
     }
     
     func updateContent<T: Encodable>(_ path: String, content: T) async -> Result<Content,JupyterError> {
@@ -123,17 +128,32 @@ class JupyterService {
             print("Error encoding content of type \(T.self)")
             return .failure(JupyterError.encodeError)
         }
-        return await request(type: Content.self, path: "api/contents/" + path.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!, method: "PUT", jsonData: contentJson)
+        let data = await request(path: "api/contents/" + path.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!, method: "PUT", jsonData: contentJson)
+        return data.flatMap { decode(type: Content.self, data: $0) }
     }
 
     func createSession(name: String, path: String) async -> Result<Session,JupyterError> {
         // TODO: make kernel an arg
-        let result = await request(type: Session.self, path: "api/sessions", method: "POST", json: ["kernel": ["name": "python3"], "name": name, "path": path, "type": ContentType.notebook.rawValue])
-        switch result {
-        case .success(let session): self.session = session
-        default: break
+        let data = await request(path: "api/sessions", method: "POST", json: ["kernel": ["name": "python3"], "name": name, "path": path, "type": ContentType.notebook.rawValue])
+        let result = data.flatMap { decode(type: Session.self, data: $0) }
+        if case let .success(session) = result {
+            self.session = session
         }
         return result
+    }
+    
+    func interruptKernel() async -> JupyterError? {
+        switch await request(path: "api/kernels/\(session!.kernel.id)/interrupt", method: "POST") {
+        case .success(_): return nil
+        case .failure(let error):
+            print("Failed to interrupt:", error)
+            return error
+        }
+    }
+    
+    func restartKernel() async -> Result<Kernel,JupyterError> {
+        let data = await request(path: "api/kernels/\(session!.kernel.id)/restart", method: "POST")
+        return data.flatMap { decode(type: Kernel.self, data: $0) }
     }
     
     func webSocketTask(_ session: Session) {
