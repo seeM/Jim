@@ -696,72 +696,52 @@
                                         <action selector="backClicked:" target="Oky-zY-oP4" id="hDo-wy-UQJ"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="3A7C3B66-8C92-4135-90E2-9A534FDC6210" label="" paletteLabel="Insert a cell below" toolTip="Insert a cell below" tag="-1" image="plus" catalog="system" bordered="YES" id="gvL-La-OhE" userLabel="Insert a cell below">
-                                    <size key="minSize" width="26" height="25"/>
-                                    <size key="maxSize" width="26" height="25"/>
+                                <toolbarItem implicitItemIdentifier="3A7C3B66-8C92-4135-90E2-9A534FDC6210" label="" paletteLabel="Insert a cell below" toolTip="Insert a cell below" tag="-1" image="plus" catalog="system" bordered="YES" sizingBehavior="auto" id="gvL-La-OhE" userLabel="Insert a cell below">
                                     <connections>
                                         <action selector="insertClicked:" target="Oky-zY-oP4" id="EhT-FR-uRO"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="F1DCA7A7-BC6C-465D-9324-577910F56964" label="" paletteLabel="Cut the selected cells" toolTip="Cut the selected cells" tag="-1" image="scissors" catalog="system" bordered="YES" id="w1C-A1-dpD" userLabel="Cut the selected cells">
-                                    <size key="minSize" width="32" height="25"/>
-                                    <size key="maxSize" width="32" height="25"/>
+                                <toolbarItem implicitItemIdentifier="F1DCA7A7-BC6C-465D-9324-577910F56964" label="" paletteLabel="Cut the selected cells" toolTip="Cut the selected cells" tag="-1" image="scissors" catalog="system" bordered="YES" sizingBehavior="auto" id="w1C-A1-dpD" userLabel="Cut the selected cells">
                                     <connections>
                                         <action selector="cutClicked:" target="Oky-zY-oP4" id="7hQ-CF-rsl"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="F9841219-D385-4E87-95A3-119999A88E0B" label="" paletteLabel="Copy the selected cells" toolTip="Copy the selected cells" tag="-1" image="doc.on.doc" catalog="system" bordered="YES" id="fBs-Oa-nay" userLabel="Copy the selected cells">
-                                    <size key="minSize" width="28" height="25"/>
-                                    <size key="maxSize" width="28" height="25"/>
+                                <toolbarItem implicitItemIdentifier="F9841219-D385-4E87-95A3-119999A88E0B" label="" paletteLabel="Copy the selected cells" toolTip="Copy the selected cells" tag="-1" image="doc.on.doc" catalog="system" bordered="YES" sizingBehavior="auto" id="fBs-Oa-nay" userLabel="Copy the selected cells">
                                     <connections>
                                         <action selector="copyClicked:" target="Oky-zY-oP4" id="Gqs-nc-f1L"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="64991545-F5F1-49E1-97CB-F498A77C562C" label="" paletteLabel="Paste cells from the clipboard" toolTip="Paste cells from the clipboard" tag="-1" image="clipboard" catalog="system" bordered="YES" id="lUz-UX-HBh" userLabel="Paste cells from the clipboard">
-                                    <size key="minSize" width="26" height="25"/>
-                                    <size key="maxSize" width="26" height="25"/>
+                                <toolbarItem implicitItemIdentifier="64991545-F5F1-49E1-97CB-F498A77C562C" label="" paletteLabel="Paste cells from the clipboard" toolTip="Paste cells from the clipboard" tag="-1" image="clipboard" catalog="system" bordered="YES" sizingBehavior="auto" id="lUz-UX-HBh" userLabel="Paste cells from the clipboard">
                                     <connections>
                                         <action selector="pasteClicked:" target="Oky-zY-oP4" id="EaW-tT-z6Z"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="00655034-2D09-4AA2-8B98-E04F44C243BA" label="" paletteLabel="Move selected cells up" toolTip="Move selected cells up" tag="-1" image="arrow.up" catalog="system" bordered="YES" id="zx6-bf-2aU" userLabel="Move selected cells up">
-                                    <size key="minSize" width="25" height="25"/>
-                                    <size key="maxSize" width="25" height="25"/>
+                                <toolbarItem implicitItemIdentifier="00655034-2D09-4AA2-8B98-E04F44C243BA" label="" paletteLabel="Move selected cells up" toolTip="Move selected cells up" tag="-1" image="arrow.up" catalog="system" bordered="YES" sizingBehavior="auto" id="zx6-bf-2aU" userLabel="Move selected cells up">
                                     <connections>
                                         <action selector="moveUpClicked:" target="Oky-zY-oP4" id="sci-f1-kKY"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="A188A7AD-B9B9-47D8-89C9-F4621CE6067D" label="" paletteLabel="Move selected cells down" toolTip="Move selected cells down" tag="-1" image="arrow.down" catalog="system" bordered="YES" id="sBC-w3-glg" userLabel="Move selected cells down">
-                                    <size key="minSize" width="25" height="25"/>
-                                    <size key="maxSize" width="25" height="25"/>
+                                <toolbarItem implicitItemIdentifier="A188A7AD-B9B9-47D8-89C9-F4621CE6067D" label="" paletteLabel="Move selected cells down" toolTip="Move selected cells down" tag="-1" image="arrow.down" catalog="system" bordered="YES" sizingBehavior="auto" id="sBC-w3-glg" userLabel="Move selected cells down">
                                     <connections>
                                         <action selector="moveDownClicked:" target="Oky-zY-oP4" id="kZf-7w-Dtb"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="B6C7AA0B-1A0C-42D0-A88D-A9647646A590" label="" paletteLabel="Run the selected cells and advance" toolTip="Run the selected cells and advance" tag="-1" image="play.fill" catalog="system" bordered="YES" id="xXp-sc-4FP" userLabel="Run the selected cells and advance">
-                                    <size key="minSize" width="24" height="25"/>
-                                    <size key="maxSize" width="24" height="25"/>
+                                <toolbarItem implicitItemIdentifier="B6C7AA0B-1A0C-42D0-A88D-A9647646A590" label="" paletteLabel="Run the selected cells and advance" toolTip="Run the selected cells and advance" tag="-1" image="play.fill" catalog="system" bordered="YES" sizingBehavior="auto" id="xXp-sc-4FP" userLabel="Run the selected cells and advance">
                                     <connections>
                                         <action selector="runClicked:" target="Oky-zY-oP4" id="rhS-a1-BgQ"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="96E0E263-FB0B-49D4-8CED-E0AF18E7D4CB" label="" paletteLabel="Interrupt the kernel" toolTip="Interrupt the kernel" tag="-1" image="stop.fill" catalog="system" bordered="YES" id="2Nq-Xa-5cC" userLabel="Interrupt the kernel">
-                                    <size key="minSize" width="26" height="25"/>
-                                    <size key="maxSize" width="26" height="25"/>
+                                <toolbarItem implicitItemIdentifier="96E0E263-FB0B-49D4-8CED-E0AF18E7D4CB" label="" paletteLabel="Interrupt the kernel" toolTip="Interrupt the kernel" tag="-1" image="stop.fill" catalog="system" bordered="YES" sizingBehavior="auto" id="2Nq-Xa-5cC" userLabel="Interrupt the kernel">
                                     <connections>
                                         <action selector="interruptClicked:" target="Oky-zY-oP4" id="fIa-Wh-OwZ"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="94F5DB17-F9F3-4403-8EBF-FDB620B7C0AF" label="" paletteLabel="Restart the kernel" toolTip="Restart the kernel" tag="-1" image="goforward" catalog="system" bordered="YES" id="nHH-gd-qXW" userLabel="Restart the kernel">
-                                    <size key="minSize" width="27" height="25"/>
-                                    <size key="maxSize" width="27" height="25"/>
+                                <toolbarItem implicitItemIdentifier="94F5DB17-F9F3-4403-8EBF-FDB620B7C0AF" label="" paletteLabel="Restart the kernel" toolTip="Restart the kernel" tag="-1" image="goforward" catalog="system" bordered="YES" sizingBehavior="auto" id="nHH-gd-qXW" userLabel="Restart the kernel">
                                     <connections>
                                         <action selector="restartClicked:" target="Oky-zY-oP4" id="ERa-zE-siL"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="28CD4850-63E7-4486-A957-F0BAEE77AFC5" label="" paletteLabel="Restart the kernel and run all cells" toolTip="Restart the kernel and run all cells" tag="-1" image="forward.fill" catalog="system" bordered="YES" id="xaj-Ju-m7y" userLabel="Restart the kernel and run all cells">
-                                    <size key="minSize" width="31" height="25"/>
-                                    <size key="maxSize" width="31" height="25"/>
+                                <toolbarItem implicitItemIdentifier="28CD4850-63E7-4486-A957-F0BAEE77AFC5" label="" paletteLabel="Restart the kernel and run all cells" toolTip="Restart the kernel and run all cells" tag="-1" image="forward.fill" catalog="system" bordered="YES" sizingBehavior="auto" id="xaj-Ju-m7y" userLabel="Restart the kernel and run all cells">
                                     <connections>
                                         <action selector="restartAndRerunAllClicked:" target="Oky-zY-oP4" id="V5l-Dg-4rH"/>
                                     </connections>
@@ -769,8 +749,8 @@
                                 <toolbarItem implicitItemIdentifier="0BB73751-1093-4A20-B3DA-54A24E15DE92" label="" paletteLabel="Custom View" sizingBehavior="auto" id="nD7-3j-XUI" userLabel="Set the selected cells' type">
                                     <nil key="toolTip"/>
                                     <comboBox key="view" verticalHuggingPriority="750" id="mqU-KU-2se">
-                                        <rect key="frame" x="0.0" y="14" width="99" height="26"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="0.0" y="14" width="94" height="23"/>
+                                        <autoresizingMask key="autoresizingMask"/>
                                         <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Cell type" drawsBackground="YES" completes="NO" numberOfVisibleItems="3" id="zkk-QR-Odu">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
