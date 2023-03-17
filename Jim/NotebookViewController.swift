@@ -21,7 +21,7 @@ class NotebookViewController: NSViewController {
     }()
     
     let outputLineHeight: CGFloat = {
-        let string = NSAttributedString(string: "A")
+        let string = NSAttributedString(string: "A", attributes: [.font: JimSourceCodeTheme.shared.font])
         return string.size().height
     }()
     

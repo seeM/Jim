@@ -136,8 +136,9 @@ class NotebookTableCell: NSTableCellView {
     }
     
     func appendOutputTextSubview(_ text: String) {
-        let string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines)
+        let string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines).replacing(/\[\d+[\d;]*m/, with: "")
         let textView = OutputTextView()
+        textView.font = JimSourceCodeTheme.shared.font
         textView.drawsBackground = false
         textView.minSize = .zero
         textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
