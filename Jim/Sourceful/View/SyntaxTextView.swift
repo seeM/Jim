@@ -49,11 +49,6 @@ struct ThemeInfo {
 }
 
 public class HuggingTextView: NSTextView {
-//    public override func draw(_ dirtyRect: NSRect) {
-//        super.draw(dirtyRect)
-//        NSColor.red.setStroke()
-//        NSBezierPath(rect: bounds).stroke()
-//    }
     public override var intrinsicContentSize: NSSize {
         guard let textContainer = textContainer, let layoutManager = layoutManager else { return super.intrinsicContentSize }
         layoutManager.ensureLayout(for: textContainer)
@@ -91,7 +86,6 @@ open class SyntaxTextView: NSScrollView {
     var ignoreSelectionChange = false
     var ignoreShouldChange = false
     var padding = CGFloat(5)  // TODO: Ideally this should be passed in
-//    var isExecuting = false
 
     public var tintColor: NSColor! {
         set {
@@ -128,14 +122,6 @@ open class SyntaxTextView: NSScrollView {
             super.scrollWheel(with: event)
         }
     }
-    
-//    open override func draw(_ dirtyRect: NSRect) {
-//        super.draw(dirtyRect)
-//        let width = 5.0
-//        let leftMarginRect = NSRect(x: bounds.maxX - width, y: bounds.minY, width: width, height: bounds.height)
-//        NSColor(red: 0, green: 125/255, blue: 250/255, alpha: 1).setFill()
-//        NSBezierPath.init(roundedRect: leftMarginRect, xRadius: 2, yRadius: 2).fill()
-//    }
 
     private func setup() {
         scrollView.borderType = .noBorder
@@ -144,12 +130,6 @@ open class SyntaxTextView: NSScrollView {
         scrollView.hasHorizontalScroller = true
         scrollView.horizontalScrollElasticity = .automatic
         scrollView.verticalScrollElasticity = .none
-
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        scrollView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        scrollView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        scrollView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
 
         scrollView.drawsBackground = true
 //        scrollView.wantsLayer = true
@@ -175,18 +155,26 @@ open class SyntaxTextView: NSScrollView {
 
         scrollView.documentView = textViewContainer
 
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
         textViewContainer.translatesAutoresizingMaskIntoConstraints = false
-        textViewContainer.translatesAutoresizingMaskIntoConstraints = false
-        textViewContainer.leadingAnchor.constraint(equalTo: scrollView.contentView.leadingAnchor).isActive = true
-        textViewContainer.trailingAnchor.constraint(greaterThanOrEqualTo: scrollView.contentView.trailingAnchor).isActive = true
-        textViewContainer.topAnchor.constraint(equalTo: scrollView.contentView.topAnchor).isActive = true
-        textViewContainer.bottomAnchor.constraint(equalTo: scrollView.contentView.bottomAnchor).isActive = true
-
         textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.leadingAnchor.constraint(equalTo: textViewContainer.leadingAnchor).isActive = true
-        textView.trailingAnchor.constraint(equalTo: textViewContainer.trailingAnchor).isActive = true
-        textView.topAnchor.constraint(equalTo: textViewContainer.topAnchor, constant: padding).isActive = true
-        textView.bottomAnchor.constraint(equalTo: textViewContainer.bottomAnchor, constant: -padding).isActive = true
+
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: topAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            textViewContainer.leadingAnchor.constraint(equalTo: scrollView.contentView.leadingAnchor),
+            textViewContainer.trailingAnchor.constraint(greaterThanOrEqualTo: scrollView.contentView.trailingAnchor),
+            textViewContainer.topAnchor.constraint(equalTo: scrollView.contentView.topAnchor),
+            textViewContainer.bottomAnchor.constraint(equalTo: scrollView.contentView.bottomAnchor),
+
+            textView.leadingAnchor.constraint(equalTo: textViewContainer.leadingAnchor),
+            textView.trailingAnchor.constraint(equalTo: textViewContainer.trailingAnchor),
+            textView.topAnchor.constraint(equalTo: textViewContainer.topAnchor, constant: padding),
+            textView.bottomAnchor.constraint(equalTo: textViewContainer.bottomAnchor, constant: -padding),
+        ])
         textView.setContentHuggingPriority(.required, for: .vertical)
 
         textView.delegate = self

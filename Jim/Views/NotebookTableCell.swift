@@ -3,8 +3,10 @@ import Cocoa
 class OutputStackView: NSStackView {
     override func addArrangedSubview(_ view: NSView) {
         super.addArrangedSubview(view)
-        view.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
-        view.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            view.widthAnchor.constraint(equalTo: widthAnchor),
+            view.leadingAnchor.constraint(equalTo: leadingAnchor),
+        ])
         view.setContentHuggingPriority(.required, for: .vertical)
     }
 }
@@ -31,14 +33,6 @@ class NotebookTableCell: NSTableCellView {
     var row: Int { tableView.row(for: self) }
     var notebook: Notebook!
     let lexer = Python3Lexer()
-    
-    var isExecuting = false {
-        didSet {
-//            syntaxTextView.isExecuting = isExecuting
-            tableView.rowView(atRow: row, makeIfNecessary: false)!.needsDisplay = true
-//            runButton.inProgress = isExecuting
-        }
-    }
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect); create()
@@ -79,41 +73,49 @@ class NotebookTableCell: NSTableCellView {
         containerView.addSubview(outputStackView)
         
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        containerView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        containerView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        containerView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            containerView.topAnchor.constraint(equalTo: topAnchor),
+            containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
+        ])
         
         runButton.translatesAutoresizingMaskIntoConstraints = false
         let runButtonTopAnchorConstraint = runButton.topAnchor.constraint(lessThanOrEqualTo: syntaxTextView.topAnchor, constant: syntaxTextView.padding)
-        runButtonTopAnchorConstraint.isActive = true
-        runButtonTopAnchorConstraint.priority = .defaultLow
         let runButtonCenterYConstraint = runButton.centerYAnchor.constraint(lessThanOrEqualTo: syntaxTextView.centerYAnchor)
-        runButtonCenterYConstraint.isActive = true
+        NSLayoutConstraint.activate([
+            runButtonTopAnchorConstraint,
+            runButtonCenterYConstraint,
+            runButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+        ])
+        runButtonTopAnchorConstraint.priority = .defaultLow
         runButtonCenterYConstraint.priority = .defaultLow
-        runButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         runButton.setContentHuggingPriority(.required, for: .horizontal)
         runButton.isHidden = true
 
         syntaxTextView.translatesAutoresizingMaskIntoConstraints = false
         syntaxTextView.setContentHuggingPriority(.required, for: .vertical)
-        syntaxTextView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-//        syntaxTextView.leadingAnchor.constraint(equalTo: runButton.trailingAnchor, constant: syntaxTextView.padding).isActive = true
-        syntaxTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
-        syntaxTextView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            syntaxTextView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+//            syntaxTextView.leadingAnchor.constraint(equalTo: runButton.trailingAnchor, constant: syntaxTextView.padding),
+            syntaxTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            syntaxTextView.topAnchor.constraint(equalTo: containerView.topAnchor),
+        ])
 
         outputStackView.translatesAutoresizingMaskIntoConstraints = false
         outputStackView.setHuggingPriority(.required, for: .vertical)
-        outputStackView.leadingAnchor.constraint(equalTo: syntaxTextView.leadingAnchor).isActive = true
-        outputStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
-        outputStackView.topAnchor.constraint(equalTo: syntaxTextView.bottomAnchor).isActive = true
-        outputStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            outputStackView.leadingAnchor.constraint(equalTo: syntaxTextView.leadingAnchor),
+            outputStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            outputStackView.topAnchor.constraint(equalTo: syntaxTextView.bottomAnchor),
+            outputStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+        ])
     }
     
     func clearOutputs() {
         for view in outputStackView.arrangedSubviews {
-//            outputStackView.removeArrangedSubview(view)
-//            NSLayoutConstraint.deactivate(view.constraints)
+            outputStackView.removeArrangedSubview(view)
+            NSLayoutConstraint.deactivate(view.constraints)
             view.removeFromSuperview()
         }
     }
@@ -149,7 +151,18 @@ class NotebookTableCell: NSTableCellView {
         textView.textContainer?.size.height = CGFloat.greatestFiniteMagnitude
         textView.isEditable = false
         textView.string = string
-        outputStackView.addArrangedSubview(textView)
+        
+        let container = NSView()
+        container.addSubview(textView)
+        
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            textView.topAnchor.constraint(equalTo: container.topAnchor, constant: syntaxTextView.padding),
+            textView.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -syntaxTextView.padding),
+            textView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            textView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+        ])
+        outputStackView.addArrangedSubview(container)
     }
     
     func appendOutputImageSubview(_ image: NSImage) {
@@ -170,13 +183,20 @@ class NotebookTableCell: NSTableCellView {
                 appendOutputSubview(output)
             }
         }
+        setIsExecuting(cell, isExecuting: cell.isExecuting)
+    }
+    
+    func setIsExecuting(_ cell: Cell, isExecuting: Bool) {
+        cell.isExecuting = isExecuting
+        alphaValue = isExecuting ? 0.5 : 1.0
     }
     
     func runCell() {
         guard cell.cellType == .code else { return }
         let jupyter = JupyterService.shared
         notebook.dirty = true
-        isExecuting = true
+        setIsExecuting(cell, isExecuting: true)
+
         clearOutputs()
         cell.outputs = []
         jupyter.webSocketSend(code: cell.source.value) { msg in
@@ -204,7 +224,7 @@ class NotebookTableCell: NSTableCellView {
                 switch msg.content {
                 case .executeReply(_):
                     Task.detached { @MainActor in
-                        self.isExecuting = false
+                        self.setIsExecuting(self.cell, isExecuting: false)
                     }
                 default: break
                 }

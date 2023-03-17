@@ -9,6 +9,7 @@ class Cell: Codable, Identifiable {
     var outputs: [Output]?
     let metadata: [String: AnyCodable]?
     let executionCount: Int?
+    var isExecuting = false
     
     init(id: String? = nil, cellType: CellType = .code, source: StringOrArray = StringOrArray(""), outputs: [Output]? = [], metadata: [String: AnyCodable]? = nil) {
         self.id = id ?? UUID().uuidString

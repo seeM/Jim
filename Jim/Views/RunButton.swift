@@ -41,18 +41,22 @@ class RunButton: NSView {
         addSubview(progress)
         
         translatesAutoresizingMaskIntoConstraints = false
-        widthAnchor.constraint(equalTo: button.widthAnchor).isActive = true
-        heightAnchor.constraint(equalTo: button.heightAnchor).isActive = true
-        
         button.translatesAutoresizingMaskIntoConstraints = false
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            widthAnchor.constraint(equalTo: button.widthAnchor),
+            heightAnchor.constraint(equalTo: button.heightAnchor),
+            
+            button.centerYAnchor.constraint(equalTo: centerYAnchor),
+            button.centerXAnchor.constraint(equalTo: centerXAnchor),
+        
+            progress.centerYAnchor.constraint(equalTo: centerYAnchor),
+            progress.centerXAnchor.constraint(equalTo: centerXAnchor),
+        ])
+        
         button.setContentHuggingPriority(.required, for: .horizontal)
         button.setContentHuggingPriority(.required, for: .vertical)
-        button.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        button.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        
-        progress.translatesAutoresizingMaskIntoConstraints = false
-        progress.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        progress.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
     }
     
     required init?(coder: NSCoder) {

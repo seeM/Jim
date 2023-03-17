@@ -200,10 +200,10 @@
 		84ED491729BF4DA40069AFD8 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				841C6ECE29A6268D008B1FE5 /* NotebookTableCell.swift */,
 				84ED491829BF50720069AFD8 /* NotebookTableView.swift */,
-				84ED491A29BF517C0069AFD8 /* RunButton.swift */,
 				84CCB4E329C4894900EC17B3 /* NotebookTableRowView.swift */,
+				841C6ECE29A6268D008B1FE5 /* NotebookTableCell.swift */,
+				84ED491A29BF517C0069AFD8 /* RunButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";

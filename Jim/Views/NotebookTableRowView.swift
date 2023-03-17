@@ -13,15 +13,4 @@ class NotebookTableRowView: NSTableRowView {
         NSColor(red: 0, green: 125/255, blue: 250/255, alpha: 1).setFill()
         NSBezierPath.init(roundedRect: leftMarginRect, xRadius: 2, yRadius: 2).fill()
     }
-    
-    override func draw(_ dirtyRect: NSRect) {
-        super.draw(dirtyRect)
-        let view = (self.view(atColumn: 0) as! NotebookTableCell)
-        if view.isExecuting {
-            let borderRect = NSInsetRect(self.bounds, 5, 7)
-            let rightMarginRect = NSRect(x: borderRect.maxX-5, y: borderRect.minY, width: 5, height: borderRect.height)
-            NSColor(red: 0, green: 125/255, blue: 250/255, alpha: 1).setFill()
-            NSBezierPath.init(roundedRect: rightMarginRect, xRadius: 2, yRadius: 2).fill()
-        }
-    }
 }
