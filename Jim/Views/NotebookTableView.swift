@@ -26,12 +26,20 @@ class NotebookTableView: NSTableView {
         scrollRowToVisible(row)
     }
     
-    func selectCellAbove() {
-        selectCell(at: selectedRow - 1)
+    func selectCellAbove(_ n: Int = 1) {
+        selectCell(at: selectedRow - n)
     }
     
-    func selectCellBelow() {
-        selectCell(at: selectedRow + 1)
+    func selectCellBelow(_ n: Int = 1) {
+        selectCell(at: selectedRow + n)
+    }
+    
+    func selectFirstCell() {
+        selectCell(at: 0)
+    }
+    
+    func selectLastCell() {
+        selectCell(at: numberOfRows - 1)
     }
     
     func enterEditMode() {
@@ -163,6 +171,12 @@ class NotebookTableView: NSTableView {
             copyCell()
         } else if event.keyCode == 1 && flags == .command { // cmd + s
             notebookDelegate?.save()
+        } else if event.keyCode == 5 && flags == .shift {
+            selectLastCell()
+        } else if event.keyCode == 2 && flags == .control { // ctrl + d
+            selectCellBelow(10)
+        } else if event.keyCode == 32 && flags == .control { // ctrl + u
+            selectCellAbove(10)
         } else if [34, 5, 29].contains(where: { $0 == event.keyCode }) { // i, g, 00
             // TODO: Think we should rather keep a keymap.
             //       Make it a nested dict and somehow use that to determine whether to wait for more keys.
@@ -174,6 +188,8 @@ class NotebookTableView: NSTableView {
                 interruptKernel()
             } else if keys == [29, 29] {
                 restartKernel()
+            } else if keys == [5, 5] {
+                selectFirstCell()
             } else {
                 timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { timer in
                     self.keys = []
