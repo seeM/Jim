@@ -1,7 +1,7 @@
 import AnyCodable
 import Foundation
 
-class Cell: Codable, Identifiable {
+class Cell: Codable, Identifiable, Equatable  {
     let id: String
     // TODO: don't think it should be var, should make a new cell...
     var cellType: CellType
@@ -18,6 +18,10 @@ class Cell: Codable, Identifiable {
         self.outputs = outputs
         self.metadata = metadata
         self.executionCount = nil  // TODO
+    }
+    
+    static func == (lhs: Cell, rhs: Cell) -> Bool {
+        lhs.id == rhs.id
     }
     
     convenience init(from cell: Cell) {

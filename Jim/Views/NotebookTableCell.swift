@@ -199,7 +199,8 @@ class NotebookTableCell: NSTableCellView {
 
         clearOutputs()
         cell.outputs = []
-        jupyter.webSocketSend(code: cell.source.value) { msg in
+        jupyter.webSocketSend(code: cell.source.value) { [row] msg in
+            let cell = self.notebook.content.cells[row]
             switch msg.channel {
             case .iopub:
                 var output: Output?
@@ -216,15 +217,18 @@ class NotebookTableCell: NSTableCellView {
                 }
                 if let output {
                     Task.detached { @MainActor in
-                        self.appendOutputSubview(output)
+                        // TODO: feels hacky...
+                        if cell == self.cell {
+                            self.appendOutputSubview(output)
+                        }
                     }
-                    self.cell.outputs!.append(output)
+                    cell.outputs!.append(output)
                 }
             case .shell:
                 switch msg.content {
                 case .executeReply(_):
                     Task.detached { @MainActor in
-                        self.setIsExecuting(self.cell, isExecuting: false)
+                        self.setIsExecuting(cell, isExecuting: false)
                     }
                 default: break
                 }
