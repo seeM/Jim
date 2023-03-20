@@ -12,6 +12,8 @@ class OutputStackView: NSStackView {
 }
 
 class OutputTextView: NSTextView {
+    var cellView: NotebookTableCell!
+    
     public override var intrinsicContentSize: NSSize {
         guard let textContainer = textContainer, let layoutManager = layoutManager else { return super.intrinsicContentSize }
         layoutManager.ensureLayout(for: textContainer)
@@ -21,6 +23,11 @@ class OutputTextView: NSTextView {
     override func resize(withOldSuperviewSize oldSize: NSSize) {
         invalidateIntrinsicContentSize()
         super.resize(withOldSuperviewSize: oldSize)
+    }
+    
+    override func becomeFirstResponder() -> Bool {
+        cellView.tableView.selectRowIndexes(IndexSet(integer: cellView.row), byExtendingSelection: false)
+        return super.becomeFirstResponder()
     }
 }
 
@@ -140,6 +147,7 @@ class NotebookTableCell: NSTableCellView {
     func appendOutputTextSubview(_ text: String) {
         let string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines).replacing(/\[\d+[\d;]*m/, with: "")
         let textView = OutputTextView()
+        textView.cellView = self
         textView.font = JimSourceCodeTheme.shared.font
         textView.drawsBackground = false
         textView.minSize = .zero
