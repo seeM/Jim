@@ -54,11 +54,16 @@ public class HuggingTextView: NSTextView {
         layoutManager.ensureLayout(for: textContainer)
         return layoutManager.usedRect(for: textContainer).size
     }
+    
+    public override func invalidateIntrinsicContentSize() {
+        // TODO: needed?
+        super.invalidateIntrinsicContentSize()
+        enclosingScrollView?.invalidateIntrinsicContentSize()
+    }
 
     public override func didChangeText() {
         super.didChangeText()
         invalidateIntrinsicContentSize()
-        enclosingScrollView?.invalidateIntrinsicContentSize()
     }
     
     public override func becomeFirstResponder() -> Bool {
@@ -69,12 +74,7 @@ public class HuggingTextView: NSTextView {
 }
 
 open class SyntaxTextView: NSScrollView {
-
-    var previousSelectedRange: NSRange?
     var uniqueUndoManager: UndoManager?
-
-    private var textViewSelectedRangeObserver: NSKeyValueObservation?
-
     let textView: HuggingTextView
 
     public weak var delegate: SyntaxTextViewDelegate? {
@@ -83,7 +83,6 @@ open class SyntaxTextView: NSScrollView {
         }
     }
 
-    var ignoreSelectionChange = false
     var ignoreShouldChange = false
     var padding = CGFloat(5)  // TODO: Ideally this should be passed in
 
@@ -97,22 +96,15 @@ open class SyntaxTextView: NSScrollView {
     }
     
     public override init(frame: CGRect) {
-        textView = SyntaxTextView.createInnerTextView()
+        textView = HuggingTextView(frame: .zero)
         super.init(frame: frame)
         setup()
     }
     
-    public required init?(coder aDecoder: NSCoder) {
-        textView = SyntaxTextView.createInnerTextView()
-        super.init(coder: aDecoder)
-        setup()
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-
-    private static func createInnerTextView() -> HuggingTextView {
-        // We'll set the container size and text view frame later
-        return HuggingTextView(frame: .zero)
-    }
-
+    
     public var scrollView: NSScrollView { self }
     
     public override func scrollWheel(with event: NSEvent) {
@@ -138,10 +130,9 @@ open class SyntaxTextView: NSScrollView {
         textView.drawsBackground = false
         
         // Infinite max size text view and container + resizable text view allows for horizontal scrolling.
-        // textView.isRichText = false
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.allowsUndo = true
-        textView.minSize = NSSize(width: 0, height: scrollView.bounds.height)
+        textView.minSize = NSSize(width: 0, height: 0)
         textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = true
@@ -155,16 +146,10 @@ open class SyntaxTextView: NSScrollView {
 
         scrollView.documentView = textViewContainer
 
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
         textViewContainer.translatesAutoresizingMaskIntoConstraints = false
+        
         textView.translatesAutoresizingMaskIntoConstraints = false
-
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: topAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
-
             textViewContainer.leadingAnchor.constraint(equalTo: scrollView.contentView.leadingAnchor),
             textViewContainer.trailingAnchor.constraint(greaterThanOrEqualTo: scrollView.contentView.trailingAnchor),
             textViewContainer.topAnchor.constraint(equalTo: scrollView.contentView.topAnchor),
