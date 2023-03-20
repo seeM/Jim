@@ -17,7 +17,8 @@ class OutputTextView: NSTextView {
     public override var intrinsicContentSize: NSSize {
         guard let textContainer = textContainer, let layoutManager = layoutManager else { return super.intrinsicContentSize }
         layoutManager.ensureLayout(for: textContainer)
-        return NSSize(width: -1, height: layoutManager.usedRect(for: textContainer).size.height)
+        let size = layoutManager.usedRect(for: textContainer).size
+        return .init(width: -1, height: size.height + 2 * textContainerInset.height)
     }
     
     override func resize(withOldSuperviewSize oldSize: NSSize) {
@@ -157,20 +158,11 @@ class NotebookTableCell: NSTableCellView {
         textView.textContainer?.widthTracksTextView = true
         textView.textContainer?.heightTracksTextView = false
         textView.textContainer?.size.height = CGFloat.greatestFiniteMagnitude
+        textView.textContainerInset = .init(width: 0, height: 5)
         textView.isEditable = false
         textView.string = string
         
-        let container = NSView()
-        container.addSubview(textView)
-        
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            textView.topAnchor.constraint(equalTo: container.topAnchor, constant: syntaxTextView.padding),
-            textView.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -syntaxTextView.padding),
-            textView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            textView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-        ])
-        outputStackView.addArrangedSubview(container)
+        outputStackView.addArrangedSubview(textView)
     }
     
     func appendOutputImageSubview(_ image: NSImage) {
