@@ -22,8 +22,8 @@ class JupyterService {
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
     
-    private var session: Session?
-    private var task: URLSessionWebSocketTask?
+    private var activeSession: Session?
+    private var sessions = [Session: URLSessionWebSocketTask?]()
     private var executeRequests = [String: (Cancellable, PassthroughSubject<Message, Never>)]()
     
     static var nbformatUserInfoKey: CodingUserInfoKey {
@@ -137,13 +137,16 @@ class JupyterService {
         let data = await request(path: "api/sessions", method: "POST", json: ["kernel": ["name": "python3"], "name": name, "path": path, "type": ContentType.notebook.rawValue])
         let result = data.flatMap { decode(type: Session.self, data: $0) }
         if case let .success(session) = result {
-            self.session = session
+            self.activeSession = session
+            if self.sessions[session] == nil {
+                self.sessions[session] = nil
+            }
         }
         return result
     }
     
     func interruptKernel() async -> JupyterError? {
-        switch await request(path: "api/kernels/\(session!.kernel.id)/interrupt", method: "POST") {
+        switch await request(path: "api/kernels/\(activeSession!.kernel.id)/interrupt", method: "POST") {
         case .success(_): return nil
         case .failure(let error):
             print("Failed to interrupt:", error)
@@ -152,18 +155,19 @@ class JupyterService {
     }
     
     func restartKernel() async -> Result<Kernel,JupyterError> {
-        let data = await request(path: "api/kernels/\(session!.kernel.id)/restart", method: "POST")
+        let data = await request(path: "api/kernels/\(activeSession!.kernel.id)/restart", method: "POST")
         return data.flatMap { decode(type: Kernel.self, data: $0) }
     }
     
     func webSocketTask(_ session: Session) {
         guard let baseUrl else { return }
+        if self.sessions[session] != nil { return }
         // TODO: why don't I need xsrf here?
         let url = URL(string: baseUrl + "api/kernels/\(session.kernel.id)/channels?session_id=\(session.id)")!
         var request = URLRequest(url: url)
         request.timeoutInterval = 5
         let task = URLSession.shared.webSocketTask(with: request)
-        self.task = task
+        self.sessions[session] = task
         task.resume()
         recieveAll(task)
     }
@@ -172,7 +176,8 @@ class JupyterService {
         task.receive { result in
             switch result {
             case .failure(let error):
-                print("Failed to receive message: \(error)")
+                print("Failed to receive message, exiting recieve handler: \(error)")
+                return
             case .success(let message):
                 switch message {
                 case .string(let text):
@@ -198,7 +203,7 @@ class JupyterService {
     func webSocketSend(code: String, handler: @escaping (Message) -> ()) {
         // TODO: Where does username come from?
         let msgId = UUID().uuidString // TODO: move into Message?
-        let msg = Message(header: MessageHeader(msgId: msgId, session: self.session!.id, username: "seem", version: "5.3", date: Date(), msgType: .executeRequest), parentHeader: nil, content: MessageContent.executeRequest(.init(code: code, silent: false)), channel: .shell)
+        let msg = Message(header: MessageHeader(msgId: msgId, session: self.activeSession!.id, username: "seem", version: "5.3", date: Date(), msgType: .executeRequest), parentHeader: nil, content: MessageContent.executeRequest(.init(code: code, silent: false)), channel: .shell)
         let msgD: Data
         do {
             msgD = try self.encoder.encode(msg)
@@ -213,7 +218,7 @@ class JupyterService {
             handler(msg)
         }
         self.executeRequests[msgId] = (cancellable, subject)
-        self.task!.send(codeMsgD) { error in
+        self.sessions[self.activeSession!]!!.send(codeMsgD) { error in
             if let error = error {
                 print("Error: \(error)")
                 return
