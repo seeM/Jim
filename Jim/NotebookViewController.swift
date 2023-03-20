@@ -237,10 +237,9 @@ extension NotebookViewController: NSToolbarItemValidation {
     }
     
     @IBAction func setCellTypeClicked(_ sender: NSComboBox) {
+        // TODO: is there a way for the sender to use an enum directly?
         let rawValue = (sender.objectValueOfSelectedItem as! String).lowercased()
-        // TODO: update the cell's outputs etc to match type...
-        // TODO: make this undoable too?
-        // TODO: make a command for this
-        notebook.content.cells[tableView.selectedRow].cellType = .init(rawValue: rawValue)!
+        let cellType = CellType.init(rawValue: rawValue)!
+        tableView.setCellType(cellType)
     }
 }

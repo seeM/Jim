@@ -142,6 +142,17 @@ class NotebookTableView: NSTableView {
         Task { await JupyterService.shared.restartKernel() }
     }
     
+    func setCellType(_ cellType: CellType) {
+        // TODO: update the cell's outputs etc to match type...
+        // TODO: make this undoable too?
+        // TODO: more consistent way to access the cell?
+        selectedCellView?.cell.cellType = cellType
+        // TODO: very ugly
+        let windowController = window!.windowController as! WindowController
+        let title = cellType.rawValue.capitalized
+        windowController.cellTypeComboBox.cell?.title = title
+    }
+    
     var keys = [UInt16]()
     var timer: Timer?
     
@@ -169,6 +180,12 @@ class NotebookTableView: NSTableView {
             undoCellDeletion()
         } else if event.keyCode == 8 {  // c
             copyCell()
+        } else if event.keyCode == 46 {  // m
+            setCellType(.markdown)
+        } else if event.keyCode == 15 {  // r
+            setCellType(.raw)
+        } else if event.keyCode == 16 {  // y
+            setCellType(.code)
         } else if event.keyCode == 1 && flags == .command { // cmd + s
             notebookDelegate?.save()
         } else if event.keyCode == 5 && flags == .shift {
