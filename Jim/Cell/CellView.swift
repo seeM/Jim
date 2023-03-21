@@ -1,42 +1,14 @@
 import Cocoa
 
-class OutputStackView: NSStackView {
-    override func addArrangedSubview(_ view: NSView) {
-        super.addArrangedSubview(view)
-        NSLayoutConstraint.activate([
-            view.widthAnchor.constraint(equalTo: widthAnchor),
-            view.leadingAnchor.constraint(equalTo: leadingAnchor),
-        ])
-        view.setContentHuggingPriority(.required, for: .vertical)
+class CellViewModel {
+    private let cell: Cell
+    
+    init(cell: Cell) {
+        self.cell = cell
     }
 }
 
-class OutputTextView: NSTextView {
-    var cellView: NotebookTableCell!
-    
-    public override var intrinsicContentSize: NSSize {
-        guard let textContainer = textContainer, let layoutManager = layoutManager else { return super.intrinsicContentSize }
-        layoutManager.ensureLayout(for: textContainer)
-        let size = layoutManager.usedRect(for: textContainer).size
-        return .init(width: -1, height: size.height + 2 * textContainerInset.height)
-    }
-    
-    override func resize(withOldSuperviewSize oldSize: NSSize) {
-        invalidateIntrinsicContentSize()
-        super.resize(withOldSuperviewSize: oldSize)
-    }
-    
-    override func keyDown(with event: NSEvent) {
-        nextResponder?.keyDown(with: event)
-    }
-    
-    override func becomeFirstResponder() -> Bool {
-        cellView.tableView.selectRowIndexes(IndexSet(integer: cellView.row), byExtendingSelection: false)
-        return super.becomeFirstResponder()
-    }
-}
-
-class NotebookTableCell: NSTableCellView {
+class CellView: NSTableCellView {
     let runButton = RunButton()
     let syntaxTextView = SyntaxTextView()
     let outputStackView = OutputStackView()
@@ -45,6 +17,8 @@ class NotebookTableCell: NSTableCellView {
     var row: Int { tableView.row(for: self) }
     var notebook: Notebook!
     let lexer = Python3Lexer()
+    
+    var viewModel: CellViewModel?
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect); create()
@@ -124,6 +98,30 @@ class NotebookTableCell: NSTableCellView {
         ])
     }
     
+    func update(cell: Cell, tableView: NotebookTableView, notebook: Notebook, undoManager: UndoManager, with viewModel: CellViewModel) {
+        // Store previous cell state
+        // TODO: there must be a better pattern for this
+        self.cell?.selectedRange = syntaxTextView.textView.selectedRange()
+        
+        self.viewModel = viewModel
+        
+        self.cell = cell
+        self.tableView = tableView
+        self.notebook = notebook
+        syntaxTextView.uniqueUndoManager = undoManager
+        syntaxTextView.text = cell.source.value
+        clearOutputs()
+        if let outputs = cell.outputs {
+            for output in outputs {
+                appendOutputSubview(output)
+            }
+        }
+        
+        // Apply new cell state
+        syntaxTextView.textView.setSelectedRange(cell.selectedRange)
+        setIsExecuting(cell, isExecuting: cell.isExecuting)
+    }
+    
     func clearOutputs() {
         for view in outputStackView.arrangedSubviews {
             outputStackView.removeArrangedSubview(view)
@@ -150,22 +148,8 @@ class NotebookTableCell: NSTableCellView {
     }
     
     func appendOutputTextSubview(_ text: String) {
-        let string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines).replacing(/\[\d+[\d;]*m/, with: "")
-        let textView = OutputTextView()
-        textView.cellView = self
-        textView.font = JimSourceCodeTheme.shared.font
-        textView.drawsBackground = false
-        textView.minSize = .zero
-        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        textView.isVerticallyResizable = true
-        textView.isHorizontallyResizable = false
-        textView.textContainer?.widthTracksTextView = true
-        textView.textContainer?.heightTracksTextView = false
-        textView.textContainer?.size.height = CGFloat.greatestFiniteMagnitude
-        textView.textContainerInset = .init(width: 0, height: 5)
-        textView.isEditable = false
-        textView.string = string
-        
+        let textView = OutputTextView(cellView: self)
+        textView.string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines).replacing(/\[\d+[\d;]*m/, with: "")
         outputStackView.addArrangedSubview(textView)
     }
     
@@ -173,28 +157,6 @@ class NotebookTableCell: NSTableCellView {
         let imageView = NSImageView(image: image)
         imageView.imageAlignment = .alignTopLeft
         outputStackView.addArrangedSubview(imageView)
-    }
-    
-    func update(cell: Cell, tableView: NotebookTableView, notebook: Notebook, undoManager: UndoManager) {
-        // Store previous cell state
-        // TODO: there must be a better pattern for this
-        self.cell?.selectedRange = syntaxTextView.textView.selectedRange()
-        
-        self.cell = cell
-        self.tableView = tableView
-        self.notebook = notebook
-        syntaxTextView.uniqueUndoManager = undoManager
-        syntaxTextView.text = cell.source.value
-        clearOutputs()
-        if let outputs = cell.outputs {
-            for output in outputs {
-                appendOutputSubview(output)
-            }
-        }
-        
-        // Apply new cell state
-        syntaxTextView.textView.setSelectedRange(cell.selectedRange)
-        setIsExecuting(cell, isExecuting: cell.isExecuting)
     }
     
     func setIsExecuting(_ cell: Cell, isExecuting: Bool) {
@@ -248,7 +210,7 @@ class NotebookTableCell: NSTableCellView {
     }
 }
 
-extension NotebookTableCell: SyntaxTextViewDelegate {
+extension CellView: SyntaxTextViewDelegate {
     func lexerForSource(_ source: String) -> Lexer {
         lexer
     }

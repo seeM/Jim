@@ -13,6 +13,7 @@ class NotebookViewController: NSViewController {
         }
     }
     var cells: [Cell] { notebook?.content.cells ?? []}
+    var cellViewModels = [String: CellViewModel]()
     var undoManagers = [String: UndoManager]()
     
     let inputLineHeight: CGFloat = {
@@ -54,7 +55,7 @@ extension NotebookViewController: NSTableViewDataSource {
 
 extension NotebookViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        guard let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "notebookCell"), owner: self) as? NotebookTableCell else { return nil }
+        guard let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "notebookCell"), owner: self) as? CellView else { return nil }
         let cell = cells[row]
         
         var undoManager: UndoManager! = undoManagers[cell.id]
@@ -63,7 +64,15 @@ extension NotebookViewController: NSTableViewDelegate {
             undoManagers[cell.id] = undoManager
         }
         
-        view.update(cell: cells[row], tableView: tableView as! NotebookTableView, notebook: notebook, undoManager: undoManager)
+        let viewModel: CellViewModel
+        if let existingViewModel = cellViewModels[cell.id] {
+            viewModel = existingViewModel
+        } else {
+            viewModel = CellViewModel(cell: cell)
+            cellViewModels[cell.id] = viewModel
+        }
+        
+        view.update(cell: cells[row], tableView: tableView as! NotebookTableView, notebook: notebook, undoManager: undoManager, with: viewModel)
         return view
     }
     

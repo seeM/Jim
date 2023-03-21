@@ -944,7 +944,7 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
-                                                <tableCellView identifier="notebookCell" id="UQI-4j-dZq" customClass="NotebookTableCell" customModule="Jim" customModuleProvider="target">
+                                                <tableCellView identifier="notebookCell" id="UQI-4j-dZq" customClass="CellView" customModule="Jim" customModuleProvider="target">
                                                     <rect key="frame" x="18" y="7" width="416" height="24"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 </tableCellView>

@@ -16,8 +16,8 @@ class NotebookTableView: NSTableView {
     }
     var previouslyRemovedRow: Int?
     var notebookDelegate: NotebookTableViewDelegate?
-    var selectedCellView: NotebookTableCell? {
-        view(atColumn: selectedColumn, row: selectedRow, makeIfNecessary: false) as? NotebookTableCell
+    var selectedCellView: CellView? {
+        view(atColumn: selectedColumn, row: selectedRow, makeIfNecessary: false) as? CellView
     }
     
     func selectCell(at tryRow: Int) {
