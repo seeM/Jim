@@ -32,7 +32,7 @@ public extension sourceViewDelegate {
 
 struct ThemeInfo {
 
-    let theme: SyntaxColorTheme
+    let theme: SourceCodeTheme
 
     /// Width of a space character in the theme's font.
     /// Useful for calculating tab indent size.
@@ -176,7 +176,7 @@ open class SourceView: NSScrollView {
         }
     }
 
-    public var theme: SyntaxColorTheme? {
+    public var theme: SourceCodeTheme? {
         didSet {
             guard let theme = theme else {
                 return
@@ -233,7 +233,7 @@ open class SourceView: NSScrollView {
         createAttributes(theme: theme, themeInfo: themeInfo, textStorage: textStorage, cachedTokens: cachedTokens, source: source)
     }
 
-    func createAttributes(theme: SyntaxColorTheme, themeInfo: ThemeInfo, textStorage: NSTextStorage, cachedTokens: [CachedToken], source: String) {
+    func createAttributes(theme: SourceCodeTheme, themeInfo: ThemeInfo, textStorage: NSTextStorage, cachedTokens: [CachedToken], source: String) {
 
         // Buffer a series of changes to the receiver's characters or attributes
         textStorage.beginEditing()

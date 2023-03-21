@@ -14,7 +14,7 @@ class OutputTextView: NSTextView {
         
         super.init(frame: .zero, textContainer: textContainer)
         
-        font = JimSourceCodeTheme.shared.font
+        font = SourceCodeTheme.shared.font
         drawsBackground = false
         isEditable = false
         textContainerInset = .init(width: 0, height: verticalPadding)

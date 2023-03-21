@@ -9,7 +9,6 @@ class CellViewModel {
 }
 
 class CellView: NSTableCellView {
-    let runButton = RunButton()
     let sourceView = SourceView()
     let outputStackView = OutputStackView()
     var cell: Cell!
@@ -30,24 +29,20 @@ class CellView: NSTableCellView {
 
     private func create() {
         let containerView = NSView()
-        
         containerView.wantsLayer = true
         containerView.layer?.backgroundColor = .white
         containerView.layer?.masksToBounds = true
         containerView.layer?.cornerRadius = 5
-                
+        
         shadow = NSShadow()
         shadow?.shadowBlurRadius = 3
         shadow?.shadowOffset = .init(width: 0, height: -2)
         shadow?.shadowColor = .black.withAlphaComponent(0.2)
-
+        
         outputStackView.wantsLayer = true
         outputStackView.layer?.backgroundColor = .white
         
-        runButton.button.image = NSImage(systemSymbolName: "play.fill", accessibilityDescription: "Run cell")
-        runButton.callback = self.runCell
-        
-        sourceView.theme = JimSourceCodeTheme.shared
+        sourceView.theme = SourceCodeTheme.shared
         sourceView.delegate = self
         
         outputStackView.spacing = 0
@@ -55,7 +50,6 @@ class CellView: NSTableCellView {
         
         addSubview(containerView)
         containerView.addSubview(sourceView)
-        containerView.addSubview(runButton)
         containerView.addSubview(outputStackView)
         
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -65,25 +59,11 @@ class CellView: NSTableCellView {
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
-        
-        runButton.translatesAutoresizingMaskIntoConstraints = false
-        let runButtonTopAnchorConstraint = runButton.topAnchor.constraint(lessThanOrEqualTo: sourceView.topAnchor, constant: sourceView.padding)
-        let runButtonCenterYConstraint = runButton.centerYAnchor.constraint(lessThanOrEqualTo: sourceView.centerYAnchor)
-        NSLayoutConstraint.activate([
-            runButtonTopAnchorConstraint,
-            runButtonCenterYConstraint,
-            runButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-        ])
-        runButtonTopAnchorConstraint.priority = .defaultLow
-        runButtonCenterYConstraint.priority = .defaultLow
-        runButton.setContentHuggingPriority(.required, for: .horizontal)
-        runButton.isHidden = true
 
         sourceView.translatesAutoresizingMaskIntoConstraints = false
         sourceView.setContentHuggingPriority(.required, for: .vertical)
         NSLayoutConstraint.activate([
             sourceView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-//            sourceView.leadingAnchor.constraint(equalTo: runButton.trailingAnchor, constant: sourceView.padding),
             sourceView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             sourceView.topAnchor.constraint(equalTo: containerView.topAnchor),
         ])

@@ -17,12 +17,12 @@ class NotebookViewController: NSViewController {
     var undoManagers = [String: UndoManager]()
     
     let inputLineHeight: CGFloat = {
-        let string = NSAttributedString(string: "A", attributes: [.font: JimSourceCodeTheme.shared.font])
+        let string = NSAttributedString(string: "A", attributes: [.font: SourceCodeTheme.shared.font])
         return string.size().height + 2
     }()
     
     let outputLineHeight: CGFloat = {
-        let string = NSAttributedString(string: "A", attributes: [.font: JimSourceCodeTheme.shared.font])
+        let string = NSAttributedString(string: "A", attributes: [.font: SourceCodeTheme.shared.font])
         return string.size().height
     }()
     
@@ -179,22 +179,6 @@ extension NotebookViewController: NotebookTableViewDelegate {
             self.notebook.dirty = false
         case .failure(let error):
             print("Failed to save notebook, error:", error)  // TODO: show alert
-        }
-    }
-}
-
-struct JimSourceCodeTheme: SourceCodeTheme {
-    static let shared = JimSourceCodeTheme()
-    public let font = NSFont(name: "Menlo", size: 12)!
-    public let backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0.05)
-    public func color(for syntaxColorType: SourceCodeTokenType) -> NSColor {
-        switch syntaxColorType {
-        case .plain: return .black
-        case .number: return NSColor(red: 0, green: 136/255, blue: 0, alpha: 1.0)
-        case .string: return NSColor(red: 186/255, green: 33/255, blue: 33/255, alpha: 1.0)
-        case .identifier: return .black
-        case .keyword: return NSColor(red: 0, green: 128/255, blue: 0, alpha: 1.0)
-        case .comment: return NSColor(red: 0, green: 121/255, blue: 121/255, alpha: 1.0)
         }
     }
 }
