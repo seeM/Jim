@@ -105,15 +105,15 @@ class CellView: NSTableCellView {
         switch output {
         case .stream(let output): appendOutputTextSubview(output.text)
         case .displayData(let output):
-            if let plainText = output.data.plainText { appendOutputTextSubview(plainText.value) }
-            if let markdownText = output.data.markdownText { appendOutputTextSubview(markdownText.value) }
-            if let htmlText = output.data.markdownText { appendOutputTextSubview(htmlText.value) }
             if let image = output.data.image { appendOutputImageSubview(image.value) }
+            else if let htmlText = output.data.markdownText { appendOutputTextSubview(htmlText.value) }
+            else if let markdownText = output.data.markdownText { appendOutputTextSubview(markdownText.value) }
+            else if let plainText = output.data.plainText { appendOutputTextSubview(plainText.value) }
         case .executeResult(let output):
-            if let plainText = output.data.plainText { appendOutputTextSubview(plainText.value) }
-            if let markdownText = output.data.markdownText { appendOutputTextSubview(markdownText.value) }
-            if let htmlText = output.data.markdownText { appendOutputTextSubview(htmlText.value) }
             if let image = output.data.image { appendOutputImageSubview(image.value) }
+            else if let htmlText = output.data.markdownText { appendOutputTextSubview(htmlText.value) }
+            else if let markdownText = output.data.markdownText { appendOutputTextSubview(markdownText.value) }
+            else if let plainText = output.data.plainText { appendOutputTextSubview(plainText.value) }
         case .error(let output): appendOutputTextSubview(output.traceback.joined(separator: "\n"))
         }
     }
