@@ -9,7 +9,10 @@ class Cell: Codable, Identifiable, Equatable  {
     var outputs: [Output]?
     let metadata: [String: AnyCodable]?
     let executionCount: Int?
+    
+    // Editor properties
     var isExecuting = false
+    var selectedRange = NSRange(location: 0, length: 0)
     
     init(id: String? = nil, cellType: CellType = .code, source: StringOrArray = StringOrArray(""), outputs: [Output]? = [], metadata: [String: AnyCodable]? = nil) {
         self.id = id ?? UUID().uuidString

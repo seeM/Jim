@@ -176,6 +176,10 @@ class NotebookTableCell: NSTableCellView {
     }
     
     func update(cell: Cell, tableView: NotebookTableView, notebook: Notebook, undoManager: UndoManager) {
+        // Store previous cell state
+        // TODO: there must be a better pattern for this
+        self.cell?.selectedRange = syntaxTextView.textView.selectedRange()
+        
         self.cell = cell
         self.tableView = tableView
         self.notebook = notebook
@@ -187,6 +191,9 @@ class NotebookTableCell: NSTableCellView {
                 appendOutputSubview(output)
             }
         }
+        
+        // Apply new cell state
+        syntaxTextView.textView.setSelectedRange(cell.selectedRange)
         setIsExecuting(cell, isExecuting: cell.isExecuting)
     }
     
