@@ -26,6 +26,10 @@ class OutputTextView: NSTextView {
         super.resize(withOldSuperviewSize: oldSize)
     }
     
+    override func keyDown(with event: NSEvent) {
+        nextResponder?.keyDown(with: event)
+    }
+    
     override func becomeFirstResponder() -> Bool {
         cellView.tableView.selectRowIndexes(IndexSet(integer: cellView.row), byExtendingSelection: false)
         return super.becomeFirstResponder()
