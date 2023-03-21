@@ -10,7 +10,7 @@ class CellViewModel {
 
 class CellView: NSTableCellView {
     let runButton = RunButton()
-    let syntaxTextView = SyntaxTextView()
+    let sourceView = SourceView()
     let outputStackView = OutputStackView()
     var cell: Cell!
     var tableView: NotebookTableView!
@@ -47,14 +47,14 @@ class CellView: NSTableCellView {
         runButton.button.image = NSImage(systemSymbolName: "play.fill", accessibilityDescription: "Run cell")
         runButton.callback = self.runCell
         
-        syntaxTextView.theme = JimSourceCodeTheme.shared
-        syntaxTextView.delegate = self
+        sourceView.theme = JimSourceCodeTheme.shared
+        sourceView.delegate = self
         
         outputStackView.spacing = 0
         outputStackView.orientation = .vertical
         
         addSubview(containerView)
-        containerView.addSubview(syntaxTextView)
+        containerView.addSubview(sourceView)
         containerView.addSubview(runButton)
         containerView.addSubview(outputStackView)
         
@@ -67,8 +67,8 @@ class CellView: NSTableCellView {
         ])
         
         runButton.translatesAutoresizingMaskIntoConstraints = false
-        let runButtonTopAnchorConstraint = runButton.topAnchor.constraint(lessThanOrEqualTo: syntaxTextView.topAnchor, constant: syntaxTextView.padding)
-        let runButtonCenterYConstraint = runButton.centerYAnchor.constraint(lessThanOrEqualTo: syntaxTextView.centerYAnchor)
+        let runButtonTopAnchorConstraint = runButton.topAnchor.constraint(lessThanOrEqualTo: sourceView.topAnchor, constant: sourceView.padding)
+        let runButtonCenterYConstraint = runButton.centerYAnchor.constraint(lessThanOrEqualTo: sourceView.centerYAnchor)
         NSLayoutConstraint.activate([
             runButtonTopAnchorConstraint,
             runButtonCenterYConstraint,
@@ -79,21 +79,21 @@ class CellView: NSTableCellView {
         runButton.setContentHuggingPriority(.required, for: .horizontal)
         runButton.isHidden = true
 
-        syntaxTextView.translatesAutoresizingMaskIntoConstraints = false
-        syntaxTextView.setContentHuggingPriority(.required, for: .vertical)
+        sourceView.translatesAutoresizingMaskIntoConstraints = false
+        sourceView.setContentHuggingPriority(.required, for: .vertical)
         NSLayoutConstraint.activate([
-            syntaxTextView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-//            syntaxTextView.leadingAnchor.constraint(equalTo: runButton.trailingAnchor, constant: syntaxTextView.padding),
-            syntaxTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            syntaxTextView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            sourceView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+//            sourceView.leadingAnchor.constraint(equalTo: runButton.trailingAnchor, constant: sourceView.padding),
+            sourceView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            sourceView.topAnchor.constraint(equalTo: containerView.topAnchor),
         ])
 
         outputStackView.translatesAutoresizingMaskIntoConstraints = false
         outputStackView.setHuggingPriority(.required, for: .vertical)
         NSLayoutConstraint.activate([
-            outputStackView.leadingAnchor.constraint(equalTo: syntaxTextView.leadingAnchor),
+            outputStackView.leadingAnchor.constraint(equalTo: sourceView.leadingAnchor),
             outputStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            outputStackView.topAnchor.constraint(equalTo: syntaxTextView.bottomAnchor),
+            outputStackView.topAnchor.constraint(equalTo: sourceView.bottomAnchor),
             outputStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
         ])
     }
@@ -101,15 +101,15 @@ class CellView: NSTableCellView {
     func update(cell: Cell, tableView: NotebookTableView, notebook: Notebook, undoManager: UndoManager, with viewModel: CellViewModel) {
         // Store previous cell state
         // TODO: there must be a better pattern for this
-        self.cell?.selectedRange = syntaxTextView.textView.selectedRange()
+        self.cell?.selectedRange = sourceView.textView.selectedRange()
         
         self.viewModel = viewModel
         
         self.cell = cell
         self.tableView = tableView
         self.notebook = notebook
-        syntaxTextView.uniqueUndoManager = undoManager
-        syntaxTextView.text = cell.source.value
+        sourceView.uniqueUndoManager = undoManager
+        sourceView.text = cell.source.value
         clearOutputs()
         if let outputs = cell.outputs {
             for output in outputs {
@@ -118,7 +118,7 @@ class CellView: NSTableCellView {
         }
         
         // Apply new cell state
-        syntaxTextView.textView.setSelectedRange(cell.selectedRange)
+        sourceView.textView.setSelectedRange(cell.selectedRange)
         setIsExecuting(cell, isExecuting: cell.isExecuting)
     }
     
@@ -210,40 +210,40 @@ class CellView: NSTableCellView {
     }
 }
 
-extension CellView: SyntaxTextViewDelegate {
+extension CellView: sourceViewDelegate {
     func lexerForSource(_ source: String) -> Lexer {
         lexer
     }
     
-    func didChangeText(_ syntaxTextView: SyntaxTextView) {
-        cell.source.value = syntaxTextView.text
+    func didChangeText(_ sourceView: SourceView) {
+        cell.source.value = sourceView.text
         notebook.dirty = true
     }
     
-    func didCommit(_ syntaxTextView: SyntaxTextView) {
-        endEditMode(syntaxTextView)
+    func didCommit(_ sourceView: SourceView) {
+        endEditMode(sourceView)
         tableView.runCellSelectBelow()
     }
     
-    func previousCell(_ syntaxTextView: SyntaxTextView) {
+    func previousCell(_ sourceView: SourceView) {
         if row == 0 { return }
         tableView.selectCellAbove()
-        let textView = tableView.selectedCellView!.syntaxTextView.textView
+        let textView = tableView.selectedCellView!.sourceView.textView
         textView.setSelectedRange(NSRange(location: textView.string.count, length: 0))
     }
     
-    func nextCell(_ syntaxTextView: SyntaxTextView) {
+    func nextCell(_ sourceView: SourceView) {
         if row == tableView.numberOfRows - 1 { return }
         tableView.selectCellBelow()
-        let textView = tableView.selectedCellView!.syntaxTextView.textView
+        let textView = tableView.selectedCellView!.sourceView.textView
         textView.setSelectedRange(NSRange(location: 0, length: 0))
     }
     
-    func didBecomeFirstResponder(_ syntaxTextView: SyntaxTextView) {
+    func didBecomeFirstResponder(_ sourceView: SourceView) {
         tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
     }
     
-    func endEditMode(_ syntaxTextView: SyntaxTextView) {
+    func endEditMode(_ sourceView: SourceView) {
         window?.makeFirstResponder(tableView)
     }
     

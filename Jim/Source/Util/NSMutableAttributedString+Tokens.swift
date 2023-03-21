@@ -1,11 +1,3 @@
-//
-//  NSMutableAttributedString+Tokens.swift
-//  SavannaKit
-//
-//  Created by Louis D'hauwe on 02/05/2018.
-//  Copyright © 2018 Silver Fox. All rights reserved.
-//
-
 import Foundation
 import AppKit
 

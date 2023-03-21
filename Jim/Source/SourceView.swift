@@ -1,41 +1,33 @@
-//
-//  SyntaxTextView.swift
-//  SavannaKit
-//
-//  Created by Louis D'hauwe on 23/01/2017.
-//  Copyright © 2017 Silver Fox. All rights reserved.
-//
-
 import Foundation
 import CoreGraphics
 import AppKit
 
-public protocol SyntaxTextViewDelegate: AnyObject {
+public protocol sourceViewDelegate: AnyObject {
 
-    func didChangeText(_ syntaxTextView: SyntaxTextView)
+    func didChangeText(_ sourceView: SourceView)
     
-    func didCommit(_ syntaxTextView: SyntaxTextView)
+    func didCommit(_ sourceView: SourceView)
 
-    func textViewDidBeginEditing(_ syntaxTextView: SyntaxTextView)
+    func textViewDidBeginEditing(_ sourceView: SourceView)
 
     func lexerForSource(_ source: String) -> Lexer
     
-    func previousCell(_ syntaxTextView: SyntaxTextView)
+    func previousCell(_ sourceView: SourceView)
     
-    func nextCell(_ syntaxTextView: SyntaxTextView)
+    func nextCell(_ sourceView: SourceView)
 
-    func didBecomeFirstResponder(_ syntaxTextView: SyntaxTextView)
+    func didBecomeFirstResponder(_ sourceView: SourceView)
     
-    func endEditMode(_ syntaxTextView: SyntaxTextView)
+    func endEditMode(_ sourceView: SourceView)
     
     func save()
 }
 
 // Provide default empty implementations of methods that are optional.
-public extension SyntaxTextViewDelegate {
-    func didChangeText(_ syntaxTextView: SyntaxTextView) { }
+public extension sourceViewDelegate {
+    func didChangeText(_ sourceView: SourceView) { }
 
-    func textViewDidBeginEditing(_ syntaxTextView: SyntaxTextView) { }
+    func textViewDidBeginEditing(_ sourceView: SourceView) { }
 }
 
 struct ThemeInfo {
@@ -48,7 +40,7 @@ struct ThemeInfo {
 
 }
 
-public class HuggingTextView: NSTextView {
+public class SourceTextView: NSTextView {
     public override var intrinsicContentSize: NSSize {
         guard let textContainer = textContainer, let layoutManager = layoutManager else { return super.intrinsicContentSize }
         layoutManager.ensureLayout(for: textContainer)
@@ -67,17 +59,17 @@ public class HuggingTextView: NSTextView {
     }
     
     public override func becomeFirstResponder() -> Bool {
-        let syntaxTextView = enclosingScrollView as! SyntaxTextView
-        syntaxTextView.delegate?.didBecomeFirstResponder(syntaxTextView)
+        let sourceView = enclosingScrollView as! SourceView
+        sourceView.delegate?.didBecomeFirstResponder(sourceView)
         return super.becomeFirstResponder()
     }
 }
 
-open class SyntaxTextView: NSScrollView {
+open class SourceView: NSScrollView {
     var uniqueUndoManager: UndoManager?
-    let textView: HuggingTextView
+    let textView: SourceTextView
 
-    public weak var delegate: SyntaxTextViewDelegate? {
+    public weak var delegate: sourceViewDelegate? {
         didSet {
             refreshColors()
         }
@@ -96,7 +88,7 @@ open class SyntaxTextView: NSScrollView {
     }
     
     public override init(frame: CGRect) {
-        textView = HuggingTextView(frame: .zero)
+        textView = SourceTextView(frame: .zero)
         super.init(frame: frame)
         setup()
     }
@@ -278,4 +270,141 @@ open class SyntaxTextView: NSScrollView {
         textStorage.endEditing()
     }
 
+}
+
+extension SourceView {
+    func didUpdateText() {
+        refreshColors()
+        delegate?.didChangeText(self)
+    }
+}
+
+extension SourceView: NSTextViewDelegate {
+    
+    open func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
+        let text = replacementString ?? ""
+        return self.shouldChangeText(insertingText: text, shouldChangeTextIn: affectedCharRange)
+    }
+
+    open func textDidChange(_ notification: Notification) {
+        guard let textView = notification.object as? NSTextView, textView == self.textView else { return }
+        didUpdateText()
+    }
+    
+    func refreshColors() {
+        self.invalidateCachedTokens()
+        
+        if let delegate = delegate {
+            colorTextView(lexerForSource: { (source) -> Lexer in
+                return delegate.lexerForSource(source)
+            })
+        }
+    }
+    
+    public func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+        guard let event = NSApp.currentEvent else { return false }
+        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        if event.keyCode == 36 && flags == .shift {
+            delegate?.didCommit(self)
+            return true
+        } else if event.keyCode == 125 {
+            if textView.selectedRange().location == textView.string.count {
+                delegate?.nextCell(self)
+                return true
+            }
+        } else if event.keyCode == 126 {
+            if textView.selectedRange().location == 0 {
+                delegate?.previousCell(self)
+                return true
+            }
+        } else if event.keyCode == 53 {
+            delegate?.endEditMode(self)
+            return true
+        } else if event.keyCode == 1 && flags == .command {
+            delegate?.save()
+            return true
+        }
+        return false
+    }
+    
+    public func undoManager(for view: NSTextView) -> UndoManager? {
+        uniqueUndoManager
+    }
+}
+
+extension SourceView {
+
+    func shouldChangeText(insertingText: String, shouldChangeTextIn affectedCharRange: NSRange? = nil) -> Bool {
+        if ignoreShouldChange { return true }
+
+        let selectedRange = textView.selectedRange
+        var location = selectedRange.lowerBound
+
+        let origInsertingText = insertingText
+
+        var insertingText = insertingText
+        
+        if insertingText == "" && affectedCharRange != nil {
+            // TODO: Remove paired
+        } else if insertingText == "\n" {
+            
+            let nsText = textView.string as NSString
+            
+            var currentLine = nsText.substring(with: nsText.lineRange(for: selectedRange))
+            
+            // Remove trailing newline to avoid adding it to newLinePrefix
+            if currentLine.hasSuffix("\n") {
+                currentLine.removeLast()
+            }
+            
+            var newLinePrefix = ""
+            
+            for char in currentLine {
+                
+                let tempSet = CharacterSet(charactersIn: "\(char)")
+                
+                if tempSet.isSubset(of: .whitespacesAndNewlines) {
+                    newLinePrefix += "\(char)"
+                } else {
+                    break
+                }
+                
+            }
+            
+            insertingText += newLinePrefix
+            
+            // TODO: Implement auto indent
+//            let suffixesToIndent = [":", "[", "("]
+//            for s in suffixesToIndent {
+//                if currentLine.hasSuffix(s) {
+//                    insertingText += "    " // TODO: don't hardcode indent size
+//                    break
+//                }
+//            }
+
+            location += insertingText.count
+        } else {
+            // TODO: Implement smart paired chars
+//            let pairedChars = ["[]", "()"]
+//            // If the user is typing a character that has a pair, insert the pair and move the cursor in between
+//            for pair in pairedChars {
+//                if insertingText == pair.prefix(1) {
+//                    insertingText += pair.dropFirst()
+//                    location += 1
+//                    break
+//                }
+//            }
+        }
+        
+        if insertingText != origInsertingText {
+            ignoreShouldChange = true
+            textView.insertText(insertingText, replacementRange: selectedRange)
+            ignoreShouldChange = false
+            didUpdateText()
+            return false
+        }
+        
+        return true
+    }
+    
 }

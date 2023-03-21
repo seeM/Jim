@@ -43,7 +43,7 @@ class NotebookTableView: NSTableView {
     }
     
     func enterEditMode() {
-        let textView = selectedCellView!.syntaxTextView.textView
+        let textView = selectedCellView!.sourceView.textView
         window?.makeFirstResponder(textView)
         textView.scrollRangeToVisible(textView.selectedRange())
     }

@@ -1,12 +1,3 @@
-//
-//  Python3Lexer.swift
-//  SourceEditor
-//
-//  Created by Stefan Wijnja on 27/07/2018.
-//  Based on SwiftLexer.swift by Louis D'hauwe.
-//  Copyright © 2018 Silver Fox. All rights reserved.
-//
-
 import Foundation
 
 public class Python3Lexer: SourceCodeRegexLexer {

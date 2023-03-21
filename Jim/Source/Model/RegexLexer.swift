@@ -1,11 +1,3 @@
-//
-//  RegexLexer.swift
-//  SavannaKit
-//
-//  Created by Louis D'hauwe on 05/07/2018.
-//  Copyright © 2018 Silver Fox. All rights reserved.
-//
-
 import Foundation
 
 public typealias TokenTransformer = (_ range: Range<String.Index>) -> Token
