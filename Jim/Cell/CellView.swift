@@ -1,13 +1,5 @@
 import Cocoa
 
-class CellViewModel {
-    private let cell: Cell
-    
-    init(cell: Cell) {
-        self.cell = cell
-    }
-}
-
 class CellView: NSTableCellView {
     let sourceView = SourceView()
     let outputStackView = OutputStackView()
@@ -78,7 +70,7 @@ class CellView: NSTableCellView {
         ])
     }
     
-    func update(cell: Cell, tableView: NotebookTableView, notebook: Notebook, undoManager: UndoManager, with viewModel: CellViewModel) {
+    func update(cell: Cell, tableView: NotebookTableView, notebook: Notebook, with viewModel: CellViewModel) {
         // Store previous cell state
         // TODO: there must be a better pattern for this
         self.cell?.selectedRange = sourceView.textView.selectedRange()
@@ -88,7 +80,7 @@ class CellView: NSTableCellView {
         self.cell = cell
         self.tableView = tableView
         self.notebook = notebook
-        sourceView.uniqueUndoManager = undoManager
+        sourceView.uniqueUndoManager = viewModel.undoManager
         sourceView.text = cell.source.value
         clearOutputs()
         if let outputs = cell.outputs {
@@ -146,13 +138,12 @@ class CellView: NSTableCellView {
     
     func runCell() {
         guard cell.cellType == .code else { return }
-        let jupyter = JupyterService.shared
         notebook.dirty = true
         setIsExecuting(cell, isExecuting: true)
 
         clearOutputs()
         cell.outputs = []
-        jupyter.webSocketSend(code: cell.source.value) { [row] msg in
+        JupyterService.shared.webSocketSend(code: cell.source.value) { [row] msg in
             let cell = self.notebook.content.cells[row]
             switch msg.channel {
             case .iopub:

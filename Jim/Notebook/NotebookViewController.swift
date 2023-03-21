@@ -3,18 +3,12 @@ import Cocoa
 class NotebookViewController: NSViewController {
     @IBOutlet var tableView: NotebookTableView!
     
+    var viewModels = [String: NotebookViewModel]()
+    var viewModel: NotebookViewModel!
+    
     let jupyter = JupyterService.shared
-    var notebook: Notebook! {
-        didSet {
-            guard let notebook = notebook else { return }
-            tableView.reloadData()
-            view.window?.makeFirstResponder(tableView)
-            view.window?.title = notebook.name
-        }
-    }
-    var cells: [Cell] { notebook?.content.cells ?? []}
-    var cellViewModels = [String: CellViewModel]()
-    var undoManagers = [String: UndoManager]()
+    
+    var notebook: Notebook { viewModel!.notebook }
     
     let inputLineHeight: CGFloat = {
         let string = NSAttributedString(string: "A", attributes: [.font: SourceCodeTheme.shared.font])
@@ -36,7 +30,11 @@ class NotebookViewController: NSViewController {
         Task {
             switch await jupyter.getContent(path, type: Notebook.self) {
             case .success(let notebook):
-                self.notebook = notebook
+                self.viewModel = NotebookViewModel(notebook)
+                self.viewModels[notebook.path] = self.viewModel
+                tableView.reloadData()
+                view.window?.makeFirstResponder(tableView)
+                view.window?.title = viewModel.notebook.name
                 switch await jupyter.createSession(name: notebook.name, path: notebook.path) {
                 case .success(let session): Task(priority: .background) { jupyter.webSocketTask(session) }
                 case .failure(let error): print("Error creating session:", error)
@@ -49,30 +47,16 @@ class NotebookViewController: NSViewController {
 
 extension NotebookViewController: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
-        cells.count
+        viewModel?.cells.count ?? 0
     }
 }
 
 extension NotebookViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         guard let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "notebookCell"), owner: self) as? CellView else { return nil }
-        let cell = cells[row]
-        
-        var undoManager: UndoManager! = undoManagers[cell.id]
-        if undoManager == nil {
-            undoManager = UndoManager()
-            undoManagers[cell.id] = undoManager
-        }
-        
-        let viewModel: CellViewModel
-        if let existingViewModel = cellViewModels[cell.id] {
-            viewModel = existingViewModel
-        } else {
-            viewModel = CellViewModel(cell: cell)
-            cellViewModels[cell.id] = viewModel
-        }
-        
-        view.update(cell: cells[row], tableView: tableView as! NotebookTableView, notebook: notebook, undoManager: undoManager, with: viewModel)
+        let cell = viewModel.cells[row]
+        let cellViewModel = viewModel.cellViewModel(for: cell)
+        view.update(cell: cell, tableView: tableView as! NotebookTableView, notebook: viewModel.notebook, with: cellViewModel)
         return view
     }
     
@@ -81,7 +65,7 @@ extension NotebookViewController: NSTableViewDelegate {
     }
     
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        let cell = cells[row]
+        let cell = viewModel.cells[row]
         let inputVerticalPadding = CGFloat(5)
         let inputHeight = 2 * inputVerticalPadding + textHeight(cell.source.value, lineHeight: inputLineHeight)
         var outputHeights = [CGFloat]()
@@ -157,7 +141,7 @@ extension NotebookViewController: NotebookTableViewDelegate {
                     case .alertFirstButtonReturn:
                         await _save()
                     case .alertSecondButtonReturn:
-                        self.notebook = diskNotebook
+                        self.viewModel.notebook = diskNotebook
                     default: break
                     }
                 } else {
@@ -185,7 +169,7 @@ extension NotebookViewController: NotebookTableViewDelegate {
 
 extension NotebookViewController: NSToolbarItemValidation {
     func validateToolbarItem(_ item: NSToolbarItem) -> Bool {
-        notebook != nil
+        viewModel != nil
     }
     
     @IBAction func insertClicked(_ sender: NSView) {

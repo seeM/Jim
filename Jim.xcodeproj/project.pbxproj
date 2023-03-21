@@ -16,6 +16,8 @@
 		8456BD51299D0F5E001E3EDA /* NotebookViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456BD50299D0F5E001E3EDA /* NotebookViewController.swift */; };
 		8478D3F329C9807F0028A8E1 /* OutputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8478D3F229C9807F0028A8E1 /* OutputTextView.swift */; };
 		8478D3F529C9809B0028A8E1 /* OutputStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8478D3F429C9809B0028A8E1 /* OutputStackView.swift */; };
+		8478D3FB29C99AC20028A8E1 /* CellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8478D3FA29C99AC20028A8E1 /* CellViewModel.swift */; };
+		8478D3FD29C99C150028A8E1 /* NotebookViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8478D3FC29C99C150028A8E1 /* NotebookViewModel.swift */; };
 		84C838E6299D6E2900BA3F8F /* AnyCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 84C838E5299D6E2900BA3F8F /* AnyCodable */; };
 		84C838EA299D6E4600BA3F8F /* StringOrArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C838E8299D6E4600BA3F8F /* StringOrArray.swift */; };
 		84C838EB299D6E4600BA3F8F /* Base64Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C838E9299D6E4600BA3F8F /* Base64Image.swift */; };
@@ -52,6 +54,8 @@
 		8456BD50299D0F5E001E3EDA /* NotebookViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookViewController.swift; sourceTree = "<group>"; };
 		8478D3F229C9807F0028A8E1 /* OutputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputTextView.swift; sourceTree = "<group>"; };
 		8478D3F429C9809B0028A8E1 /* OutputStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputStackView.swift; sourceTree = "<group>"; };
+		8478D3FA29C99AC20028A8E1 /* CellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellViewModel.swift; sourceTree = "<group>"; };
+		8478D3FC29C99C150028A8E1 /* NotebookViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookViewModel.swift; sourceTree = "<group>"; };
 		84C838E8299D6E4600BA3F8F /* StringOrArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringOrArray.swift; sourceTree = "<group>"; };
 		84C838E9299D6E4600BA3F8F /* Base64Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Base64Image.swift; sourceTree = "<group>"; };
 		84CCB4E329C4894900EC17B3 /* NotebookTableRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookTableRowView.swift; sourceTree = "<group>"; };
@@ -133,6 +137,7 @@
 			isa = PBXGroup;
 			children = (
 				8456BD50299D0F5E001E3EDA /* NotebookViewController.swift */,
+				8478D3FC29C99C150028A8E1 /* NotebookViewModel.swift */,
 				84ED491829BF50720069AFD8 /* NotebookTableView.swift */,
 				84CCB4E329C4894900EC17B3 /* NotebookTableRowView.swift */,
 			);
@@ -143,6 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				841C6ECE29A6268D008B1FE5 /* CellView.swift */,
+				8478D3FA29C99AC20028A8E1 /* CellViewModel.swift */,
 				8478D3F429C9809B0028A8E1 /* OutputStackView.swift */,
 				8478D3F229C9807F0028A8E1 /* OutputTextView.swift */,
 				84ED491A29BF517C0069AFD8 /* RunButton.swift */,
@@ -298,6 +304,7 @@
 				84ED48F329B9C0A70069AFD8 /* JupyterService.swift in Sources */,
 				84CE599829A762990094FE3E /* SourceCodeTheme.swift in Sources */,
 				84CE598529A762990094FE3E /* NSMutableAttributedString+Tokens.swift in Sources */,
+				8478D3FB29C99AC20028A8E1 /* CellViewModel.swift in Sources */,
 				84CCB4E429C4894900EC17B3 /* NotebookTableRowView.swift in Sources */,
 				84CE598629A762990094FE3E /* Python3Lexer.swift in Sources */,
 				84ED491B29BF517C0069AFD8 /* RunButton.swift in Sources */,
@@ -317,6 +324,7 @@
 				84ED48F429B9C0A70069AFD8 /* Cell.swift in Sources */,
 				84CE599029A762990094FE3E /* RegexLexer.swift in Sources */,
 				84CE599129A762990094FE3E /* SourceView.swift in Sources */,
+				8478D3FD29C99C150028A8E1 /* NotebookViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
