@@ -2,7 +2,7 @@ import Foundation
 import CoreGraphics
 import AppKit
 
-public protocol sourceViewDelegate: AnyObject {
+public protocol SourceViewDelegate: AnyObject {
 
     func didChangeText(_ sourceView: SourceView)
     
@@ -24,7 +24,7 @@ public protocol sourceViewDelegate: AnyObject {
 }
 
 // Provide default empty implementations of methods that are optional.
-public extension sourceViewDelegate {
+public extension SourceViewDelegate {
     func didChangeText(_ sourceView: SourceView) { }
 
     func textViewDidBeginEditing(_ sourceView: SourceView) { }
@@ -69,7 +69,7 @@ open class SourceView: NSScrollView {
     var uniqueUndoManager: UndoManager?
     let textView: SourceTextView
 
-    public weak var delegate: sourceViewDelegate? {
+    public weak var delegate: SourceViewDelegate? {
         didSet {
             refreshColors()
         }

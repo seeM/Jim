@@ -1,15 +1,15 @@
 import Cocoa
+import Combine
 
 class CellView: NSTableCellView {
     let sourceView = SourceView()
     let outputStackView = OutputStackView()
-    var cell: Cell!
     var tableView: NotebookTableView!
     var row: Int { tableView.row(for: self) }
-    var notebook: Notebook!
     let lexer = Python3Lexer()
     
-    var viewModel: CellViewModel?
+    var viewModel: CellViewModel!
+    private var isExecutingCancellable: AnyCancellable?
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect); create()
@@ -70,28 +70,27 @@ class CellView: NSTableCellView {
         ])
     }
     
-    func update(cell: Cell, tableView: NotebookTableView, notebook: Notebook, with viewModel: CellViewModel) {
+    func update(with viewModel: CellViewModel, tableView: NotebookTableView) {
         // Store previous cell state
         // TODO: there must be a better pattern for this
-        self.cell?.selectedRange = sourceView.textView.selectedRange()
+        self.viewModel?.selectedRange = sourceView.textView.selectedRange()
         
-        self.viewModel = viewModel
+        isExecutingCancellable = viewModel.$isExecuting
+            .sink { [weak self] isExecuting in
+                self?.alphaValue = isExecuting ? 0.5 : 1.0
+            }
         
-        self.cell = cell
         self.tableView = tableView
-        self.notebook = notebook
+        self.viewModel = viewModel
         sourceView.uniqueUndoManager = viewModel.undoManager
-        sourceView.text = cell.source.value
+        sourceView.text = viewModel.source
+        sourceView.textView.setSelectedRange(viewModel.selectedRange)
         clearOutputs()
-        if let outputs = cell.outputs {
+        if let outputs = viewModel.cell.outputs {
             for output in outputs {
                 appendOutputSubview(output)
             }
         }
-        
-        // Apply new cell state
-        sourceView.textView.setSelectedRange(cell.selectedRange)
-        setIsExecuting(cell, isExecuting: cell.isExecuting)
     }
     
     func clearOutputs() {
@@ -131,20 +130,14 @@ class CellView: NSTableCellView {
         outputStackView.addArrangedSubview(imageView)
     }
     
-    func setIsExecuting(_ cell: Cell, isExecuting: Bool) {
-        cell.isExecuting = isExecuting
-        alphaValue = isExecuting ? 0.5 : 1.0
-    }
-    
     func runCell() {
-        guard cell.cellType == .code else { return }
-        notebook.dirty = true
-        setIsExecuting(cell, isExecuting: true)
+        guard viewModel.cell.cellType == .code else { return }
+        viewModel.notebookViewModel.notebook.dirty = true
+        viewModel.isExecuting = true
 
         clearOutputs()
-        cell.outputs = []
-        JupyterService.shared.webSocketSend(code: cell.source.value) { [row] msg in
-            let cell = self.notebook.content.cells[row]
+        viewModel.cell.outputs = []
+        JupyterService.shared.webSocketSend(code: viewModel.cell.source.value) { [viewModel] msg in
             switch msg.channel {
             case .iopub:
                 var output: Output?
@@ -162,17 +155,17 @@ class CellView: NSTableCellView {
                 if let output {
                     Task.detached { @MainActor in
                         // TODO: feels hacky...
-                        if cell == self.cell {
+                        if viewModel!.cell == self.viewModel.cell {
                             self.appendOutputSubview(output)
                         }
                     }
-                    cell.outputs!.append(output)
+                    viewModel!.cell.outputs!.append(output)
                 }
             case .shell:
                 switch msg.content {
                 case .executeReply(_):
                     Task.detached { @MainActor in
-                        self.setIsExecuting(cell, isExecuting: false)
+                        viewModel?.isExecuting = false
                     }
                 default: break
                 }
@@ -181,14 +174,13 @@ class CellView: NSTableCellView {
     }
 }
 
-extension CellView: sourceViewDelegate {
+extension CellView: SourceViewDelegate {
     func lexerForSource(_ source: String) -> Lexer {
         lexer
     }
     
     func didChangeText(_ sourceView: SourceView) {
-        cell.source.value = sourceView.text
-        notebook.dirty = true
+        viewModel.source = sourceView.text
     }
     
     func didCommit(_ sourceView: SourceView) {
@@ -219,6 +211,6 @@ extension CellView: sourceViewDelegate {
     }
     
     func save() {
-        tableView.notebookDelegate?.save()
+        tableView.save()
     }
 }

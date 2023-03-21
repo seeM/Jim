@@ -11,7 +11,7 @@ class NotebookViewController: NSViewController {
     var notebook: Notebook { viewModel!.notebook }
     
     let inputLineHeight: CGFloat = {
-        let string = NSAttributedString(string: "A", attributes: [.font: SourceCodeTheme.shared.font])
+        let string = NSMutableAttributedString(source: "A", tokens: [], theme: SourceCodeTheme.shared)
         return string.size().height + 2
     }()
     
@@ -20,24 +20,19 @@ class NotebookViewController: NSViewController {
         return string.size().height
     }()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        tableView.notebookDelegate = self
-        tableView.usesAutomaticRowHeights = true
-    }
-    
     func notebookSelected(path: String) {
         Task {
             switch await jupyter.getContent(path, type: Notebook.self) {
             case .success(let notebook):
                 self.viewModel = NotebookViewModel(notebook)
                 self.viewModels[notebook.path] = self.viewModel
+                tableView.viewModel = self.viewModel
                 tableView.reloadData()
-                view.window?.makeFirstResponder(tableView)
-                view.window?.title = viewModel.notebook.name
                 switch await jupyter.createSession(name: notebook.name, path: notebook.path) {
-                case .success(let session): Task(priority: .background) { jupyter.webSocketTask(session) }
-                case .failure(let error): print("Error creating session:", error)
+                case .success(let session):
+                    Task(priority: .background) { jupyter.webSocketTask(session) }
+                case .failure(let error):
+                    print("Error creating session:", error)
                 }
             case .failure(let error): print("Error getting notebook:", error)
             }
@@ -56,7 +51,7 @@ extension NotebookViewController: NSTableViewDelegate {
         guard let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "notebookCell"), owner: self) as? CellView else { return nil }
         let cell = viewModel.cells[row]
         let cellViewModel = viewModel.cellViewModel(for: cell)
-        view.update(cell: cell, tableView: tableView as! NotebookTableView, notebook: viewModel.notebook, with: cellViewModel)
+        view.update(with: cellViewModel, tableView: tableView as! NotebookTableView)
         return view
     }
     
@@ -98,71 +93,8 @@ extension NotebookViewController: NSTableViewDelegate {
     
     func tableViewSelectionDidChange(_ notification: Notification) {
         let windowController = view.window!.windowController as! WindowController
-        if let title = selectedCell()?.cellType.rawValue.capitalized {
+        if let title = viewModel.cell(at: tableView.selectedRow)?.cellType.rawValue.capitalized {
             windowController.cellTypeComboBox.cell?.title = title
-        }
-    }
-}
-
-extension NotebookViewController: NotebookTableViewDelegate {
-    func insertCell(_ cell: Cell, at row: Int) {
-        notebook.dirty = true
-        notebook.content.cells.insert(cell, at: row)
-    }
-    
-    func removeCell(at row: Int) -> Cell {
-        notebook.dirty = true
-        return notebook.content.cells.remove(at: row)
-    }
-    
-    func selectedCell() -> Cell? {
-        tableView.selectedRow == -1 ? nil : notebook.content.cells[tableView.selectedRow]
-    }
-    
-    func save() {
-        Task {
-            switch await jupyter.getContent(notebook.path, type: Notebook.self) {
-            case .success(let diskNotebook):
-                // TODO: need a margin? lab uses 500
-                if diskNotebook.lastModified >  notebook.lastModified {
-                    let alert = NSAlert()
-                    alert.messageText = "Failed to save \(notebook.path)"
-                    alert.informativeText = "The content on disk is newer. Do you want to overwrite it with your changes or discard them and revert to the on disk content?"
-                    alert.alertStyle = .warning
-                    alert.addButton(withTitle: "Overwrite")
-                    alert.addButton(withTitle: "Discard")
-                    alert.addButton(withTitle: "Cancel")
-                    let discardButton = alert.buttons[1]
-                    discardButton.hasDestructiveAction = true
-                    let overwriteButton = alert.buttons[0]
-                    overwriteButton.hasDestructiveAction = true
-                    let response = alert.runModal()
-                    switch response {
-                    case .alertFirstButtonReturn:
-                        await _save()
-                    case .alertSecondButtonReturn:
-                        self.viewModel.notebook = diskNotebook
-                    default: break
-                    }
-                } else {
-                    await _save()
-                }
-            case .failure(let error):
-                print("Failed to get content while saving notebook, error:", error)  // TODO: show alert
-                return
-            }
-        }
-    }
-    
-    private func _save() async {
-        switch await jupyter.updateContent(notebook.path, content: notebook) {
-        case .success(let content):
-            print("Saved!")  // TODO: update UI
-            self.notebook.lastModified = content.lastModified
-            self.notebook.size = content.size
-            self.notebook.dirty = false
-        case .failure(let error):
-            print("Failed to save notebook, error:", error)  // TODO: show alert
         }
     }
 }

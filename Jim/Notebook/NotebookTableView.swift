@@ -1,13 +1,8 @@
 import Cocoa
 
-protocol NotebookTableViewDelegate: AnyObject {
-    func insertCell(_ cell: Cell, at row: Int)
-    func removeCell(at row: Int) -> Cell
-    func selectedCell() -> Cell?
-    func save()
-}
-
 class NotebookTableView: NSTableView {
+    var viewModel: NotebookViewModel!
+    
     var copyBuffer: Cell?
     var previouslyRemovedCell: Cell? {
         didSet {
@@ -15,7 +10,6 @@ class NotebookTableView: NSTableView {
         }
     }
     var previouslyRemovedRow: Int?
-    var notebookDelegate: NotebookTableViewDelegate?
     var selectedCellView: CellView? {
         view(atColumn: selectedColumn, row: selectedRow, makeIfNecessary: false) as? CellView
     }
@@ -43,13 +37,13 @@ class NotebookTableView: NSTableView {
     }
     
     func enterEditMode() {
-        let textView = selectedCellView!.sourceView.textView
+        guard let textView = selectedCellView?.sourceView.textView else { return }
         window?.makeFirstResponder(textView)
         textView.scrollRangeToVisible(textView.selectedRange())
     }
     
     func insertCell(at row: Int, cell: Cell = Cell()) {
-        notebookDelegate!.insertCell(cell, at: row)
+        viewModel.insertCell(cell, at: row)
         insertRows(at: .init(integer: row))
         
         guard let previouslyRemovedRow else { return }
@@ -70,7 +64,7 @@ class NotebookTableView: NSTableView {
     
     func removeCell(at row: Int) -> Cell {
         removeRows(at: .init(integer: row))
-        return notebookDelegate!.removeCell(at: row)
+        return viewModel.removeCell(at: row)
     }
     
     func moveCell(at row: Int, to: Int) {
@@ -89,7 +83,7 @@ class NotebookTableView: NSTableView {
     }
     
     func runCell() {
-        selectedCellView!.runCell()
+        selectedCellView?.runCell()
     }
     
     func runCellSelectBelow() {
@@ -115,7 +109,7 @@ class NotebookTableView: NSTableView {
     }
     
     func copyCell() {
-        copyBuffer = notebookDelegate?.selectedCell()
+        copyBuffer = viewModel.cell(at: selectedRow)
     }
     
     func pasteCellAbove() {
@@ -146,7 +140,7 @@ class NotebookTableView: NSTableView {
         // TODO: update the cell's outputs etc to match type...
         // TODO: make this undoable too?
         // TODO: more consistent way to access the cell?
-        selectedCellView?.cell.cellType = cellType
+        selectedCellView?.viewModel.cell.cellType = cellType
         // TODO: very ugly
         let windowController = window!.windowController as! WindowController
         let title = cellType.rawValue.capitalized
@@ -155,6 +149,56 @@ class NotebookTableView: NSTableView {
     
     var keys = [UInt16]()
     var timer: Timer?
+    
+    override func reloadData() {
+        super.reloadData()
+        window?.makeFirstResponder(self)
+        window?.title = viewModel.notebook.name
+    }
+    
+    // TODO: really doesn't feel like the right place for jupyter/save logic
+    func save() {
+        Task {
+            switch await viewModel.getLatestNotebook() {
+            case .success(let diskNotebook):
+                // TODO: need a margin? lab uses 500
+                if diskNotebook.lastModified > viewModel.notebook.lastModified {
+                    let alert = makeAlert()
+                    let response = alert.runModal()
+                    switch response {
+                    case .alertFirstButtonReturn:
+                        await viewModel.updateNotebook()
+                    case .alertSecondButtonReturn:
+                        // TODO: do we need to handle cellViewModels if notebook is set?
+                        viewModel.notebook = diskNotebook
+                        viewModel.cellViewModels = [:]
+                        reloadData()
+                    default: break
+                    }
+                } else {
+                    await viewModel.updateNotebook()
+                }
+            case .failure(let error):
+                print("Failed to get content while saving notebook, error:", error)  // TODO: show alert
+                return
+            }
+        }
+    }
+    
+    private func makeAlert() -> NSAlert {
+        let alert = NSAlert()
+        alert.messageText = "Failed to save \(viewModel.notebook.path)"
+        alert.informativeText = "The content on disk is newer. Do you want to overwrite it with your changes or discard them and revert to the on disk content?"
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Overwrite")
+        alert.addButton(withTitle: "Discard")
+        alert.addButton(withTitle: "Cancel")
+        let discardButton = alert.buttons[1]
+        discardButton.hasDestructiveAction = true
+        let overwriteButton = alert.buttons[0]
+        overwriteButton.hasDestructiveAction = true
+        return alert
+    }
     
     override func keyDown(with event: NSEvent) {
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
@@ -187,7 +231,7 @@ class NotebookTableView: NSTableView {
         } else if event.keyCode == 16 {  // y
             setCellType(.code)
         } else if event.keyCode == 1 && flags == .command { // cmd + s
-            notebookDelegate?.save()
+            save()
         } else if event.keyCode == 5 && flags == .shift {
             selectLastCell()
         } else if event.keyCode == 2 && flags == .control { // ctrl + d
