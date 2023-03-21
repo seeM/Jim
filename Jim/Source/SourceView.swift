@@ -160,7 +160,7 @@ open class SourceView: NSScrollView {
     @IBInspectable
     public var text: String {
         get {
-            return textView.string
+            textView.string
         }
         set {
             textView.layer?.isOpaque = true
@@ -227,7 +227,7 @@ open class SourceView: NSScrollView {
         
         let lexer = lexerForSource(source)
         let tokens = lexer.getSavannaTokens(input: source)
-        let cachedTokens = tokens.map { CachedToken(token: $0, nsRange: source.nsRange(fromRange: $0.range)) }
+        let cachedTokens = tokens.map { CachedToken(token: $0, nsRange: .init($0.range, in: source)) }
         self.cachedTokens = cachedTokens
         
         createAttributes(theme: theme, themeInfo: themeInfo, textStorage: textStorage, cachedTokens: cachedTokens, source: source)

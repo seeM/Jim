@@ -41,7 +41,7 @@ public extension NSMutableAttributedString {
 			
 			let tokenRange = token.range
 			
-			let range = source.nsRange(fromRange: tokenRange)
+            let range = NSRange(tokenRange, in: source)
 			
 			self.setAttributes(theme.attributes(for: token), range: range)
 			

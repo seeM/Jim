@@ -21,7 +21,6 @@
 		84C838EB299D6E4600BA3F8F /* Base64Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C838E9299D6E4600BA3F8F /* Base64Image.swift */; };
 		84CCB4E429C4894900EC17B3 /* NotebookTableRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CCB4E329C4894900EC17B3 /* NotebookTableRowView.swift */; };
 		84CE598129A762990094FE3E /* SourceCodeRegexLexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE596029A762990094FE3E /* SourceCodeRegexLexer.swift */; };
-		84CE598229A762990094FE3E /* String+Range.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE596229A762990094FE3E /* String+Range.swift */; };
 		84CE598529A762990094FE3E /* NSMutableAttributedString+Tokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE596529A762990094FE3E /* NSMutableAttributedString+Tokens.swift */; };
 		84CE598629A762990094FE3E /* Python3Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE596729A762990094FE3E /* Python3Lexer.swift */; };
 		84CE598C29A762990094FE3E /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE596E29A762990094FE3E /* Lexer.swift */; };
@@ -58,7 +57,6 @@
 		84C838E9299D6E4600BA3F8F /* Base64Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Base64Image.swift; sourceTree = "<group>"; };
 		84CCB4E329C4894900EC17B3 /* NotebookTableRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookTableRowView.swift; sourceTree = "<group>"; };
 		84CE596029A762990094FE3E /* SourceCodeRegexLexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SourceCodeRegexLexer.swift; sourceTree = "<group>"; };
-		84CE596229A762990094FE3E /* String+Range.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Range.swift"; sourceTree = "<group>"; };
 		84CE596529A762990094FE3E /* NSMutableAttributedString+Tokens.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Tokens.swift"; sourceTree = "<group>"; };
 		84CE596729A762990094FE3E /* Python3Lexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Python3Lexer.swift; sourceTree = "<group>"; };
 		84CE596E29A762990094FE3E /* Lexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lexer.swift; sourceTree = "<group>"; };
@@ -180,7 +178,6 @@
 		84CE596129A762990094FE3E /* Util */ = {
 			isa = PBXGroup;
 			children = (
-				84CE596229A762990094FE3E /* String+Range.swift */,
 				84CE596529A762990094FE3E /* NSMutableAttributedString+Tokens.swift */,
 			);
 			path = Util;
@@ -307,7 +304,6 @@
 				84CE598529A762990094FE3E /* NSMutableAttributedString+Tokens.swift in Sources */,
 				84CCB4E429C4894900EC17B3 /* NotebookTableRowView.swift in Sources */,
 				84CE598629A762990094FE3E /* Python3Lexer.swift in Sources */,
-				84CE598229A762990094FE3E /* String+Range.swift in Sources */,
 				84ED491B29BF517C0069AFD8 /* RunButton.swift in Sources */,
 				84ED48F629B9C0A70069AFD8 /* Notebook.swift in Sources */,
 				8456BD40299D0264001E3EDA /* AppDelegate.swift in Sources */,
