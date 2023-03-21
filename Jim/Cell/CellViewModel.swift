@@ -12,7 +12,7 @@ class CellViewModel: ObservableObject {
     var source: String {
         get { cell.source.value }
         set {
-            dirty = newValue != cell.source.value
+            dirty = dirty || (newValue != cell.source.value)
             cell.source.value = newValue
         }
     }
