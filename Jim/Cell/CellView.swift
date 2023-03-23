@@ -45,28 +45,25 @@ class CellView: NSTableCellView {
         containerView.addSubview(outputStackView)
         
         containerView.translatesAutoresizingMaskIntoConstraints = false
+        sourceView.translatesAutoresizingMaskIntoConstraints = false
+        outputStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        sourceView.setContentHuggingPriority(.required, for: .vertical)
+        outputStackView.setHuggingPriority(.required, for: .vertical)
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: topAnchor),
             containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-        ])
-
-        sourceView.translatesAutoresizingMaskIntoConstraints = false
-        sourceView.setContentHuggingPriority(.required, for: .vertical)
-        NSLayoutConstraint.activate([
+            
+            sourceView.topAnchor.constraint(equalTo: containerView.topAnchor),
             sourceView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             sourceView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            sourceView.topAnchor.constraint(equalTo: containerView.topAnchor),
-        ])
-
-        outputStackView.translatesAutoresizingMaskIntoConstraints = false
-        outputStackView.setHuggingPriority(.required, for: .vertical)
-        NSLayoutConstraint.activate([
+            
+            outputStackView.topAnchor.constraint(equalTo: sourceView.bottomAnchor),
             outputStackView.leadingAnchor.constraint(equalTo: sourceView.leadingAnchor),
             outputStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            outputStackView.topAnchor.constraint(equalTo: sourceView.bottomAnchor),
-            outputStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            outputStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
     
