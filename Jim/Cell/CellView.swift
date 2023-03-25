@@ -52,6 +52,8 @@ class CellView: NSTableCellView {
         
         outputStackView.orientation = .vertical
         
+        sourceView.delegate = self
+        
         addSubview(containerView)
         containerView.addSubview(sourceView)
         containerView.addSubview(outputStackView)

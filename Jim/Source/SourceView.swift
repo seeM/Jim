@@ -142,4 +142,9 @@ extension SourceView: NSTextViewDelegate {
     public func undoManager(for view: NSTextView) -> UndoManager? {
         uniqueUndoManager
     }
+    
+    public func textDidChange(_ notification: Notification) {
+        guard let textView = notification.object as? SourceTextView, textView == self.textView else { return }
+        delegate?.didChangeText(self)
+    }
 }
