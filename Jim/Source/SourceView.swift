@@ -36,22 +36,20 @@ class SourceView: NSScrollView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public var scrollView: NSScrollView { self }
-    
     private func setup() {
         _ = textView.layoutManager
-        scrollView.borderType = .noBorder
-        scrollView.autohidesScrollers = true
-        scrollView.hasVerticalScroller = false
-        scrollView.hasHorizontalScroller = true
-        scrollView.horizontalScrollElasticity = .automatic
-        scrollView.verticalScrollElasticity = .none
+        borderType = .noBorder
+        autohidesScrollers = true
+        hasVerticalScroller = false
+        hasHorizontalScroller = true
+        horizontalScrollElasticity = .automatic
+        verticalScrollElasticity = .none
         
-        scrollView.drawsBackground = true
-        scrollView.backgroundColor = Theme.shared.backgroundColor
-        //        scrollView.wantsLayer = true
-        //        scrollView.layer?.cornerRadius = 3
-        //        scrollView.layer?.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        drawsBackground = true
+        backgroundColor = Theme.shared.backgroundColor
+        //        wantsLayer = true
+        //        layer?.cornerRadius = 3
+        //        layer?.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         textView.drawsBackground = false
         
         // Infinite max size text view and container + resizable text view allows for horizontal scrolling.
@@ -77,16 +75,16 @@ class SourceView: NSScrollView {
         let textViewContainer = NSView()
         textViewContainer.addSubview(textView)
         
-        scrollView.documentView = textViewContainer
+        documentView = textViewContainer
         
         textViewContainer.translatesAutoresizingMaskIntoConstraints = false
         
         textView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            textViewContainer.leadingAnchor.constraint(equalTo: scrollView.contentView.leadingAnchor),
-            textViewContainer.trailingAnchor.constraint(greaterThanOrEqualTo: scrollView.contentView.trailingAnchor),
-            textViewContainer.topAnchor.constraint(equalTo: scrollView.contentView.topAnchor),
-            textViewContainer.bottomAnchor.constraint(equalTo: scrollView.contentView.bottomAnchor),
+            textViewContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            textViewContainer.trailingAnchor.constraint(greaterThanOrEqualTo: contentView.trailingAnchor),
+            textViewContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
+            textViewContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             
             textView.leadingAnchor.constraint(equalTo: textViewContainer.leadingAnchor),
             textView.trailingAnchor.constraint(equalTo: textViewContainer.trailingAnchor),
