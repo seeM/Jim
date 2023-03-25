@@ -47,6 +47,9 @@ class SourceView: NSScrollView {
         drawsBackground = true
         backgroundColor = Theme.shared.backgroundColor
         
+        textView.delegate = self
+        
+        // Needed else textView has layout bugs e.g. it's offset upward by textContainerInset.height
         let textViewContainer = NSView()
         textViewContainer.addSubview(textView)
         documentView = textViewContainer
@@ -61,12 +64,10 @@ class SourceView: NSScrollView {
             
             textView.leadingAnchor.constraint(equalTo: textViewContainer.leadingAnchor),
             textView.trailingAnchor.constraint(equalTo: textViewContainer.trailingAnchor),
-            textView.topAnchor.constraint(equalTo: textViewContainer.topAnchor, constant: 5),
-            textView.bottomAnchor.constraint(equalTo: textViewContainer.bottomAnchor, constant: -5),
+            textView.topAnchor.constraint(equalTo: textViewContainer.topAnchor),
+            textView.bottomAnchor.constraint(equalTo: textViewContainer.bottomAnchor),
         ])
         textView.setContentHuggingPriority(.required, for: .vertical)
-        
-        textView.delegate = self
     }
     
     override func scrollWheel(with event: NSEvent) {

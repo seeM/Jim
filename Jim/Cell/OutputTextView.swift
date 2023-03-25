@@ -17,6 +17,8 @@ class OutputTextView: MinimalTextView {
         font = Theme.shared.font
         drawsBackground = false
         isEditable = false
+        
+        // NOTE: We might need this if layout has bugs
 //        isVerticallyResizable = true
 //        isHorizontallyResizable = false
     }

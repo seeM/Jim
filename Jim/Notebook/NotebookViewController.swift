@@ -20,6 +20,11 @@ class NotebookViewController: NSViewController {
         return string.size().height
     }()
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.rowHeight = 20
+    }
+    
     func notebookSelected(path: String) {
         Task {
             switch await jupyter.getContent(path, type: Notebook.self) {
