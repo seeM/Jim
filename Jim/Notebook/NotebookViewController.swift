@@ -65,29 +65,29 @@ extension NotebookViewController: NSTableViewDelegate {
     }
     
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+        // TODO: outputHeight should use TextKit components since it may wrap
         let cell = viewModel.cells[row]
         let inputVerticalPadding = CGFloat(5)
         let inputHeight = 2 * inputVerticalPadding + textHeight(cell.source.value, lineHeight: inputLineHeight)
-        var outputHeights = [CGFloat]()
+        var outputHeight: CGFloat = 0
         if let outputs = cell.outputs {
             for output in outputs {
                 switch output {
-                case .stream(let output): outputHeights.append(textHeight(output.text, lineHeight: outputLineHeight))
+                case .stream(let output): outputHeight += textHeight(output.text, lineHeight: outputLineHeight)
                 case .displayData(let output):
-                    if let plainText = output.data.plainText { outputHeights.append(textHeight(plainText.value, lineHeight: outputLineHeight)) }
-                    if let markdownText = output.data.markdownText { outputHeights.append(textHeight(markdownText.value, lineHeight: outputLineHeight)) }
-                    if let htmlText = output.data.markdownText { outputHeights.append(textHeight(htmlText.value, lineHeight: outputLineHeight)) }
-                    if let image = output.data.image { outputHeights.append(image.value.size.height) }
+                    if let plainText = output.data.plainText { outputHeight += textHeight(plainText.value, lineHeight: outputLineHeight) }
+                    if let markdownText = output.data.markdownText { outputHeight += textHeight(markdownText.value, lineHeight: outputLineHeight) }
+                    if let htmlText = output.data.markdownText { outputHeight += textHeight(htmlText.value, lineHeight: outputLineHeight) }
+                    if let image = output.data.image { outputHeight += image.value.size.height }
                 case .executeResult(let output):
-                    if let plainText = output.data.plainText { outputHeights.append(textHeight(plainText.value, lineHeight: outputLineHeight)) }
-                    if let markdownText = output.data.markdownText { outputHeights.append(textHeight(markdownText.value, lineHeight: outputLineHeight)) }
-                    if let htmlText = output.data.markdownText { outputHeights.append(textHeight(htmlText.value, lineHeight: outputLineHeight)) }
-                    if let image = output.data.image { outputHeights.append(image.value.size.height) }
-                case .error(let output): outputHeights.append(CGFloat(output.traceback.count)*outputLineHeight)
+                    if let plainText = output.data.plainText { outputHeight += textHeight(plainText.value, lineHeight: outputLineHeight) }
+                    if let markdownText = output.data.markdownText { outputHeight += textHeight(markdownText.value, lineHeight: outputLineHeight) }
+                    if let htmlText = output.data.markdownText { outputHeight += textHeight(htmlText.value, lineHeight: outputLineHeight) }
+                    if let image = output.data.image { outputHeight += image.value.size.height }
+                case .error(let output): outputHeight += CGFloat(output.traceback.count)*outputLineHeight
                 }
             }
         }
-        let outputHeight = outputHeights.reduce(0, { $0 + $1 })
         let height = inputHeight + outputHeight
         return height
     }
