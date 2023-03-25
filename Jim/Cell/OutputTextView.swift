@@ -14,10 +14,18 @@ class OutputTextView: NSTextView {
         
         super.init(frame: .zero, textContainer: textContainer)
         
-        font = SourceCodeTheme.shared.font
+        font = Theme.shared.font
         drawsBackground = false
         isEditable = false
         textContainerInset = .init(width: 0, height: verticalPadding)
+        
+        usesFontPanel = false
+        isRichText = false
+        smartInsertDeleteEnabled = false
+        isAutomaticTextCompletionEnabled = false
+        isAutomaticTextReplacementEnabled = false
+        isAutomaticSpellingCorrectionEnabled = false
+        allowsCharacterPickerTouchBarItem = false
         
         // Horizontally fixed with wrapping, vertically fitting content
         minSize = .zero

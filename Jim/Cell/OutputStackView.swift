@@ -1,6 +1,7 @@
 import Cocoa
 
 class OutputStackView: NSStackView {
+    
     override func addArrangedSubview(_ view: NSView) {
         super.addArrangedSubview(view)
         NSLayoutConstraint.activate([

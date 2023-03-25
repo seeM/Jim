@@ -11,12 +11,12 @@ class NotebookViewController: NSViewController {
     var notebook: Notebook { viewModel!.notebook }
     
     let inputLineHeight: CGFloat = {
-        let string = NSMutableAttributedString(source: "A", tokens: [], theme: SourceCodeTheme.shared)
-        return string.size().height + 2
+        let string = NSAttributedString(string: "A", attributes: [.font: Theme.shared.font])
+        return string.size().height
     }()
     
     let outputLineHeight: CGFloat = {
-        let string = NSAttributedString(string: "A", attributes: [.font: SourceCodeTheme.shared.font])
+        let string = NSAttributedString(string: "A", attributes: [.font: Theme.shared.font])
         return string.size().height
     }()
     

@@ -6,21 +6,23 @@ class CellView: NSTableCellView {
     let outputStackView = OutputStackView()
     var tableView: NotebookTableView!
     var row: Int { tableView.row(for: self) }
-    let lexer = Python3Lexer()
     
     var viewModel: CellViewModel!
     private var isExecutingCancellable: AnyCancellable?
     
     override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect); create()
+        super.init(frame: frameRect)
+        setup()
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder); create()
+        super.init(coder: coder)
+        setup()
     }
 
-    private func create() {
+    private func setup() {
         let containerView = NSView()
+        
         containerView.wantsLayer = true
         containerView.layer?.backgroundColor = .white
         containerView.layer?.masksToBounds = true
@@ -34,7 +36,7 @@ class CellView: NSTableCellView {
         outputStackView.wantsLayer = true
         outputStackView.layer?.backgroundColor = .white
         
-        sourceView.theme = SourceCodeTheme.shared
+        sourceView.textView.font = Theme.shared.font
         sourceView.delegate = self
         
         outputStackView.spacing = 0
@@ -80,7 +82,8 @@ class CellView: NSTableCellView {
         self.tableView = tableView
         self.viewModel = viewModel
         sourceView.uniqueUndoManager = viewModel.undoManager
-        sourceView.text = viewModel.source
+        sourceView.backgroundColor = Theme.shared.backgroundColor
+        sourceView.textView.string = viewModel.source
         sourceView.textView.setSelectedRange(viewModel.selectedRange)
         clearOutputs()
         if let outputs = viewModel.cell.outputs {
@@ -92,8 +95,6 @@ class CellView: NSTableCellView {
     
     func clearOutputs() {
         for view in outputStackView.arrangedSubviews {
-            outputStackView.removeArrangedSubview(view)
-            NSLayoutConstraint.deactivate(view.constraints)
             view.removeFromSuperview()
         }
     }
@@ -172,12 +173,8 @@ class CellView: NSTableCellView {
 }
 
 extension CellView: SourceViewDelegate {
-    func lexerForSource(_ source: String) -> Lexer {
-        lexer
-    }
-    
     func didChangeText(_ sourceView: SourceView) {
-        viewModel.source = sourceView.text
+        viewModel.source = sourceView.textView.string
     }
     
     func didCommit(_ sourceView: SourceView) {
