@@ -23,6 +23,7 @@ class SourceView: NSScrollView {
     var uniqueUndoManager: UndoManager?
     let textView: SourceTextView
     
+    override var isOpaque: Bool { true }
     
     weak var delegate: SourceViewDelegate?
     
@@ -44,12 +45,9 @@ class SourceView: NSScrollView {
         hasHorizontalScroller = true
         horizontalScrollElasticity = .automatic
         verticalScrollElasticity = .none
-        
         drawsBackground = true
         backgroundColor = Theme.shared.backgroundColor
-        //        wantsLayer = true
-        //        layer?.cornerRadius = 3
-        //        layer?.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        
         textView.drawsBackground = false
         
         // Infinite max size text view and container + resizable text view allows for horizontal scrolling.
