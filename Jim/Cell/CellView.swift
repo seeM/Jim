@@ -20,6 +20,8 @@ class CellView: NSTableCellView {
     private var reusableImageViews = [NSImageView]()
     private var reusableTextViews = [OutputTextView]()
     
+    override var isOpaque: Bool { true }
+    
     let cornerRadius = 5.0
     
     var viewModel: CellViewModel!

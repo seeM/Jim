@@ -2,6 +2,8 @@ import Cocoa
 
 class OutputStackView: NSStackView {
     
+    override var isOpaque: Bool { true }
+    
     override func addArrangedSubview(_ view: NSView) {
         super.addArrangedSubview(view)
         NSLayoutConstraint.activate([

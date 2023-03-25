@@ -3,6 +3,8 @@ import Cocoa
 class NotebookTableView: NSTableView {
     var viewModel: NotebookViewModel!
     
+    override var isOpaque: Bool { true }
+    
     var copyBuffer: Cell?
     var previouslyRemovedCell: Cell? {
         didSet {

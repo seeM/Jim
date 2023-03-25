@@ -1,6 +1,8 @@
 import AppKit
 
 class SourceTextView: MinimalTextView {
+    override var isOpaque: Bool { true }
+    
     override init() {
         super.init()
         setup()
@@ -13,7 +15,8 @@ class SourceTextView: MinimalTextView {
     
     private func setup() {
         font = Theme.shared.font
-        drawsBackground = false
+        drawsBackground = true
+        backgroundColor = Theme.shared.backgroundColor
         allowsUndo = true
         
         // Needed else reused views may retain previous height

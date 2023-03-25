@@ -1,6 +1,8 @@
 import Cocoa
 
 class OutputTextView: MinimalTextView {
+    override var isOpaque: Bool { true }
+    
     override init() {
         super.init()
         setup()
@@ -15,7 +17,8 @@ class OutputTextView: MinimalTextView {
         textContainer?.widthTracksTextView = true
         textContainer?.heightTracksTextView = false
         font = Theme.shared.font
-        drawsBackground = false
+        drawsBackground = true
+        backgroundColor = .white
         isEditable = false
         
         // NOTE: We might need this if layout has bugs
