@@ -117,7 +117,7 @@ class CellView: NSTableCellView {
     }
     
     func appendOutputTextSubview(_ text: String) {
-        let textView = OutputTextView(cellView: self, verticalPadding: 5)
+        let textView = OutputTextView()
         textView.string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines).replacing(/\[\d+[\d;]*m/, with: "")
         outputStackView.addArrangedSubview(textView)
     }

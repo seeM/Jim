@@ -1,54 +1,28 @@
 import Cocoa
 
-class OutputTextView: NSTextView {
-    var cellView: CellView
-    
-    init(cellView: CellView, verticalPadding: CGFloat) {
-        self.cellView = cellView
-
-        let textContentStorage = NSTextContentStorage()
-        let textLayoutManager = NSTextLayoutManager()
-        let textContainer = NSTextContainer()
-        textContentStorage.addTextLayoutManager(textLayoutManager)
-        textLayoutManager.textContainer = textContainer
-        
-        super.init(frame: .zero, textContainer: textContainer)
-        
-        font = Theme.shared.font
-        drawsBackground = false
-        isEditable = false
-        textContainerInset = .init(width: 0, height: verticalPadding)
-        
-        usesFontPanel = false
-        isRichText = false
-        smartInsertDeleteEnabled = false
-        isAutomaticTextCompletionEnabled = false
-        isAutomaticTextReplacementEnabled = false
-        isAutomaticSpellingCorrectionEnabled = false
-        allowsCharacterPickerTouchBarItem = false
-        
-        // Horizontally fixed with wrapping, vertically fitting content
-        minSize = .zero
-        maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        isVerticallyResizable = true
-        isHorizontallyResizable = false
-        textContainer.widthTracksTextView = true
-        textContainer.heightTracksTextView = false
-        textContainer.size.height = CGFloat.greatestFiniteMagnitude
+class OutputTextView: MinimalTextView {
+    override init() {
+        super.init()
+        setup()
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
+        setup()
+    }
+    
+    private func setup() {
+        textContainer?.widthTracksTextView = true
+        textContainer?.heightTracksTextView = false
+        font = Theme.shared.font
+        drawsBackground = false
+        isEditable = false
+//        isVerticallyResizable = true
+//        isHorizontallyResizable = false
     }
     
     public override var intrinsicContentSize: NSSize {
-        guard let textContainer = textContainer,
-              let layoutManager = layoutManager else {
-            return super.intrinsicContentSize
-        }
-        layoutManager.ensureLayout(for: textContainer)
-        let size = layoutManager.usedRect(for: textContainer).size
-        return .init(width: -1, height: size.height + 2 * textContainerInset.height)
+        NSSize(width: -1, height: super.intrinsicContentSize.height)
     }
     
     override func resize(withOldSuperviewSize oldSize: NSSize) {
@@ -61,7 +35,8 @@ class OutputTextView: NSTextView {
     }
     
     override func becomeFirstResponder() -> Bool {
-        cellView.tableView!.selectRowIndexes(IndexSet(integer: cellView.row), byExtendingSelection: false)
+        // TODO: get tableViewRow reference somehow
+//        cellView.tableView!.selectRowIndexes(IndexSet(integer: cellView.row), byExtendingSelection: false)
         return super.becomeFirstResponder()
     }
 }
