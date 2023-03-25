@@ -47,25 +47,11 @@ class SourceView: NSScrollView {
         drawsBackground = true
         backgroundColor = Theme.shared.backgroundColor
         
-        textView.drawsBackground = false
-        // Infinite max size text view and container + resizable text view allows for horizontal scrolling.
-        textView.isAutomaticQuoteSubstitutionEnabled = false
-        textView.allowsUndo = true
-        textView.minSize = NSSize(width: 0, height: 0)
-        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        textView.isVerticallyResizable = true
-        textView.isHorizontallyResizable = true
-        textView.textContainer?.widthTracksTextView = false
-        textView.textContainer?.heightTracksTextView = false
-        textView.textContainer?.size = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        
         let textViewContainer = NSView()
         textViewContainer.addSubview(textView)
-        
         documentView = textViewContainer
         
         textViewContainer.translatesAutoresizingMaskIntoConstraints = false
-        
         textView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             textViewContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
