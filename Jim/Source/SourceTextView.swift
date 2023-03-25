@@ -3,11 +3,16 @@ import AppKit
 class SourceTextView: MinimalTextView {
     override init() {
         super.init()
-        font = Theme.shared.font
+        setup()
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
+        setup()
+    }
+    
+    private func setup() {
+        font = Theme.shared.font
     }
 
     override func invalidateIntrinsicContentSize() {

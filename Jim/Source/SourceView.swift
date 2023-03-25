@@ -38,7 +38,6 @@ class SourceView: NSScrollView {
     }
     
     private func setup() {
-        _ = textView.layoutManager
         borderType = .noBorder
         autohidesScrollers = true
         hasVerticalScroller = false
@@ -49,7 +48,6 @@ class SourceView: NSScrollView {
         backgroundColor = Theme.shared.backgroundColor
         
         textView.drawsBackground = false
-        
         // Infinite max size text view and container + resizable text view allows for horizontal scrolling.
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.allowsUndo = true
@@ -60,15 +58,6 @@ class SourceView: NSScrollView {
         textView.textContainer?.widthTracksTextView = false
         textView.textContainer?.heightTracksTextView = false
         textView.textContainer?.size = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        
-        // TODO: Create my own textview base class?
-        textView.usesFontPanel = false
-        textView.isRichText = false
-        textView.smartInsertDeleteEnabled = false
-        textView.isAutomaticTextCompletionEnabled = false
-        textView.isAutomaticTextReplacementEnabled = false
-        textView.isAutomaticSpellingCorrectionEnabled = false
-        textView.allowsCharacterPickerTouchBarItem = false
         
         let textViewContainer = NSView()
         textViewContainer.addSubview(textView)
