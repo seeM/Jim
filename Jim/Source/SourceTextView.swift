@@ -8,6 +8,8 @@ public class SourceTextView: NSTextView {
         textStorage.addLayoutManager(layoutManager)
         layoutManager.addTextContainer(textContainer)
         super.init(frame: .zero, textContainer: textContainer)
+    
+        font = Theme.shared.font
     }
     
     required init?(coder: NSCoder) {

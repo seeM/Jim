@@ -1,11 +1,26 @@
 import Cocoa
 import Combine
+import Foundation
+
+class OpaqueView: NSView {
+    override var isOpaque: Bool { true }
+}
 
 class CellView: NSTableCellView {
     let sourceView = SourceView()
-    let outputStackView = OutputStackView()
+    let outputStackView = NSStackView()
     var tableView: NotebookTableView!
     var row: Int { tableView.row(for: self) }
+    
+    private let containerView = OpaqueView()
+    private let shadowLayer = CALayer()
+    
+    // Caching
+    private var previousBounds = CGRect.zero
+    private var reusableImageViews = [NSImageView]()
+    private var reusableTextViews = [OutputTextView]()
+    
+    let cornerRadius = 5.0
     
     var viewModel: CellViewModel!
     private var isExecutingCancellable: AnyCancellable?
@@ -21,25 +36,20 @@ class CellView: NSTableCellView {
     }
 
     private func setup() {
-        let containerView = NSView()
-        
+        wantsLayer = true
+        layer?.masksToBounds = false
+
+        shadowLayer.shadowColor = NSColor.black.cgColor
+        shadowLayer.shadowOpacity = 0.3
+        shadowLayer.shadowOffset = CGSize(width: 0, height: -2)
+        shadowLayer.shadowRadius = 3
+        layer?.addSublayer(shadowLayer)
+
         containerView.wantsLayer = true
-        containerView.layer?.backgroundColor = .white
+        containerView.layer?.cornerRadius = cornerRadius
         containerView.layer?.masksToBounds = true
-        containerView.layer?.cornerRadius = 5
+        containerView.layer?.backgroundColor = .white
         
-        shadow = NSShadow()
-        shadow?.shadowBlurRadius = 3
-        shadow?.shadowOffset = .init(width: 0, height: -2)
-        shadow?.shadowColor = .black.withAlphaComponent(0.2)
-        
-        outputStackView.wantsLayer = true
-        outputStackView.layer?.backgroundColor = .white
-        
-        sourceView.textView.font = Theme.shared.font
-        sourceView.delegate = self
-        
-        outputStackView.spacing = 0
         outputStackView.orientation = .vertical
         
         addSubview(containerView)
@@ -49,7 +59,6 @@ class CellView: NSTableCellView {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         sourceView.translatesAutoresizingMaskIntoConstraints = false
         outputStackView.translatesAutoresizingMaskIntoConstraints = false
-        
         sourceView.setContentHuggingPriority(.required, for: .vertical)
         outputStackView.setHuggingPriority(.required, for: .vertical)
         NSLayoutConstraint.activate([
@@ -57,22 +66,39 @@ class CellView: NSTableCellView {
             containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
+
             sourceView.topAnchor.constraint(equalTo: containerView.topAnchor),
             sourceView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             sourceView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             
             outputStackView.topAnchor.constraint(equalTo: sourceView.bottomAnchor),
+            outputStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             outputStackView.leadingAnchor.constraint(equalTo: sourceView.leadingAnchor),
             outputStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            outputStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
+    }
+    
+    override func layout() {
+        super.layout()
+        if !NSEqualRects(containerView.bounds, previousBounds) {
+            shadowLayer.shadowPath = CGPath(roundedRect: containerView.bounds, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+            previousBounds = containerView.bounds
+        }
     }
     
     func update(with viewModel: CellViewModel, tableView: NotebookTableView) {
         // Store previous cell state
         // TODO: there must be a better pattern for this
         self.viewModel?.selectedRange = sourceView.textView.selectedRange()
+        
+        for view in outputStackView.arrangedSubviews {
+            view.removeFromSuperview()
+            if let imageView = view as? NSImageView {
+                reusableImageViews.append(imageView)
+            } else if let textView = view as? OutputTextView {
+                reusableTextViews.append(textView)
+            }
+        }
         
         isExecutingCancellable = viewModel.$isExecuting
             .sink { [weak self] isExecuting in
@@ -82,7 +108,6 @@ class CellView: NSTableCellView {
         self.tableView = tableView
         self.viewModel = viewModel
         sourceView.uniqueUndoManager = viewModel.undoManager
-        sourceView.backgroundColor = Theme.shared.backgroundColor
         sourceView.textView.string = viewModel.source
         sourceView.textView.setSelectedRange(viewModel.selectedRange)
         clearOutputs()
@@ -117,15 +142,32 @@ class CellView: NSTableCellView {
     }
     
     func appendOutputTextSubview(_ text: String) {
-        let textView = OutputTextView()
+        let textView: OutputTextView
+        if let reusedTextView = reusableTextViews.popLast() {
+            textView = reusedTextView
+        } else {
+            textView = OutputTextView()
+            textView.translatesAutoresizingMaskIntoConstraints = false
+            textView.setContentHuggingPriority(.required, for: .vertical)
+        }
+        
         textView.string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines).replacing(/\[\d+[\d;]*m/, with: "")
         outputStackView.addArrangedSubview(textView)
     }
     
     func appendOutputImageSubview(_ image: NSImage) {
-        let imageView = NSImageView(image: image)
-        imageView.imageAlignment = .alignTopLeft
+        let imageView: NSImageView
+        if let reusedImageView = reusableImageViews.popLast() {
+            imageView = reusedImageView
+        } else {
+            imageView = NSImageView()
+            imageView.imageAlignment = .alignTopLeft
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            imageView.setContentHuggingPriority(.required, for: .vertical)
+        }
+        imageView.image = image
         outputStackView.addArrangedSubview(imageView)
+        imageView.leadingAnchor.constraint(equalTo: outputStackView.leadingAnchor).isActive = true
     }
     
     func runCell() {

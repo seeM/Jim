@@ -60,6 +60,7 @@ open class SourceView: NSScrollView {
         scrollView.verticalScrollElasticity = .none
         
         scrollView.drawsBackground = true
+        scrollView.backgroundColor = Theme.shared.backgroundColor
         //        scrollView.wantsLayer = true
         //        scrollView.layer?.cornerRadius = 3
         //        scrollView.layer?.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
