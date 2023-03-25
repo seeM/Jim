@@ -2,7 +2,7 @@ import Foundation
 import CoreGraphics
 import AppKit
 
-public protocol SourceViewDelegate: AnyObject {
+protocol SourceViewDelegate: AnyObject {
 
     func didChangeText(_ sourceView: SourceView)
     
@@ -19,36 +19,24 @@ public protocol SourceViewDelegate: AnyObject {
     func save()
 }
 
-open class SourceView: NSScrollView {
+class SourceView: NSScrollView {
     var uniqueUndoManager: UndoManager?
     let textView: SourceTextView
     
-    public weak var delegate: SourceViewDelegate?
     
-    var ignoreShouldChange = false
-    var padding = CGFloat(5)  // TODO: Ideally this should be passed in
+    weak var delegate: SourceViewDelegate?
     
-    public var theme: Theme?
-    
-    public override init(frame: CGRect) {
+    override init(frame: CGRect) {
         textView = SourceTextView()
         super.init(frame: frame)
         setup()
     }
     
-    required public init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     public var scrollView: NSScrollView { self }
-    
-    public override func scrollWheel(with event: NSEvent) {
-        if abs(event.deltaX) < abs(event.deltaY) {
-            super.nextResponder?.scrollWheel(with: event)
-        } else {
-            super.scrollWheel(with: event)
-        }
-    }
     
     private func setup() {
         _ = textView.layoutManager
@@ -76,7 +64,6 @@ open class SourceView: NSScrollView {
         textView.textContainer?.widthTracksTextView = false
         textView.textContainer?.heightTracksTextView = false
         textView.textContainer?.size = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        textView.textContainer?.lineFragmentPadding = padding
         
         // TODO: Create my own textview base class?
         textView.usesFontPanel = false
@@ -103,17 +90,25 @@ open class SourceView: NSScrollView {
             
             textView.leadingAnchor.constraint(equalTo: textViewContainer.leadingAnchor),
             textView.trailingAnchor.constraint(equalTo: textViewContainer.trailingAnchor),
-            textView.topAnchor.constraint(equalTo: textViewContainer.topAnchor, constant: padding),
-            textView.bottomAnchor.constraint(equalTo: textViewContainer.bottomAnchor, constant: -padding),
+            textView.topAnchor.constraint(equalTo: textViewContainer.topAnchor, constant: 5),
+            textView.bottomAnchor.constraint(equalTo: textViewContainer.bottomAnchor, constant: -5),
         ])
         textView.setContentHuggingPriority(.required, for: .vertical)
         
         textView.delegate = self
     }
+    
+    override func scrollWheel(with event: NSEvent) {
+        if abs(event.deltaX) < abs(event.deltaY) {
+            super.nextResponder?.scrollWheel(with: event)
+        } else {
+            super.scrollWheel(with: event)
+        }
+    }
 }
 
 extension SourceView: NSTextViewDelegate {
-    public func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+    func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         guard let event = NSApp.currentEvent else { return false }
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
         if event.keyCode == 36 && flags == .shift {
@@ -139,7 +134,7 @@ extension SourceView: NSTextViewDelegate {
         return false
     }
     
-    public func undoManager(for view: NSTextView) -> UndoManager? {
+    func undoManager(for view: NSTextView) -> UndoManager? {
         uniqueUndoManager
     }
     
