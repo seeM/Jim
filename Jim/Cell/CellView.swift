@@ -151,6 +151,7 @@ class CellView: NSTableCellView {
             textView = reusedTextView
         } else {
             textView = OutputTextView()
+            textView.customDelegate = self
             textView.translatesAutoresizingMaskIntoConstraints = false
             textView.setContentHuggingPriority(.required, for: .vertical)
         }
@@ -216,6 +217,10 @@ class CellView: NSTableCellView {
             }
         }
     }
+    
+    private func selectCurrentRow() {
+        tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+    }
 }
 
 extension CellView: SourceViewDelegate {
@@ -243,7 +248,7 @@ extension CellView: SourceViewDelegate {
     }
     
     func didBecomeFirstResponder(_ sourceView: SourceView) {
-        tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+        selectCurrentRow()
     }
     
     func endEditMode(_ sourceView: SourceView) {
@@ -252,5 +257,11 @@ extension CellView: SourceViewDelegate {
     
     func save() {
         tableView.save()
+    }
+}
+
+extension CellView: OutputTextViewDelegate {
+    func didBecomeFirstResponder() {
+        selectCurrentRow()
     }
 }

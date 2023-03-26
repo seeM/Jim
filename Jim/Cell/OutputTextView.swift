@@ -1,7 +1,13 @@
 import Cocoa
 
+protocol OutputTextViewDelegate {
+    func didBecomeFirstResponder()
+}
+
 class OutputTextView: MinimalTextView {
     override var isOpaque: Bool { true }
+    
+    var customDelegate: OutputTextViewDelegate?
     
     override init() {
         super.init()
@@ -40,8 +46,7 @@ class OutputTextView: MinimalTextView {
     }
     
     override func becomeFirstResponder() -> Bool {
-        // TODO: get tableViewRow reference somehow
-//        cellView.tableView!.selectRowIndexes(IndexSet(integer: cellView.row), byExtendingSelection: false)
+        customDelegate?.didBecomeFirstResponder()
         return super.becomeFirstResponder()
     }
 }
