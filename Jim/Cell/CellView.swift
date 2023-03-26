@@ -261,7 +261,7 @@ extension CellView: SourceViewDelegate {
 }
 
 extension CellView: OutputTextViewDelegate {
-    func didBecomeFirstResponder() {
+    func didBecomeFirstResponder(_ textView: OutputTextView) {
         selectCurrentRow()
     }
 }

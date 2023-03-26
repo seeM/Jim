@@ -1,7 +1,7 @@
 import Cocoa
 
 protocol OutputTextViewDelegate {
-    func didBecomeFirstResponder()
+    func didBecomeFirstResponder(_ textView: OutputTextView)
 }
 
 class OutputTextView: MinimalTextView {
@@ -46,7 +46,7 @@ class OutputTextView: MinimalTextView {
     }
     
     override func becomeFirstResponder() -> Bool {
-        customDelegate?.didBecomeFirstResponder()
+        customDelegate?.didBecomeFirstResponder(self)
         return super.becomeFirstResponder()
     }
 }

@@ -46,6 +46,12 @@ class SourceView: NSScrollView {
         verticalScrollElasticity = .none
         drawsBackground = true
         backgroundColor = Theme.shared.backgroundColor
+  
+        if let horizontalScroller = horizontalScroller {
+            let horizontalSourceScroller = SourceScroller(frame: horizontalScroller.frame)
+            horizontalSourceScroller.delegate = self
+            self.horizontalScroller = horizontalSourceScroller
+        }
         
         textView.delegate = self
         
@@ -113,5 +119,11 @@ extension SourceView: NSTextViewDelegate {
     public func textDidChange(_ notification: Notification) {
         guard let textView = notification.object as? SourceTextView, textView == self.textView else { return }
         delegate?.didChangeText(self)
+    }
+}
+
+extension SourceView: SourceScrollerDelegate {
+    func didMouseDown(_ scroller: SourceScroller) {
+        delegate?.didBecomeFirstResponder(self)
     }
 }
