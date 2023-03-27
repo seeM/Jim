@@ -11,6 +11,8 @@
 		842CBCB029CEC02600C0DE4C /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842CBCAF29CEC02600C0DE4C /* Debug.swift */; };
 		842CBCB229CED64D00C0DE4C /* SourceTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842CBCB129CED64D00C0DE4C /* SourceTextView.swift */; };
 		842CBCC029D03B8A00C0DE4C /* SourceScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842CBCBF29D03B8A00C0DE4C /* SourceScroller.swift */; };
+		842CBCC229D059F000C0DE4C /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842CBCC129D059F000C0DE4C /* RichTextView.swift */; };
+		842CBCC529D16F5500C0DE4C /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = 842CBCC429D16F5500C0DE4C /* Down */; };
 		8437F0F829A4F0F500D027B7 /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8437F0F729A4F0F500D027B7 /* WindowController.swift */; };
 		8456BD40299D0264001E3EDA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456BD3F299D0264001E3EDA /* AppDelegate.swift */; };
 		8456BD44299D0268001E3EDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8456BD43299D0268001E3EDA /* Assets.xcassets */; };
@@ -44,6 +46,7 @@
 		842CBCAF29CEC02600C0DE4C /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debug.swift; sourceTree = "<group>"; };
 		842CBCB129CED64D00C0DE4C /* SourceTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceTextView.swift; sourceTree = "<group>"; };
 		842CBCBF29D03B8A00C0DE4C /* SourceScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceScroller.swift; sourceTree = "<group>"; };
+		842CBCC129D059F000C0DE4C /* RichTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextView.swift; sourceTree = "<group>"; };
 		8437F0F729A4F0F500D027B7 /* WindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
 		8456BD3C299D0264001E3EDA /* Jim.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jim.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8456BD3F299D0264001E3EDA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -78,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				842CBCC529D16F5500C0DE4C /* Down in Frameworks */,
 				84C838E6299D6E2900BA3F8F /* AnyCodable in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -144,6 +148,7 @@
 			children = (
 				841C6ECE29A6268D008B1FE5 /* CellView.swift */,
 				8478D3FA29C99AC20028A8E1 /* CellViewModel.swift */,
+				842CBCC129D059F000C0DE4C /* RichTextView.swift */,
 				8478D3F429C9809B0028A8E1 /* OutputStackView.swift */,
 				8478D3F229C9807F0028A8E1 /* OutputTextView.swift */,
 				84ED491A29BF517C0069AFD8 /* RunButton.swift */,
@@ -204,6 +209,7 @@
 			name = Jim;
 			packageProductDependencies = (
 				84C838E5299D6E2900BA3F8F /* AnyCodable */,
+				842CBCC429D16F5500C0DE4C /* Down */,
 			);
 			productName = Jim;
 			productReference = 8456BD3C299D0264001E3EDA /* Jim.app */;
@@ -235,6 +241,7 @@
 			mainGroup = 8456BD33299D0264001E3EDA;
 			packageReferences = (
 				84C838E4299D6E2800BA3F8F /* XCRemoteSwiftPackageReference "AnyCodable" */,
+				842CBCC329D16F5500C0DE4C /* XCRemoteSwiftPackageReference "Down" */,
 			);
 			productRefGroup = 8456BD3D299D0264001E3EDA /* Products */;
 			projectDirPath = "";
@@ -281,6 +288,7 @@
 				84C838EA299D6E4600BA3F8F /* StringOrArray.swift in Sources */,
 				8456BD51299D0F5E001E3EDA /* NotebookViewController.swift in Sources */,
 				845D8A5C29CEB8A9007A624B /* MinimalTextView.swift in Sources */,
+				842CBCC229D059F000C0DE4C /* RichTextView.swift in Sources */,
 				8437F0F829A4F0F500D027B7 /* WindowController.swift in Sources */,
 				84ED48F729B9C0A70069AFD8 /* Content.swift in Sources */,
 				84ED48F529B9C0A70069AFD8 /* Message.swift in Sources */,
@@ -493,6 +501,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		842CBCC329D16F5500C0DE4C /* XCRemoteSwiftPackageReference "Down" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/johnxnguyen/Down";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		84C838E4299D6E2800BA3F8F /* XCRemoteSwiftPackageReference "AnyCodable" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Flight-School/AnyCodable";
@@ -504,6 +520,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		842CBCC429D16F5500C0DE4C /* Down */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 842CBCC329D16F5500C0DE4C /* XCRemoteSwiftPackageReference "Down" */;
+			productName = Down;
+		};
 		84C838E5299D6E2900BA3F8F /* AnyCodable */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 84C838E4299D6E2800BA3F8F /* XCRemoteSwiftPackageReference "AnyCodable" */;

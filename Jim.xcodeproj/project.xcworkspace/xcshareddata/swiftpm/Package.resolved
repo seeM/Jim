@@ -8,6 +8,15 @@
         "branch" : "master",
         "revision" : "862808b2070cd908cb04f9aafe7de83d35f81b05"
       }
+    },
+    {
+      "identity" : "down",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/johnxnguyen/Down",
+      "state" : {
+        "branch" : "master",
+        "revision" : "e754ab1c80920dd51a8e08290c912ac1c2ac8b58"
+      }
     }
   ],
   "version" : 2

@@ -8,6 +8,7 @@ class OpaqueView: NSView {
 
 class CellView: NSTableCellView {
     let sourceView = SourceView()
+    let richTextView = RichTextView()
     let outputStackView = NSStackView()
     var tableView: NotebookTableView!
     var row: Int { tableView.row(for: self) }
@@ -23,9 +24,12 @@ class CellView: NSTableCellView {
     override var isOpaque: Bool { true }
     
     let cornerRadius = 5.0
+    let shadowOpacity = Float(0.3)
     
     var viewModel: CellViewModel!
     private var isExecutingCancellable: AnyCancellable?
+    private var isEditingMarkdownCancellable: AnyCancellable?
+    private var renderedMarkdownCancellable: AnyCancellable?
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -42,7 +46,7 @@ class CellView: NSTableCellView {
         layer?.masksToBounds = false
 
         shadowLayer.shadowColor = NSColor.black.cgColor
-        shadowLayer.shadowOpacity = 0.3
+        shadowLayer.shadowOpacity = shadowOpacity
         shadowLayer.shadowOffset = CGSize(width: 0, height: -2)
         shadowLayer.shadowRadius = 3
         layer?.addSublayer(shadowLayer)
@@ -56,12 +60,17 @@ class CellView: NSTableCellView {
         
         sourceView.delegate = self
         
+        richTextView.isHidden = true
+        richTextView.customDelegate = self
+        
         addSubview(containerView)
         containerView.addSubview(sourceView)
+        containerView.addSubview(richTextView)
         containerView.addSubview(outputStackView)
         
         containerView.translatesAutoresizingMaskIntoConstraints = false
         sourceView.translatesAutoresizingMaskIntoConstraints = false
+        richTextView.translatesAutoresizingMaskIntoConstraints = false
         outputStackView.translatesAutoresizingMaskIntoConstraints = false
         sourceView.setContentHuggingPriority(.required, for: .vertical)
         outputStackView.setHuggingPriority(.required, for: .vertical)
@@ -74,6 +83,10 @@ class CellView: NSTableCellView {
             sourceView.topAnchor.constraint(equalTo: containerView.topAnchor),
             sourceView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             sourceView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            
+            richTextView.topAnchor.constraint(equalTo: sourceView.topAnchor),
+            richTextView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            richTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             
             outputStackView.topAnchor.constraint(equalTo: sourceView.bottomAnchor),
             outputStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
@@ -104,13 +117,33 @@ class CellView: NSTableCellView {
             }
         }
         
+        // TODO: note
+        self.viewModel = viewModel
+        
+        isEditingMarkdownCancellable = viewModel.$isEditing
+            .sink { [weak self] isEditing in
+                print("isEditing", self?.viewModel?.cell.source.value)
+                self?.sourceView.isHidden = !isEditing
+                self?.richTextView.isHidden = isEditing
+                if !isEditing && self?.viewModel?.cell.cellType == .markdown {
+                    self?.shadowLayer.shadowOpacity = 0
+                } else {
+                    self?.shadowLayer.shadowOpacity = self!.shadowOpacity
+                }
+            }
+        
+        renderedMarkdownCancellable = viewModel.$renderedMarkdown
+            .sink { [weak self] renderedMarkdown in
+                print("renderedMarkdown", renderedMarkdown)
+                self?.richTextView.textStorage?.setAttributedString(renderedMarkdown)
+            }
+        
         isExecutingCancellable = viewModel.$isExecuting
             .sink { [weak self] isExecuting in
                 self?.alphaValue = isExecuting ? 0.5 : 1.0
             }
         
         self.tableView = tableView
-        self.viewModel = viewModel
         sourceView.uniqueUndoManager = viewModel.undoManager
         sourceView.textView.string = viewModel.source
         sourceView.textView.setSelectedRange(viewModel.selectedRange)
@@ -176,43 +209,47 @@ class CellView: NSTableCellView {
     }
     
     func runCell() {
-        guard viewModel.cell.cellType == .code else { return }
-        viewModel.notebookViewModel.notebook.dirty = true
-        viewModel.isExecuting = true
-
-        clearOutputs()
-        viewModel.cell.outputs = []
-        JupyterService.shared.webSocketSend(code: viewModel.cell.source.value) { [viewModel] msg in
-            switch msg.channel {
-            case .iopub:
-                var output: Output?
-                switch msg.content {
-                case .stream(let content):
-                    output = .stream(content)
-                case .executeResult(let content):
-                    output = .executeResult(content)
-                case .displayData(let content):
-                    output = .displayData(content)
-                case .error(let content):
-                    output = .error(content)
-                default: break
-                }
-                if let output {
-                    Task.detached { @MainActor in
-                        // TODO: feels hacky...
-                        if viewModel!.cell == self.viewModel.cell {
-                            self.appendOutputSubview(output)
+        if viewModel.cell.cellType == .markdown && viewModel.isEditing {
+            viewModel.isEditing = false
+            viewModel.renderMarkdown()
+        } else if viewModel.cell.cellType == .code {
+            viewModel.notebookViewModel.notebook.dirty = true
+            viewModel.isExecuting = true
+            
+            clearOutputs()
+            viewModel.cell.outputs = []
+            JupyterService.shared.webSocketSend(code: viewModel.cell.source.value) { [viewModel] msg in
+                switch msg.channel {
+                case .iopub:
+                    var output: Output?
+                    switch msg.content {
+                    case .stream(let content):
+                        output = .stream(content)
+                    case .executeResult(let content):
+                        output = .executeResult(content)
+                    case .displayData(let content):
+                        output = .displayData(content)
+                    case .error(let content):
+                        output = .error(content)
+                    default: break
+                    }
+                    if let output {
+                        Task.detached { @MainActor in
+                            // TODO: feels hacky...
+                            if viewModel!.cell == self.viewModel.cell {
+                                self.appendOutputSubview(output)
+                            }
                         }
+                        viewModel!.cell.outputs!.append(output)
                     }
-                    viewModel!.cell.outputs!.append(output)
-                }
-            case .shell:
-                switch msg.content {
-                case .executeReply(_):
-                    Task.detached { @MainActor in
-                        viewModel?.isExecuting = false
+                case .shell:
+                    switch msg.content {
+                    case .executeReply(_):
+                        Task.detached { @MainActor in
+                            viewModel?.isExecuting = false
+                        }
+                    default: break
                     }
-                default: break
                 }
             }
         }
@@ -248,6 +285,7 @@ extension CellView: SourceViewDelegate {
     }
     
     func didBecomeFirstResponder(_ sourceView: SourceView) {
+        viewModel.isEditing = true
         selectCurrentRow()
     }
     
@@ -263,5 +301,11 @@ extension CellView: SourceViewDelegate {
 extension CellView: OutputTextViewDelegate {
     func didBecomeFirstResponder(_ textView: OutputTextView) {
         selectCurrentRow()
+    }
+}
+
+extension CellView: RichTextViewDelegate {
+    func didBecomeFirstResponder(_ textView: RichTextView) {
+        window?.makeFirstResponder(sourceView)
     }
 }

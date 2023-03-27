@@ -22,7 +22,7 @@ class OutputTextView: MinimalTextView {
     private func setup() {
         textContainer?.widthTracksTextView = true
         textContainer?.heightTracksTextView = false
-        font = Theme.shared.font
+        font = Theme.shared.monoFont
         drawsBackground = true
         backgroundColor = .white
         isEditable = false

@@ -14,7 +14,7 @@ class SourceTextView: MinimalTextView {
     }
     
     private func setup() {
-        font = Theme.shared.font
+        font = Theme.shared.monoFont
         drawsBackground = true
         backgroundColor = Theme.shared.backgroundColor
         allowsUndo = true
