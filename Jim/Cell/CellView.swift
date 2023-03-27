@@ -31,6 +31,10 @@ class CellView: NSTableCellView {
     private var isEditingMarkdownCancellable: AnyCancellable?
     private var renderedMarkdownCancellable: AnyCancellable?
     
+    // For switching between edit and rich text mode
+    private var sourceViewVerticalConstraints: [NSLayoutConstraint]!
+    private var richTextViewVerticalConstraints: [NSLayoutConstraint]!
+    
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         setup()
@@ -73,6 +77,7 @@ class CellView: NSTableCellView {
         richTextView.translatesAutoresizingMaskIntoConstraints = false
         outputStackView.translatesAutoresizingMaskIntoConstraints = false
         sourceView.setContentHuggingPriority(.required, for: .vertical)
+        richTextView.setContentHuggingPriority(.required, for: .vertical)
         outputStackView.setHuggingPriority(.required, for: .vertical)
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: topAnchor),
@@ -80,19 +85,24 @@ class CellView: NSTableCellView {
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
 
-            sourceView.topAnchor.constraint(equalTo: containerView.topAnchor),
             sourceView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             sourceView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            
-            richTextView.topAnchor.constraint(equalTo: sourceView.topAnchor),
+
             richTextView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             richTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            
-            outputStackView.topAnchor.constraint(equalTo: sourceView.bottomAnchor),
+
             outputStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             outputStackView.leadingAnchor.constraint(equalTo: sourceView.leadingAnchor),
             outputStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ])
+        sourceViewVerticalConstraints = [
+            sourceView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            outputStackView.topAnchor.constraint(equalTo: sourceView.bottomAnchor),
+        ]
+        richTextViewVerticalConstraints = [
+            richTextView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            outputStackView.topAnchor.constraint(equalTo: richTextView.bottomAnchor),
+        ]
     }
     
     override func layout() {
@@ -122,13 +132,18 @@ class CellView: NSTableCellView {
         
         isEditingMarkdownCancellable = viewModel.$isEditing
             .sink { [weak self] isEditing in
-                print("isEditing", self?.viewModel?.cell.source.value)
                 self?.sourceView.isHidden = !isEditing
                 self?.richTextView.isHidden = isEditing
-                if !isEditing && self?.viewModel?.cell.cellType == .markdown {
-                    self?.shadowLayer.shadowOpacity = 0
-                } else {
-                    self?.shadowLayer.shadowOpacity = self!.shadowOpacity
+                self?.shadowLayer.shadowOpacity = isEditing ? self!.shadowOpacity : 0
+                if let richTextViewVerticalConstraints = self?.richTextViewVerticalConstraints, let sourceViewVerticalConstraints = self?.sourceViewVerticalConstraints {
+                    if isEditing {
+                        NSLayoutConstraint.deactivate(richTextViewVerticalConstraints)
+                        NSLayoutConstraint.activate(sourceViewVerticalConstraints)
+                    } else {
+                        NSLayoutConstraint.deactivate(sourceViewVerticalConstraints)
+                        NSLayoutConstraint.activate(richTextViewVerticalConstraints)
+                    }
+                    self?.needsLayout = true
                 }
             }
         
