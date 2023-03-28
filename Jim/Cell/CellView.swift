@@ -355,6 +355,6 @@ extension CellView: OutputTextViewDelegate {
 
 extension CellView: RichTextViewDelegate {
     func didBecomeFirstResponder(_ textView: RichTextView) {
-        window?.makeFirstResponder(sourceView)
+        selectCurrentRow()
     }
 }
