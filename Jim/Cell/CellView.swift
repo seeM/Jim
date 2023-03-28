@@ -27,10 +27,6 @@ class CellView: NSTableCellView {
     let shadowOpacity = Float(0.3)
     
     var viewModel: CellViewModel!
-    private var isExecutingCancellable: AnyCancellable?
-    private var isEditingMarkdownCancellable: AnyCancellable?
-    private var cellTypeCancellable: AnyCancellable?
-    private var renderedMarkdownCancellable: AnyCancellable?
     
     // For switching between edit and rich text mode
     private var sourceViewVerticalConstraints: [NSLayoutConstraint]!
@@ -131,6 +127,8 @@ class CellView: NSTableCellView {
         needsLayout = true
     }
     
+    private var cancellables = Set<AnyCancellable>()
+    
     func update(with viewModel: CellViewModel, tableView: NotebookTableView) {
         // Store previous cell state
         // TODO: there must be a better pattern for this
@@ -145,24 +143,28 @@ class CellView: NSTableCellView {
             }
         }
         
-        // TODO: note
+        // TODO: note that this must happen before all the cancellables, unless we directly bind the new view model instead of going via self?
         self.viewModel = viewModel
         
-        cellTypeCancellable = viewModel.$cellType
+        cancellables.removeAll()
+        
+        viewModel.$cellType
             .removeDuplicates()
             .sink { [weak self] cellType in
                 self?.showSourceView()
             }
+            .store(in: &cancellables)
         
-        isEditingMarkdownCancellable = viewModel.$isEditingMarkdown
+        viewModel.$isEditingMarkdown
             .sink { [weak self] isEditingMarkdown in
                 print("isEditing", isEditingMarkdown)
                 if self?.viewModel.cellType == .markdown && isEditingMarkdown {
                     self?.showSourceView()
                 }
             }
+            .store(in: &cancellables)
         
-        renderedMarkdownCancellable = viewModel.$renderedMarkdown
+        viewModel.$renderedMarkdown
             .sink { [weak self] renderedMarkdown in
                 print("renderedMarkdown", renderedMarkdown)
                 if self?.viewModel.cellType == .markdown {
@@ -170,11 +172,13 @@ class CellView: NSTableCellView {
                     self?.showRichTextView()
                 }
             }
+            .store(in: &cancellables)
         
-        isExecutingCancellable = viewModel.$isExecuting
+        viewModel.$isExecuting
             .sink { [weak self] isExecuting in
                 self?.alphaValue = isExecuting ? 0.5 : 1.0
             }
+            .store(in: &cancellables)
         
         self.tableView = tableView
         sourceView.uniqueUndoManager = viewModel.undoManager
