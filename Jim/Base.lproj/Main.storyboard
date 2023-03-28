@@ -853,21 +853,21 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
-                                                <tableCellView misplaced="YES" id="2Yw-7E-FbE">
+                                                <tableCellView id="2Yw-7E-FbE">
                                                     <rect key="frame" x="18" y="2" width="163" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lro-K7-0jx">
-                                                            <rect key="frame" x="0.0" y="-5" width="17" height="27"/>
+                                                            <rect key="frame" x="0.0" y="-5" width="17" height="28"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="17" id="UCg-RO-JX9"/>
                                                             </constraints>
                                                             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="v3Z-LA-6Ze"/>
                                                         </imageView>
                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Dr-5m-Zdi" userLabel="Text Field">
-                                                            <rect key="frame" x="22" y="0.0" width="143" height="16"/>
+                                                            <rect key="frame" x="22" y="0.0" width="143" height="17"/>
                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Text Field" id="k7o-th-lWb">
-                                                                <font key="font" metaFont="system"/>
+                                                                <font key="font" metaFont="system" size="14"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>

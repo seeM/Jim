@@ -51,7 +51,7 @@ class CellViewModel: ObservableObject {
     }
     
     func renderMarkdown() {
-        renderedMarkdown = NSAttributedString(string: source)
+        renderedMarkdown = NSAttributedString(string: source, attributes: [.font: Theme.shared.font])
 //        let down = Down(markdownString: source)
 //        if let attributedString = try? down.toAttributedString() {
 //            renderedMarkdown = attributedString
