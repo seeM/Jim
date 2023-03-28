@@ -21,6 +21,17 @@ class CellViewModel: ObservableObject {
             cell.source.value = newValue
         }
     }
+    
+    var cellType: CellType {
+        get { cell.cellType }
+        set {
+            if newValue != .code {
+                cell.outputs = nil
+            }
+            cell.cellType = newValue
+        }
+    }
+    
 
     init(cell: Cell, notebookViewModel: NotebookViewModel) {
         self.cell = cell

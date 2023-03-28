@@ -76,20 +76,14 @@ class CellView: NSTableCellView {
         sourceView.translatesAutoresizingMaskIntoConstraints = false
         richTextView.translatesAutoresizingMaskIntoConstraints = false
         outputStackView.translatesAutoresizingMaskIntoConstraints = false
-        sourceView.setContentHuggingPriority(.required, for: .vertical)
         richTextView.setContentHuggingPriority(.required, for: .vertical)
+        sourceView.setContentHuggingPriority(.required, for: .vertical)
         outputStackView.setHuggingPriority(.required, for: .vertical)
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: topAnchor),
             containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-
-            sourceView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            sourceView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-
-            richTextView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            richTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
 
             outputStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             outputStackView.leadingAnchor.constraint(equalTo: sourceView.leadingAnchor),
@@ -98,10 +92,14 @@ class CellView: NSTableCellView {
         sourceViewVerticalConstraints = [
             sourceView.topAnchor.constraint(equalTo: containerView.topAnchor),
             outputStackView.topAnchor.constraint(equalTo: sourceView.bottomAnchor),
+            sourceView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            sourceView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ]
         richTextViewVerticalConstraints = [
             richTextView.topAnchor.constraint(equalTo: containerView.topAnchor),
             outputStackView.topAnchor.constraint(equalTo: richTextView.bottomAnchor),
+            richTextView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            richTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ]
     }
     
@@ -132,19 +130,25 @@ class CellView: NSTableCellView {
         
         isEditingMarkdownCancellable = viewModel.$isEditing
             .sink { [weak self] isEditing in
-                self?.sourceView.isHidden = !isEditing
-                self?.richTextView.isHidden = isEditing
-                self?.shadowLayer.shadowOpacity = isEditing ? self!.shadowOpacity : 0
-                if let richTextViewVerticalConstraints = self?.richTextViewVerticalConstraints, let sourceViewVerticalConstraints = self?.sourceViewVerticalConstraints {
-                    if isEditing {
-                        NSLayoutConstraint.deactivate(richTextViewVerticalConstraints)
-                        NSLayoutConstraint.activate(sourceViewVerticalConstraints)
-                    } else {
-                        NSLayoutConstraint.deactivate(sourceViewVerticalConstraints)
-                        NSLayoutConstraint.activate(richTextViewVerticalConstraints)
-                    }
-                    self?.needsLayout = true
+                guard let richTextViewVerticalConstraints = self?.richTextViewVerticalConstraints,
+                      let sourceViewVerticalConstraints = self?.sourceViewVerticalConstraints,
+                      let shadowOpacity = self?.shadowOpacity else {
+                    return
                 }
+                if self?.viewModel.cellType == .markdown && !isEditing {
+                    self?.sourceView.isHidden = true
+                    self?.richTextView.isHidden = false
+                    self?.shadowLayer.shadowOpacity = 0
+                    NSLayoutConstraint.deactivate(sourceViewVerticalConstraints)
+                    NSLayoutConstraint.activate(richTextViewVerticalConstraints)
+                } else {
+                    self?.sourceView.isHidden = false
+                    self?.richTextView.isHidden = true
+                    self?.shadowLayer.shadowOpacity = shadowOpacity
+                    NSLayoutConstraint.deactivate(richTextViewVerticalConstraints)
+                    NSLayoutConstraint.activate(sourceViewVerticalConstraints)
+                }
+                self?.needsLayout = true
             }
         
         renderedMarkdownCancellable = viewModel.$renderedMarkdown
@@ -225,7 +229,6 @@ class CellView: NSTableCellView {
     
     func runCell() {
         if viewModel.cell.cellType == .markdown && viewModel.isEditing {
-            viewModel.isEditing = false
             viewModel.renderMarkdown()
         } else if viewModel.cell.cellType == .code {
             viewModel.notebookViewModel.notebook.dirty = true
@@ -305,6 +308,7 @@ extension CellView: SourceViewDelegate {
     }
     
     func endEditMode(_ sourceView: SourceView) {
+        viewModel.isEditing = false
         window?.makeFirstResponder(tableView)
     }
     

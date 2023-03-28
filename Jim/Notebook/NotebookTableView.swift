@@ -139,10 +139,9 @@ class NotebookTableView: NSTableView {
     }
     
     func setCellType(_ cellType: CellType) {
-        // TODO: update the cell's outputs etc to match type...
         // TODO: make this undoable too?
         // TODO: more consistent way to access the cell?
-        selectedCellView?.viewModel.cell.cellType = cellType
+        selectedCellView?.viewModel.cellType = cellType
         // TODO: very ugly
         let windowController = window!.windowController as! WindowController
         let title = cellType.rawValue.capitalized
