@@ -22,13 +22,12 @@ class CellViewModel: ObservableObject {
         }
     }
     
-    var cellType: CellType {
-        get { cell.cellType }
-        set {
-            if newValue != .code {
-                cell.outputs = nil
+    @Published var cellType: CellType {
+        didSet {
+            if cellType != oldValue && cellType == .markdown {
+                isEditingMarkdown = true
             }
-            cell.cellType = newValue
+            cell.cellType = cellType
         }
     }
     
@@ -36,7 +35,8 @@ class CellViewModel: ObservableObject {
     init(cell: Cell, notebookViewModel: NotebookViewModel) {
         self.cell = cell
         self.notebookViewModel = notebookViewModel
-        if cell.cellType == .markdown {
+        self.cellType = cell.cellType
+        if cellType == .markdown {
             renderMarkdown()
         }
     }

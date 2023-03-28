@@ -29,6 +29,7 @@ class CellView: NSTableCellView {
     var viewModel: CellViewModel!
     private var isExecutingCancellable: AnyCancellable?
     private var isEditingMarkdownCancellable: AnyCancellable?
+    private var cellTypeCancellable: AnyCancellable?
     private var renderedMarkdownCancellable: AnyCancellable?
     
     // For switching between edit and rich text mode
@@ -147,10 +148,16 @@ class CellView: NSTableCellView {
         // TODO: note
         self.viewModel = viewModel
         
+        cellTypeCancellable = viewModel.$cellType
+            .removeDuplicates()
+            .sink { [weak self] cellType in
+                self?.showSourceView()
+            }
+        
         isEditingMarkdownCancellable = viewModel.$isEditingMarkdown
-            .sink { [weak self] isEditing in
-                print("isEditing", isEditing)
-                if self?.viewModel.cellType == .markdown && isEditing {
+            .sink { [weak self] isEditingMarkdown in
+                print("isEditing", isEditingMarkdown)
+                if self?.viewModel.cellType == .markdown && isEditingMarkdown {
                     self?.showSourceView()
                 }
             }
@@ -235,10 +242,11 @@ class CellView: NSTableCellView {
     }
     
     func runCell() {
-        if viewModel.cell.cellType == .markdown && viewModel.isEditingMarkdown {
+        print("runCell", viewModel.cellType, viewModel.isEditingMarkdown)
+        if viewModel.cellType == .markdown && viewModel.isEditingMarkdown {
             viewModel.renderMarkdown()
             viewModel.isEditingMarkdown = false
-        } else if viewModel.cell.cellType == .code {
+        } else if viewModel.cellType == .code {
             viewModel.notebookViewModel.notebook.dirty = true
             viewModel.isExecuting = true
             
