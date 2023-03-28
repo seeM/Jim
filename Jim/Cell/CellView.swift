@@ -285,6 +285,7 @@ extension CellView: SourceViewDelegate {
         tableView.selectCellAbove()
         let textView = tableView.selectedCellView!.sourceView.textView
         textView.setSelectedRange(NSRange(location: textView.string.count, length: 0))
+        window?.makeFirstResponder(textView)
     }
     
     func nextCell(_ sourceView: SourceView) {
@@ -292,6 +293,7 @@ extension CellView: SourceViewDelegate {
         tableView.selectCellBelow()
         let textView = tableView.selectedCellView!.sourceView.textView
         textView.setSelectedRange(NSRange(location: 0, length: 0))
+        window?.makeFirstResponder(textView)
     }
     
     func didBecomeFirstResponder(_ sourceView: SourceView) {
