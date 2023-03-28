@@ -131,22 +131,23 @@ class CellView: NSTableCellView {
     
     func update(with viewModel: CellViewModel, tableView: NotebookTableView) {
         // Store previous cell state
-        // TODO: there must be a better pattern for this
+        // Note that this must happen before self.viewModel is updated
         self.viewModel?.selectedRange = sourceView.textView.selectedRange()
         
-        for view in outputStackView.arrangedSubviews {
-            view.removeFromSuperview()
-            if let imageView = view as? NSImageView {
-                reusableImageViews.append(imageView)
-            } else if let textView = view as? OutputTextView {
-                reusableTextViews.append(textView)
-            }
-        }
-        
-        // TODO: note that this must happen before all the cancellables, unless we directly bind the new view model instead of going via self?
+        // Note that this must happen before all subscribers
         self.viewModel = viewModel
         
+        self.tableView = tableView
+        
+        // MARK: - Subscribers
+        
         cancellables.removeAll()
+        
+        viewModel.appendedOutput
+            .sink { [weak self] output in
+                self?.appendOutputSubview(output)
+            }
+            .store(in: &cancellables)
         
         viewModel.$cellType
             .removeDuplicates()
@@ -157,7 +158,6 @@ class CellView: NSTableCellView {
         
         viewModel.$isEditingMarkdown
             .sink { [weak self] isEditingMarkdown in
-                print("isEditing", isEditingMarkdown)
                 if self?.viewModel.cellType == .markdown && isEditingMarkdown {
                     self?.showSourceView()
                 }
@@ -166,7 +166,6 @@ class CellView: NSTableCellView {
         
         viewModel.$renderedMarkdown
             .sink { [weak self] renderedMarkdown in
-                print("renderedMarkdown", renderedMarkdown)
                 if self?.viewModel.cellType == .markdown {
                     self?.richTextView.textStorage?.setAttributedString(renderedMarkdown)
                     self?.showRichTextView()
@@ -180,21 +179,28 @@ class CellView: NSTableCellView {
             }
             .store(in: &cancellables)
         
-        self.tableView = tableView
+        // MARK: - Update views based on viewModel
+        
         sourceView.uniqueUndoManager = viewModel.undoManager
         sourceView.textView.string = viewModel.source
         sourceView.textView.setSelectedRange(viewModel.selectedRange)
-        clearOutputs()
-        if let outputs = viewModel.cell.outputs {
+        
+        clearOutputSubviews()
+        if let outputs = viewModel.outputs {
             for output in outputs {
                 appendOutputSubview(output)
             }
         }
     }
     
-    func clearOutputs() {
+    func clearOutputSubviews() {
         for view in outputStackView.arrangedSubviews {
             view.removeFromSuperview()
+            if let imageView = view as? NSImageView {
+                reusableImageViews.append(imageView)
+            } else if let textView = view as? OutputTextView {
+                reusableTextViews.append(textView)
+            }
         }
     }
     
@@ -246,7 +252,6 @@ class CellView: NSTableCellView {
     }
     
     func runCell() {
-        print("runCell", viewModel.cellType, viewModel.isEditingMarkdown)
         if viewModel.cellType == .markdown && viewModel.isEditingMarkdown {
             viewModel.renderMarkdown()
             viewModel.isEditingMarkdown = false
@@ -254,9 +259,9 @@ class CellView: NSTableCellView {
             viewModel.notebookViewModel.notebook.dirty = true
             viewModel.isExecuting = true
             
-            clearOutputs()
-            viewModel.cell.outputs = []
-            JupyterService.shared.webSocketSend(code: viewModel.cell.source.value) { [viewModel] msg in
+            clearOutputSubviews()
+            viewModel.clearOutputs()
+            JupyterService.shared.webSocketSend(code: viewModel.cell.source.value) { [weak viewModel] msg in
                 switch msg.channel {
                 case .iopub:
                     var output: Output?
@@ -273,18 +278,14 @@ class CellView: NSTableCellView {
                     }
                     if let output {
                         Task.detached { @MainActor in
-                            // TODO: feels hacky...
-                            if viewModel!.cell == self.viewModel.cell {
-                                self.appendOutputSubview(output)
-                            }
+                            viewModel!.appendOutput(output)
                         }
-                        viewModel!.cell.outputs!.append(output)
                     }
                 case .shell:
                     switch msg.content {
                     case .executeReply(_):
                         Task.detached { @MainActor in
-                            viewModel?.isExecuting = false
+                            viewModel!.isExecuting = false
                         }
                     default: break
                     }
