@@ -51,12 +51,13 @@ class CellViewModel: ObservableObject {
     }
     
     func renderMarkdown() {
-        let down = Down(markdownString: source)
-        if let attributedString = try? down.toAttributedString() {
-            renderedMarkdown = attributedString
-        } else {
-            print("Error parsing markdown: \(source)")
-        }
+        renderedMarkdown = NSAttributedString(string: source)
+//        let down = Down(markdownString: source)
+//        if let attributedString = try? down.toAttributedString() {
+//            renderedMarkdown = attributedString
+//        } else {
+//            print("Error parsing markdown: \(source)")
+//        }
     }
     
     func appendOutput(_ output: Output) {

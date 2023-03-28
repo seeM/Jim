@@ -110,21 +110,31 @@ class CellView: NSTableCellView {
     }
     
     func showSourceView() {
-        sourceView.isHidden = false
-        richTextView.isHidden = true
-        shadowLayer.shadowOpacity = shadowOpacity
-        NSLayoutConstraint.deactivate(richTextViewVerticalConstraints)
-        NSLayoutConstraint.activate(sourceViewVerticalConstraints)
-        needsLayout = true
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0
+            context.allowsImplicitAnimation = false
+            
+            sourceView.isHidden = false
+            richTextView.isHidden = true
+            shadowLayer.shadowOpacity = shadowOpacity
+            NSLayoutConstraint.deactivate(richTextViewVerticalConstraints)
+            NSLayoutConstraint.activate(sourceViewVerticalConstraints)
+//            needsLayout = true
+        }
     }
     
     func showRichTextView() {
-        sourceView.isHidden = true
-        richTextView.isHidden = false
-        shadowLayer.shadowOpacity = 0
-        NSLayoutConstraint.deactivate(sourceViewVerticalConstraints)
-        NSLayoutConstraint.activate(richTextViewVerticalConstraints)
-        needsLayout = true
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0
+            context.allowsImplicitAnimation = false
+            
+            sourceView.isHidden = true
+            richTextView.isHidden = false
+            shadowLayer.shadowOpacity = 0
+            NSLayoutConstraint.deactivate(sourceViewVerticalConstraints)
+            NSLayoutConstraint.activate(richTextViewVerticalConstraints)
+//            needsLayout = true
+        }
     }
     
     private var cancellables = Set<AnyCancellable>()
@@ -138,6 +148,18 @@ class CellView: NSTableCellView {
         self.viewModel = viewModel
         
         self.tableView = tableView
+    
+        // MARK: - Update views based on viewModel
+        sourceView.uniqueUndoManager = viewModel.undoManager
+        sourceView.textView.string = viewModel.source
+        sourceView.textView.setSelectedRange(viewModel.selectedRange)
+        
+        clearOutputSubviews()
+        if let outputs = viewModel.outputs {
+            for output in outputs {
+                appendOutputSubview(output)
+            }
+        }
         
         // MARK: - Subscribers
         
@@ -153,6 +175,7 @@ class CellView: NSTableCellView {
             .removeDuplicates()
             .sink { [weak self] cellType in
                 self?.showSourceView()
+                self?.sourceView.textView.wraps = cellType != .code
             }
             .store(in: &cancellables)
         
@@ -178,19 +201,6 @@ class CellView: NSTableCellView {
                 self?.alphaValue = isExecuting ? 0.5 : 1.0
             }
             .store(in: &cancellables)
-        
-        // MARK: - Update views based on viewModel
-        
-        sourceView.uniqueUndoManager = viewModel.undoManager
-        sourceView.textView.string = viewModel.source
-        sourceView.textView.setSelectedRange(viewModel.selectedRange)
-        
-        clearOutputSubviews()
-        if let outputs = viewModel.outputs {
-            for output in outputs {
-                appendOutputSubview(output)
-            }
-        }
     }
     
     func clearOutputSubviews() {

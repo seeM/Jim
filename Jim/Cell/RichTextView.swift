@@ -23,26 +23,14 @@ class RichTextView: MinimalTextView {
         isEditable = false
         isRichText = true
         font = Theme.shared.font
-        
-        textContainer?.widthTracksTextView = true
-        textContainer?.heightTracksTextView = false
     }
     
-    public override var intrinsicContentSize: NSSize {
-        NSSize(width: -1, height: super.intrinsicContentSize.height)
+    override func keyDown(with event: NSEvent) {
+        nextResponder?.keyDown(with: event)
     }
     
-    override func resize(withOldSuperviewSize oldSize: NSSize) {
-        invalidateIntrinsicContentSize()
-        super.resize(withOldSuperviewSize: oldSize)
+    override func becomeFirstResponder() -> Bool {
+        customDelegate?.didBecomeFirstResponder(self)
+        return super.becomeFirstResponder()
     }
-    
-//    override func keyDown(with event: NSEvent) {
-//        nextResponder?.keyDown(with: event)
-//    }
-    
-//    override func becomeFirstResponder() -> Bool {
-//        customDelegate?.didBecomeFirstResponder(self)
-//        return super.becomeFirstResponder()
-//    }
 }

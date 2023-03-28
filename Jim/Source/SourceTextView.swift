@@ -18,19 +18,14 @@ class SourceTextView: MinimalTextView {
         drawsBackground = true
         backgroundColor = Theme.shared.backgroundColor
         allowsUndo = true
-        
-        // Needed else reused views may retain previous height
-        isVerticallyResizable = true
-        
-        // Needed else horizontal scrollbar shows when the content doesn't overflow horizontally
-        isHorizontallyResizable = true
+        wraps = false
     }
 
     // NOTE: We might need this to fix vertical size on table cell reuse
-//    override func invalidateIntrinsicContentSize() {
-//        super.invalidateIntrinsicContentSize()
-//        enclosingScrollView?.invalidateIntrinsicContentSize()
-//    }
+    override func invalidateIntrinsicContentSize() {
+        super.invalidateIntrinsicContentSize()
+        enclosingScrollView?.invalidateIntrinsicContentSize()
+    }
 
     override func didChangeText() {
         super.didChangeText()

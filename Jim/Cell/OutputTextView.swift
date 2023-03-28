@@ -20,25 +20,10 @@ class OutputTextView: MinimalTextView {
     }
     
     private func setup() {
-        textContainer?.widthTracksTextView = true
-        textContainer?.heightTracksTextView = false
         font = Theme.shared.monoFont
         drawsBackground = true
         backgroundColor = .white
         isEditable = false
-        
-        // NOTE: We might need this if layout has bugs
-//        isVerticallyResizable = true
-//        isHorizontallyResizable = false
-    }
-    
-    public override var intrinsicContentSize: NSSize {
-        NSSize(width: -1, height: super.intrinsicContentSize.height)
-    }
-    
-    override func resize(withOldSuperviewSize oldSize: NSSize) {
-        invalidateIntrinsicContentSize()
-        super.resize(withOldSuperviewSize: oldSize)
     }
     
     override func keyDown(with event: NSEvent) {
