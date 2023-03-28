@@ -9,7 +9,7 @@ class CellViewModel: ObservableObject {
     let undoManager = UndoManager()
     var selectedRange = NSRange(location: 0, length: 0)
     
-    @Published var isEditing: Bool
+    @Published var isEditingMarkdown = false
     @Published var renderedMarkdown = NSAttributedString()
     
     var dirty = false
@@ -37,10 +37,7 @@ class CellViewModel: ObservableObject {
         self.cell = cell
         self.notebookViewModel = notebookViewModel
         if cell.cellType == .markdown {
-            isEditing = false
             renderMarkdown()
-        } else {
-            isEditing = true
         }
     }
     

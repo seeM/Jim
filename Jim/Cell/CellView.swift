@@ -64,7 +64,6 @@ class CellView: NSTableCellView {
         
         sourceView.delegate = self
         
-        richTextView.isHidden = true
         richTextView.customDelegate = self
         
         addSubview(containerView)
@@ -101,6 +100,8 @@ class CellView: NSTableCellView {
             richTextView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             richTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ]
+        
+        showSourceView()
     }
     
     override func layout() {
@@ -109,6 +110,24 @@ class CellView: NSTableCellView {
             shadowLayer.shadowPath = CGPath(roundedRect: containerView.bounds, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
             previousBounds = containerView.bounds
         }
+    }
+    
+    func showSourceView() {
+        sourceView.isHidden = false
+        richTextView.isHidden = true
+        shadowLayer.shadowOpacity = shadowOpacity
+        NSLayoutConstraint.deactivate(richTextViewVerticalConstraints)
+        NSLayoutConstraint.activate(sourceViewVerticalConstraints)
+        needsLayout = true
+    }
+    
+    func showRichTextView() {
+        sourceView.isHidden = true
+        richTextView.isHidden = false
+        shadowLayer.shadowOpacity = 0
+        NSLayoutConstraint.deactivate(sourceViewVerticalConstraints)
+        NSLayoutConstraint.activate(richTextViewVerticalConstraints)
+        needsLayout = true
     }
     
     func update(with viewModel: CellViewModel, tableView: NotebookTableView) {
@@ -128,33 +147,21 @@ class CellView: NSTableCellView {
         // TODO: note
         self.viewModel = viewModel
         
-        isEditingMarkdownCancellable = viewModel.$isEditing
+        isEditingMarkdownCancellable = viewModel.$isEditingMarkdown
             .sink { [weak self] isEditing in
-                guard let richTextViewVerticalConstraints = self?.richTextViewVerticalConstraints,
-                      let sourceViewVerticalConstraints = self?.sourceViewVerticalConstraints,
-                      let shadowOpacity = self?.shadowOpacity else {
-                    return
+                print("isEditing", isEditing)
+                if self?.viewModel.cellType == .markdown && isEditing {
+                    self?.showSourceView()
                 }
-                if self?.viewModel.cellType == .markdown && !isEditing {
-                    self?.sourceView.isHidden = true
-                    self?.richTextView.isHidden = false
-                    self?.shadowLayer.shadowOpacity = 0
-                    NSLayoutConstraint.deactivate(sourceViewVerticalConstraints)
-                    NSLayoutConstraint.activate(richTextViewVerticalConstraints)
-                } else {
-                    self?.sourceView.isHidden = false
-                    self?.richTextView.isHidden = true
-                    self?.shadowLayer.shadowOpacity = shadowOpacity
-                    NSLayoutConstraint.deactivate(richTextViewVerticalConstraints)
-                    NSLayoutConstraint.activate(sourceViewVerticalConstraints)
-                }
-                self?.needsLayout = true
             }
         
         renderedMarkdownCancellable = viewModel.$renderedMarkdown
             .sink { [weak self] renderedMarkdown in
                 print("renderedMarkdown", renderedMarkdown)
-                self?.richTextView.textStorage?.setAttributedString(renderedMarkdown)
+                if self?.viewModel.cellType == .markdown {
+                    self?.richTextView.textStorage?.setAttributedString(renderedMarkdown)
+                    self?.showRichTextView()
+                }
             }
         
         isExecutingCancellable = viewModel.$isExecuting
@@ -228,8 +235,9 @@ class CellView: NSTableCellView {
     }
     
     func runCell() {
-        if viewModel.cell.cellType == .markdown && viewModel.isEditing {
+        if viewModel.cell.cellType == .markdown && viewModel.isEditingMarkdown {
             viewModel.renderMarkdown()
+            viewModel.isEditingMarkdown = false
         } else if viewModel.cell.cellType == .code {
             viewModel.notebookViewModel.notebook.dirty = true
             viewModel.isExecuting = true
@@ -284,8 +292,8 @@ extension CellView: SourceViewDelegate {
     }
     
     func didCommit(_ sourceView: SourceView) {
-        endEditMode(sourceView)
         tableView.runCellSelectBelow()
+        endEditMode(sourceView)
     }
     
     func previousCell(_ sourceView: SourceView) {
@@ -303,12 +311,11 @@ extension CellView: SourceViewDelegate {
     }
     
     func didBecomeFirstResponder(_ sourceView: SourceView) {
-        viewModel.isEditing = true
+        viewModel.isEditingMarkdown = true
         selectCurrentRow()
     }
     
     func endEditMode(_ sourceView: SourceView) {
-        viewModel.isEditing = false
         window?.makeFirstResponder(tableView)
     }
     
