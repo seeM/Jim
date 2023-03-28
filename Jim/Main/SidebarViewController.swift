@@ -60,8 +60,13 @@ class SidebarViewController: NSViewController, NSTableViewDelegate, NSTableViewD
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         guard let view = tableView.makeView(withIdentifier: tableColumn!.identifier, owner: self) as? NSTableCellView else { return nil }
         let item = contents[row]
-        let systemSymbolName = item.type == .directory ? "folder" : item.type == .notebook ? "text.book.closed" : "doc"
+        let systemSymbolName = item.type == .directory ? "folder.fill" : item.type == .notebook ? "text.book.closed" : "doc"
         view.imageView?.image = NSImage(systemSymbolName: systemSymbolName, accessibilityDescription: nil)!
+        // Blue
+//        view.imageView?.contentTintColor = item.type == .notebook ? NSColor.init(red: 0.071, green: 0.471, blue: 0.949, alpha: 1.0) : Theme.shared.sidebarTintColor
+        // Orange
+//        view.imageView?.contentTintColor = item.type == .notebook ? NSColor.init(red: 0.921, green: 0.447, blue: 0.192, alpha: 1.0) : Theme.shared.sidebarTintColor
+        view.imageView?.contentTintColor = Theme.shared.sidebarTintColor
         view.textField?.stringValue = item.name
         return view
     }
