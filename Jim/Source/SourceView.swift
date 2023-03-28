@@ -25,6 +25,8 @@ class SourceView: NSScrollView {
     
     override var isOpaque: Bool { true }
     
+    let cornerRadius = 5.0
+    
     weak var delegate: SourceViewDelegate?
     
     override init(frame: CGRect) {
@@ -46,6 +48,9 @@ class SourceView: NSScrollView {
         verticalScrollElasticity = .none
         drawsBackground = true
         backgroundColor = Theme.shared.backgroundColor
+        
+        wantsLayer = true
+        layer?.cornerRadius = cornerRadius
   
         if let horizontalScroller = horizontalScroller {
             let horizontalSourceScroller = SourceScroller(frame: horizontalScroller.frame)

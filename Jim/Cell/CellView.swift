@@ -13,18 +13,11 @@ class CellView: NSTableCellView {
     var tableView: NotebookTableView!
     var row: Int { tableView.row(for: self) }
     
-    private let containerView = OpaqueView()
-    private let shadowLayer = CALayer()
-    
     // Caching
-    private var previousBounds = CGRect.zero
     private var reusableImageViews = [NSImageView]()
     private var reusableTextViews = [OutputTextView]()
     
     override var isOpaque: Bool { true }
-    
-    let cornerRadius = 5.0
-    let shadowOpacity = Float(0.3)
     
     var viewModel: CellViewModel!
     
@@ -43,32 +36,16 @@ class CellView: NSTableCellView {
     }
 
     private func setup() {
-        wantsLayer = true
-        layer?.masksToBounds = false
-
-        shadowLayer.shadowColor = NSColor.black.cgColor
-        shadowLayer.shadowOpacity = shadowOpacity
-        shadowLayer.shadowOffset = CGSize(width: 0, height: -2)
-        shadowLayer.shadowRadius = 3
-        layer?.addSublayer(shadowLayer)
-
-        containerView.wantsLayer = true
-        containerView.layer?.cornerRadius = cornerRadius
-        containerView.layer?.masksToBounds = true
-        containerView.layer?.backgroundColor = .white
-        
         outputStackView.orientation = .vertical
         
         sourceView.delegate = self
         
         richTextView.customDelegate = self
         
-        addSubview(containerView)
-        containerView.addSubview(sourceView)
-        containerView.addSubview(richTextView)
-        containerView.addSubview(outputStackView)
+        addSubview(sourceView)
+        addSubview(richTextView)
+        addSubview(outputStackView)
         
-        containerView.translatesAutoresizingMaskIntoConstraints = false
         sourceView.translatesAutoresizingMaskIntoConstraints = false
         richTextView.translatesAutoresizingMaskIntoConstraints = false
         outputStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -76,37 +53,24 @@ class CellView: NSTableCellView {
         sourceView.setContentHuggingPriority(.required, for: .vertical)
         outputStackView.setHuggingPriority(.required, for: .vertical)
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: topAnchor),
-            containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-
-            outputStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            outputStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             outputStackView.leadingAnchor.constraint(equalTo: sourceView.leadingAnchor),
-            outputStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            outputStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
         sourceViewVerticalConstraints = [
-            sourceView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            sourceView.topAnchor.constraint(equalTo: topAnchor),
             outputStackView.topAnchor.constraint(equalTo: sourceView.bottomAnchor),
-            sourceView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            sourceView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            sourceView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            sourceView.trailingAnchor.constraint(equalTo: trailingAnchor),
         ]
         richTextViewVerticalConstraints = [
-            richTextView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            richTextView.topAnchor.constraint(equalTo: topAnchor),
             outputStackView.topAnchor.constraint(equalTo: richTextView.bottomAnchor),
-            richTextView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            richTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            richTextView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            richTextView.trailingAnchor.constraint(equalTo: trailingAnchor),
         ]
         
         showSourceView()
-    }
-    
-    override func layout() {
-        super.layout()
-        if !NSEqualRects(containerView.bounds, previousBounds) {
-            shadowLayer.shadowPath = CGPath(roundedRect: containerView.bounds, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
-            previousBounds = containerView.bounds
-        }
     }
     
     func showSourceView() {
@@ -116,7 +80,6 @@ class CellView: NSTableCellView {
             
             sourceView.isHidden = false
             richTextView.isHidden = true
-            shadowLayer.shadowOpacity = shadowOpacity
             NSLayoutConstraint.deactivate(richTextViewVerticalConstraints)
             NSLayoutConstraint.activate(sourceViewVerticalConstraints)
 //            needsLayout = true
@@ -130,10 +93,8 @@ class CellView: NSTableCellView {
             
             sourceView.isHidden = true
             richTextView.isHidden = false
-            shadowLayer.shadowOpacity = 0
             NSLayoutConstraint.deactivate(sourceViewVerticalConstraints)
             NSLayoutConstraint.activate(richTextViewVerticalConstraints)
-//            needsLayout = true
         }
     }
     
