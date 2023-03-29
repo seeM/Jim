@@ -3,23 +3,24 @@ import AppKit
 class MinimalTextView: NSTextView {
     var verticalPadding: CGFloat = 5
     
-    var wraps = true {
-        didSet {
-            didSetWraps(wraps)
-            // Only perform layout changes if the value actually changed
-            if wraps != oldValue {
-                // If we don't reset the container width it maintains the old width and wraps, despite
-                // isHorizontallyResizable changing.
-                textContainer?.size.width = .greatestFiniteMagnitude
-                invalidateIntrinsicContentSize()
-            }
-        }
-    }
+    private var frameObservation: NSKeyValueObservation?
     
-    private func didSetWraps(_ wraps: Bool) {
+    private(set) var wraps = true
+    
+    func setWraps(_ wraps: Bool, invalidate: Bool = true) {
         textContainer?.widthTracksTextView = wraps
         // Needed else horizontal scrollbar shows when the content doesn't overflow horizontally
         isHorizontallyResizable = !wraps
+        // Only perform layout changes if the value actually changed
+        if invalidate && wraps != self.wraps {
+            // If we don't reset the container width it maintains the old width and wraps, despite
+            // isHorizontallyResizable changing.
+            if !wraps {
+                textContainer?.size.width = .greatestFiniteMagnitude
+            }
+            invalidateIntrinsicContentSize()
+        }
+        self.wraps = wraps
     }
     
     init() {
@@ -36,6 +37,8 @@ class MinimalTextView: NSTextView {
         super.init(coder: coder)
         setup()
     }
+    
+    private var cachedIntrinsicContentSize = NSSize.zero
     
     private func setup() {
         _ = layoutManager  // Force TextKit 1
@@ -54,24 +57,26 @@ class MinimalTextView: NSTextView {
         // Needed else reused views may retain previous height
         isVerticallyResizable = true
         
-        didSetWraps(wraps)
+        setWraps(wraps, invalidate: false)
+
+        frameObservation = observe(\.frame) { [weak self] (_, _) in
+            self?.invalidateIntrinsicContentSize()
+        }
     }
-    
+
     public override var intrinsicContentSize: NSSize {
         guard let textContainer = textContainer,
               let layoutManager = layoutManager else {
-            return .zero
+            fatalError("Expected textContainer and layoutManager to exist.")
         }
         layoutManager.ensureLayout(for: textContainer)
         let size = layoutManager.usedRect(for: textContainer).size
-        return .init(width: wraps ? -1 : size.width + 2 * textContainerInset.width,
-                     height: size.height + 2 * textContainerInset.height)
+        return NSSize(width: wraps ? -1 : size.width + 2 * textContainerInset.width,
+                      height: size.height + 2 * textContainerInset.height)
     }
     
-    // I'm not sure why, but this is needed to correctly vertically size text views in the table
-    override func resize(withOldSuperviewSize oldSize: NSSize) {
+    override func didChangeText() {
+        super.didChangeText()
         invalidateIntrinsicContentSize()
-        super.resize(withOldSuperviewSize: oldSize)
     }
-
 }

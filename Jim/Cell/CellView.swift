@@ -136,7 +136,7 @@ class CellView: NSTableCellView {
             .removeDuplicates()
             .sink { [weak self] cellType in
                 self?.showSourceView()
-                self?.sourceView.textView.wraps = cellType != .code
+                self?.sourceView.textView.setWraps(cellType != .code)
             }
             .store(in: &cancellables)
         

@@ -18,18 +18,13 @@ class SourceTextView: MinimalTextView {
         drawsBackground = true
         backgroundColor = Theme.shared.backgroundColor
         allowsUndo = true
-        wraps = false
+        setWraps(false, invalidate: false)
     }
 
     // NOTE: We might need this to fix vertical size on table cell reuse
     override func invalidateIntrinsicContentSize() {
         super.invalidateIntrinsicContentSize()
         enclosingScrollView?.invalidateIntrinsicContentSize()
-    }
-
-    override func didChangeText() {
-        super.didChangeText()
-        invalidateIntrinsicContentSize()
     }
     
     override func becomeFirstResponder() -> Bool {
