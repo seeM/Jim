@@ -5,43 +5,37 @@ class MarkdownStyler: DownStyler {
     static let shared = MarkdownStyler()
 
     init() {
-        let headingStyle = NSMutableParagraphStyle()
-        let bodyStyle = NSMutableParagraphStyle()
-        let codeStyle = NSMutableParagraphStyle()
-
         var listItemOptions = ListItemOptions()
         var quoteStripeOptions = QuoteStripeOptions()
-        var thematicBreakOptions = ThematicBreakOptions()
-        var codeBlockOptions = CodeBlockOptions()
+        let thematicBreakOptions = ThematicBreakOptions()
+        let codeBlockOptions = CodeBlockOptions()
 
-//        headingStyle.paragraphSpacingBefore = 0
-//        headingStyle.paragraphSpacing = 0
-//
-//        bodyStyle.lineSpacing = 0
-//        bodyStyle.paragraphSpacing = 0
-//
-//        codeStyle.lineSpacing = 0
-//        codeStyle.paragraphSpacing = 0
-//
-//        listItemOptions.maxPrefixDigits = 1
-//        listItemOptions.spacingAfterPrefix = 4
-//        listItemOptions.spacingAbove = 2
-//        listItemOptions.spacingBelow = 4
-//
+        listItemOptions.spacingAbove = 10
+
         quoteStripeOptions.thickness = 5
-        quoteStripeOptions.spacingAfter = 8
-//
-//        thematicBreakOptions.thickness = 1
-//        thematicBreakOptions.indentation = 0
-//
-//        codeBlockOptions.containerInset = 8
+        quoteStripeOptions.spacingAfter = 16
+
+        let bodyStyle = NSMutableParagraphStyle()
+        bodyStyle.paragraphSpacingBefore = 14
+        bodyStyle.paragraphSpacing = 14
+
+        let heading1Style = NSMutableParagraphStyle()
+        heading1Style.paragraphSpacingBefore = 18
+        
+        let secondaryHeadingStyle = NSMutableParagraphStyle()
+        secondaryHeadingStyle.paragraphSpacingBefore = 28
+        
+        let codeStyle = NSMutableParagraphStyle()
 
         var paragraphStyles = StaticParagraphStyleCollection()
-//        paragraphStyles.body = bodyStyle
-//        paragraphStyles.heading1 = headingStyle
-//        paragraphStyles.heading2 = headingStyle
-//        paragraphStyles.heading3 = headingStyle
-//        paragraphStyles.code = codeStyle
+        paragraphStyles.body = bodyStyle
+        paragraphStyles.code = codeStyle
+        paragraphStyles.heading1 = heading1Style
+        paragraphStyles.heading2 = secondaryHeadingStyle
+        paragraphStyles.heading3 = secondaryHeadingStyle
+        paragraphStyles.heading4 = secondaryHeadingStyle
+        paragraphStyles.heading5 = secondaryHeadingStyle
+        paragraphStyles.heading6 = secondaryHeadingStyle
 
         let downStylerConfiguration = DownStylerConfiguration(
             fonts: MarkdownStyler.fontCollection(),
@@ -58,16 +52,15 @@ class MarkdownStyler: DownStyler {
 
     static func fontCollection() -> FontCollection {
         var fonts = StaticFontCollection()
-//        fonts.body = .preferredFont(forTextStyle: .body).withSize(14)
-//        fonts.heading1 = .preferredFont(forTextStyle: .title1)
-//        fonts.heading2 = .preferredFont(forTextStyle: .title2)
-//        fonts.heading3 = .preferredFont(forTextStyle: .title3)
-//        let monospaced = font(
-//            for: NSFontDescriptor.preferredFontDescriptor(forTextStyle: .body).withDesign(.monospaced),
-//            fallback: NSFont.preferredFont(forTextStyle: .body)
-//        )
-//        fonts.code = monospaced
-//        fonts.listItemPrefix = monospaced
+        fonts.body = fonts.body.withSize(14)
+        fonts.heading1 = fonts.heading1.withSize(26)
+        fonts.heading2 = fonts.heading2.withSize(22)
+        fonts.heading3 = fonts.heading3.withSize(18)
+        fonts.heading4 = fonts.heading4.withSize(14)
+        fonts.heading5 = NSFontManager.shared.convert(fonts.heading5.withSize(14), toHaveTrait: .italicFontMask)
+        fonts.heading6 = NSFontManager.shared.convert(fonts.heading6.withSize(14), toHaveTrait: .italicFontMask)
+        fonts.code = fonts.code.withSize(14)
+        fonts.listItemPrefix = fonts.body
         return fonts
     }
 
@@ -81,25 +74,17 @@ class MarkdownStyler: DownStyler {
 
     static var colorCollection: ColorCollection {
         var colors = StaticColorCollection()
-//        colors.body = .labelColor
-//        colors.heading1 = .labelColor
-//        colors.heading2 = .labelColor
-//        colors.heading3 = .labelColor
-//        colors.code = .labelColor
-//        colors.link = .linkColor
-//        colors.listItemPrefix = .controlAccentColor
-//        colors.quote = .secondaryLabelColor
+        colors.body = .labelColor
+        colors.heading1 = .labelColor
+        colors.heading2 = .labelColor
+        colors.heading3 = .labelColor
+        colors.code = .labelColor
+        colors.link = .linkColor
+        colors.listItemPrefix = .labelColor
+        colors.quote = .labelColor
         colors.quoteStripe = .init(red: 0.933, green: 0.933, blue: 0.933, alpha: 1)
-//        colors.thematicBreak = .black
+        colors.codeBlockBackground = .clear
+        colors.thematicBreak = .init(red: 0.933, green: 0.933, blue: 0.933, alpha: 1)
         return colors
     }
-
-//    override func style(text string: NSMutableAttributedString) {
-//        super.style(text: string)
-//        string.addAttributes([.kern: NSFont.body.kerning(6)], range: NSRange(location: 0, length: string.count))
-//    }
-//
-//    func style(seeMore string: NSMutableAttributedString) {
-//        self.style(text: string)
-//    }
 }
