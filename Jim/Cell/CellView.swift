@@ -152,6 +152,7 @@ class CellView: NSTableCellView {
             .sink { [weak self] renderedMarkdown in
                 if self?.viewModel.cellType == .markdown {
                     self?.richTextView.textStorage?.setAttributedString(renderedMarkdown)
+                    self?.richTextView.invalidateIntrinsicContentSize()
                     self?.showRichTextView()
                 }
             }
