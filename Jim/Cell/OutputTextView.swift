@@ -9,7 +9,7 @@ class OutputTextView: MinimalTextView {
     
     var customDelegate: OutputTextViewDelegate?
     
-    override init() {
+    override init(layoutManager: NSLayoutManager = NSLayoutManager()) {
         super.init()
         setup()
     }

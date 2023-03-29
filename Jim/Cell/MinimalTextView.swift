@@ -23,9 +23,8 @@ class MinimalTextView: NSTextView {
         self.wraps = wraps
     }
     
-    init() {
+    init(layoutManager: NSLayoutManager = NSLayoutManager()) {
         let textStorage = NSTextStorage()
-        let layoutManager = NSLayoutManager()
         let textContainer = NSTextContainer()
         textStorage.addLayoutManager(layoutManager)
         layoutManager.addTextContainer(textContainer)

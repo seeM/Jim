@@ -3,7 +3,7 @@ import AppKit
 class SourceTextView: MinimalTextView {
     override var isOpaque: Bool { true }
     
-    override init() {
+    override init(layoutManager: NSLayoutManager = NSLayoutManager()) {
         super.init()
         setup()
     }

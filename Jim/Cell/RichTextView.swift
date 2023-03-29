@@ -1,4 +1,5 @@
 import AppKit
+import Down
 
 protocol RichTextViewDelegate {
     func didBecomeFirstResponder(_ textView: RichTextView)
@@ -9,8 +10,8 @@ class RichTextView: MinimalTextView {
     
     var customDelegate: RichTextViewDelegate?
     
-    override init() {
-        super.init()
+    override init(layoutManager: NSLayoutManager = DownLayoutManager()) {
+        super.init(layoutManager: layoutManager)
         setup()
     }
     
