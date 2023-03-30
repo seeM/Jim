@@ -10,7 +10,8 @@ class MarkdownStyler: DownStyler {
         let thematicBreakOptions = ThematicBreakOptions()
         let codeBlockOptions = CodeBlockOptions()
 
-        listItemOptions.spacingAbove = 10
+        listItemOptions.spacingAbove = 0
+        listItemOptions.spacingBelow = 0
 
         quoteStripeOptions.thickness = 5
         quoteStripeOptions.spacingAfter = 16
@@ -20,10 +21,12 @@ class MarkdownStyler: DownStyler {
         bodyStyle.paragraphSpacing = 14
 
         let heading1Style = NSMutableParagraphStyle()
-        heading1Style.paragraphSpacingBefore = 18
+        heading1Style.paragraphSpacingBefore = 9
+        heading1Style.paragraphSpacing = 9
         
         let secondaryHeadingStyle = NSMutableParagraphStyle()
-        secondaryHeadingStyle.paragraphSpacingBefore = 28
+        secondaryHeadingStyle.paragraphSpacingBefore = 14
+        secondaryHeadingStyle.paragraphSpacing = 14
         
         let codeStyle = NSMutableParagraphStyle()
 
