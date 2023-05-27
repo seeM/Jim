@@ -54,7 +54,7 @@ Note the server URL and token displayed in the logs, which are needed to login w
 
 The corresponding login URL would be `http://localhost:8888/` and the token would be `6dc6eebb717ed09c243da57a89bee6a30dba217fbd43ec15`
 
-***Note: Jim doesn't yet have a login screen (see [issue #15](https://github.com/seeM/Jim/issues/15#issue-1676257828)). The login URL and token are currently hardcoded [here](https://github.com/seeM/Jim/blob/7e14cd8e70df1057c6888e9126c3524066a41db5/Jim/Main/SidebarViewController.swift#L21). Change those values to match your server.***
+***Note: Jim doesn't yet have a login screen (see [issue #15](https://github.com/seeM/Jim/issues/15#issue-1676257828)). The login URL and token are currently hardcoded [here](https://github.com/seeM/Jim/blob/7e14cd8e70df1057c6888e9126c3524066a41db5/Jim/Main/SidebarViewController.swift#L21). You can use the command `jupyter server --port 8999 --ServerApp.token=testtoken123` to quickly create a development server, or change those values to match your server's configuration.***
 
 ### Start Jim
 
