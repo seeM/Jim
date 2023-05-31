@@ -204,7 +204,9 @@ class CellView: NSTableCellView {
             textView.setContentHuggingPriority(.required, for: .vertical)
         }
         
-        textView.string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines).replacing(/\[\d+[\d;]*m/, with: "")
+        let string = text.trimmingCharacters(in: Foundation.CharacterSet.whitespacesAndNewlines)
+        let replacingString = string.replacingOccurrences(of: "/\\[\\d+\\\\d;]*m/", with: "", options: .regularExpression)
+        textView.string = replacingString
         outputStackView.addArrangedSubview(textView)
     }
     
